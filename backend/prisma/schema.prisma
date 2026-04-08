@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["sakura"]
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  login        String   @unique
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  @@schema("sakura")
+}
+
+model Settings {
+  id             Int      @id @default(1)
+  companyName    String   @default("Сакура")
+  phone          String   @default("")
+  address        String   @default("")
+  workingHours   Json?
+  telegramChatId String   @default("")
+  smsEnabled     Boolean  @default(false)
+  updatedAt      DateTime @updatedAt
+  @@schema("sakura")
+}
+
+model Staff {
+  id          Int             @id @default(autoincrement())
+  name        String
+  role        String
+  experience  Int             @default(0)
+  photo       String?
+  description String?
+  isActive    Boolean         @default(true)
+  schedule    Json?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  bookings    Booking[]
+  portfolio   PortfolioWork[]
+  @@schema("sakura")
+}
+
+model Service {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  price       Int
+  duration    Int       @default(30)
+  category    String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  bookings    Booking[]
+  @@schema("sakura")
+}
+
+model Booking {
+  id         Int      @id @default(autoincrement())
+  clientName String
+  phone      String
+  date       DateTime
+  time       String
+  comment    String?
+  status     String   @default("new")
+  staffId    Int
+  staff      Staff    @relation(fields: [staffId], references: [id])
+  serviceId  Int
+  service    Service  @relation(fields: [serviceId], references: [id])
+  smsSent    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@schema("sakura")
+}
+
+model PortfolioWork {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  beforePhoto String?
+  afterPhoto  String?
+  category    String?
+  staffId     Int
+  staff       Staff    @relation(fields: [staffId], references: [id])
+  createdAt   DateTime @default(now())
+  @@schema("sakura")
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  authorName String
+  text       String
+  rating     Int
+  source     String   @default("site")
+  sourceId   String?  @unique
+  isApproved Boolean  @default(false)
+  isVisible  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@schema("sakura")
+}
