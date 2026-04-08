@@ -110,6 +110,7 @@ curl -X POST http://localhost:4000/api/auth/setup \
 |------|--------|------|
 | Backend | [@ueeet](https://github.com/ueeet) | `backend/` |
 | Frontend | [@tagirov3322-blip](https://github.com/tagirov3322-blip) | `frontend/` |
+| Visioner | [@Ratmir123](https://github.com/Ratmir123) | — |
 
 ## API
 
