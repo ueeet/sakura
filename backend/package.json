@@ -4,7 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npx tsx --watch src/index.ts",
+    "build": "tsc",
+    "start": "npx tsx src/index.ts",
+    "db:push": "npx prisma db push",
+    "db:generate": "npx prisma generate",
+    "db:migrate": "npx prisma migrate dev",
+    "db:studio": "npx prisma studio",
+    "seed": "npx tsx src/seed.ts"
   },
   "keywords": [],
   "author": "",
