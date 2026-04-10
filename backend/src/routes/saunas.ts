@@ -37,7 +37,7 @@ router.get("/", asyncHandler(async (req, res) => {
 
 router.get("/:slug", asyncHandler(async (req, res) => {
   const sauna = await prisma.sauna.findUnique({
-    where: { slug: req.params.slug },
+    where: { slug: String(req.params.slug) },
     include: {
       branch: true,
       images: { orderBy: { sortOrder: "asc" } },
