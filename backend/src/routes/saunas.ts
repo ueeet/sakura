@@ -10,10 +10,24 @@ import prisma from "../prismaClient";
 
 const router = Router();
 
+type SaunaWithPrices = {
+  id: number;
+  prices?: { pricePerHour: number }[];
+  [key: string]: unknown;
+};
+
+function withPriceFrom<T extends SaunaWithPrices>(s: T): T & { priceFrom: number | null } {
+  const min = s.prices && s.prices.length > 0
+    ? Math.min(...s.prices.map((p) => p.pricePerHour))
+    : null;
+  return { ...s, priceFrom: min };
+}
+
 router.get("/", asyncHandler(async (req, res) => {
   const branchId = req.query.branchId ? Number(req.query.branchId) : undefined;
+  const categoryId = req.query.categoryId ? Number(req.query.categoryId) : undefined;
   const type = typeof req.query.type === "string" ? req.query.type : undefined;
-  const cacheKey = `saunas:list:${branchId ?? "all"}:${type ?? "all"}`;
+  const cacheKey = `saunas:list:${branchId ?? "all"}:${categoryId ?? "all"}:${type ?? "all"}`;
   const cached = cacheGet(cacheKey);
   if (cached) return res.json(cached);
 
@@ -21,18 +35,19 @@ router.get("/", asyncHandler(async (req, res) => {
     where: {
       isActive: true,
       ...(branchId && { branchId }),
+      ...(categoryId && { categoryId }),
       ...(type && { type }),
     },
     orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
     include: {
       branch: { select: { id: true, slug: true, name: true } },
-      images: { orderBy: { sortOrder: "asc" } },
-      amenities: true,
+      category: { select: { id: true, slug: true, name: true } },
       prices: true,
     },
   });
-  cacheSet(cacheKey, data, 60_000);
-  res.json(data);
+  const result = data.map(withPriceFrom);
+  cacheSet(cacheKey, result, 60_000);
+  res.json(result);
 }));
 
 router.get("/:slug", asyncHandler(async (req, res) => {
@@ -40,13 +55,12 @@ router.get("/:slug", asyncHandler(async (req, res) => {
     where: { slug: String(req.params.slug) },
     include: {
       branch: true,
-      images: { orderBy: { sortOrder: "asc" } },
-      amenities: true,
+      category: true,
       prices: true,
     },
   });
   if (!sauna) { res.status(404).json({ error: "Сауна не найдена" }); return; }
-  res.json(sauna);
+  res.json(withPriceFrom(sauna));
 }));
 
 router.get("/:id/availability", asyncHandler(async (req, res) => {
