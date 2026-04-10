@@ -15,10 +15,11 @@ import authRoutes from "./routes/auth";
 import uploadRoutes from "./routes/upload";
 import statsRoutes from "./routes/stats";
 import settingsRoutes from "./routes/settings";
-import staffRoutes from "./routes/staff";
-import servicesRoutes from "./routes/services";
+import branchesRoutes from "./routes/branches";
+import saunasRoutes from "./routes/saunas";
+import pricesRoutes from "./routes/prices";
+import promotionsRoutes from "./routes/promotions";
 import bookingsRoutes from "./routes/bookings";
-import portfolioRoutes from "./routes/portfolio";
 import reviewsRoutes from "./routes/reviews";
 
 const app = express();
@@ -54,10 +55,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/settings", settingsRoutes);
-app.use("/api/staff", staffRoutes);
-app.use("/api/services", servicesRoutes);
+app.use("/api/branches", branchesRoutes);
+app.use("/api/saunas", saunasRoutes);
+app.use("/api/prices", pricesRoutes);
+app.use("/api/promotions", promotionsRoutes);
 app.use("/api/bookings", bookingsRoutes);
-app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/reviews", reviewsRoutes);
 
 // SSE
