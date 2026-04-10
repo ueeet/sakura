@@ -9,6 +9,7 @@ import { notifyNewBooking } from "../lib/telegram";
 import { sendBookingCreatedSms, sendBookingConfirmedSms, sendBookingCancelledSms } from "../lib/sms";
 import { hasBookingConflict } from "../lib/booking";
 import { parseMoscowDate, formatMoscowHuman } from "../lib/timezone";
+import { getPaymentProvider } from "../lib/payment";
 import prisma from "../prismaClient";
 
 const router = Router();
