@@ -8,3 +8,8 @@ dist/
 .vercel
 .DS_Store
 Thumbs.db
+# Local screenshots (not part of the site)
+screenshot.png
+screenshot-*.png
+ss-*.png
+

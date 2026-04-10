@@ -22,12 +22,12 @@ const promoIcons: Record<string, React.ReactNode> = {
 };
 
 const carouselSlides = [
-  { title: "Русская баня", image: "/images/saunas/complex-9/family/2/1.png" },
-  { title: "Финская сауна", image: "/images/saunas/complex-9/family/1/1.png" },
-  { title: "Турецкий хамам", image: "/images/saunas/complex-9/family/4/1.png" },
-  { title: "Бассейн", image: "/images/saunas/complex-9/regular/1/1.png" },
-  { title: "Комната отдыха", image: "/images/saunas/complex-9/family/3/2.png" },
-  { title: "Шашлычная", image: "/images/saunas/complex-50/1/1.png" },
+  { title: "Русская баня", image: "/images/saunas/complex-9/family/2/1.webp" },
+  { title: "Финская сауна", image: "/images/saunas/complex-9/family/1/1.webp" },
+  { title: "Турецкий хамам", image: "/images/saunas/complex-9/family/4/1.webp" },
+  { title: "Бассейн", image: "/images/saunas/complex-9/regular/1/1.webp" },
+  { title: "Комната отдыха", image: "/images/saunas/complex-9/family/3/2.webp" },
+  { title: "Шашлычная", image: "/images/saunas/complex-50/1/1.webp" },
 ];
 
 const mapSrc = "https://yandex.ru/map-widget/v1/?ll=52.406%2C55.750&z=12&pt=52.389442,55.726188,pm2gnm1~52.422554,55.773935,pm2gnm2";
