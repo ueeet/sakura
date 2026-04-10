@@ -60,6 +60,7 @@ export interface Sauna {
   minHours: number;
   openHour: number;
   closeHour: number;
+  depositPercent: number;
   branchId: number;
   categoryId: number | null;
   branch?: Pick<Branch, "id" | "slug" | "name">;
