@@ -102,6 +102,12 @@ export default function AdminBookingsPage() {
                   <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.sauna?.name}</td>
                   <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.totalPrice ? `${b.totalPrice}₽` : "—"}</td>
                   <td className="px-4 py-3">
+                    <span className={`text-xs font-medium ${paymentStatusLabels[b.paymentStatus]?.class || "text-gray-400"}`}>
+                      {paymentStatusLabels[b.paymentStatus]?.label || "—"}
+                      {b.paidAmount > 0 && ` (${b.paidAmount}₽)`}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusLabels[b.status]?.class}`}>
                       {statusLabels[b.status]?.label}
                     </span>
