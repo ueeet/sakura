@@ -13,6 +13,21 @@ const statusLabels: Record<string, { label: string; class: string }> = {
   completed: { label: "Завершена", class: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400" },
 };
 
+function formatDateTime(iso: string) {
+  return new Date(iso).toLocaleString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatHours(start: string, end: string) {
+  const ms = new Date(end).getTime() - new Date(start).getTime();
+  return Math.round(ms / 3_600_000);
+}
+
 export default function AdminBookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +49,7 @@ export default function AdminBookingsPage() {
   };
 
   const deleteBooking = async (id: number) => {
-    if (!confirm("Удалить запись?")) return;
+    if (!confirm("Удалить бронь?")) return;
     try {
       await api.delete(`/bookings/${id}`);
       loadBookings();
@@ -45,7 +60,7 @@ export default function AdminBookingsPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Записи</h2>
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Брони</h2>
 
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
         <div className="overflow-x-auto">
@@ -54,10 +69,13 @@ export default function AdminBookingsPage() {
               <tr className="border-b border-gray-200 dark:border-gray-800">
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Клиент</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Телефон</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Дата</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Время</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Услуга</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Специалист</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500">Начало</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500">Конец</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500">Часов</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500">Гостей</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500">Филиал</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500">Сауна</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500">Сумма</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Статус</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Действия</th>
               </tr>
@@ -67,10 +85,13 @@ export default function AdminBookingsPage() {
                 <tr key={b.id} className="border-b border-gray-100 dark:border-gray-800 last:border-0">
                   <td className="px-4 py-3 text-gray-900 dark:text-white font-medium">{b.clientName}</td>
                   <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.phone}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{new Date(b.date).toLocaleDateString("ru-RU")}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.time}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.service?.name}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.staff?.name}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatDateTime(b.startAt)}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatDateTime(b.endAt)}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatHours(b.startAt, b.endAt)} ч</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.guests}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.branch?.name}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.sauna?.name}</td>
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.totalPrice ? `${b.totalPrice}₽` : "—"}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusLabels[b.status]?.class}`}>
                       {statusLabels[b.status]?.label}
@@ -97,7 +118,7 @@ export default function AdminBookingsPage() {
               ))}
               {bookings.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-gray-500">Записей пока нет</td>
+                  <td colSpan={11} className="px-4 py-8 text-center text-gray-500">Броней пока нет</td>
                 </tr>
               )}
             </tbody>
