@@ -148,28 +148,59 @@ model Promotion {
 
 // ========== Бронирование ==========
 model Booking {
-  id         Int      @id @default(autoincrement())
-  clientName String
-  phone      String
-  startAt    DateTime
-  endAt      DateTime
-  guests     Int      @default(2)
-  comment    String?
-  status     String   @default("new")                // "new" | "confirmed" | "cancelled" | "completed"
-  totalPrice Int?
-  smsSent    Boolean  @default(false)
+  id            Int      @id @default(autoincrement())
+  clientName    String
+  phone         String
+  startAt       DateTime
+  endAt         DateTime
+  guests        Int      @default(2)
+  comment       String?
+  status        String   @default("pending_payment") // "pending_payment" | "new" | "confirmed" | "cancelled" | "completed"
+  totalPrice    Int?
+  smsSent       Boolean  @default(false)
 
-  branchId   Int
-  branch     Branch   @relation(fields: [branchId], references: [id])
-  saunaId    Int
-  sauna      Sauna    @relation(fields: [saunaId], references: [id])
+  // Оплата
+  paymentStatus String   @default("pending")          // "pending" | "deposit_paid" | "fully_paid" | "refunded"
+  paidAmount    Int      @default(0)                  // в рублях
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  branchId      Int
+  branch        Branch   @relation(fields: [branchId], references: [id])
+  saunaId       Int
+  sauna         Sauna    @relation(fields: [saunaId], references: [id])
+
+  payments      Payment[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([saunaId, startAt])
   @@index([branchId, startAt])
   @@index([status])
+}
+
+// ========== Платёж ==========
+model Payment {
+  id              Int       @id @default(autoincrement())
+  bookingId       Int
+  booking         Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  provider        String    @default("mock")          // "mock" | "yookassa"
+  externalId      String?   @unique                   // ID платежа у провайдера
+  amount          Int                                  // в рублях
+  currency        String    @default("RUB")
+  status          String    @default("pending")       // "pending" | "succeeded" | "canceled"
+  type            String                               // "deposit" | "full"
+  paymentMethod   String?                              // "card" | "sbp" | ...
+  confirmationUrl String?                              // куда редиректить юзера
+  paidAt          DateTime?
+  refundedAt      DateTime?
+  refundedAmount  Int?
+  metadata        Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([bookingId])
+  @@index([status])
+  @@index([externalId])
 }
 
 // ========== Отзыв ==========
