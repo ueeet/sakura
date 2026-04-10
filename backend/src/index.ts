@@ -75,7 +75,7 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   res.status(500).json({ error: "Внутренняя ошибка сервера" });
 });
 
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(Number(PORT), "0.0.0.0", () => {
   logger.info(`Server running on port ${PORT}`);
   initTelegramBot();
   initReviewParser();
