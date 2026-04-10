@@ -16,6 +16,7 @@ import uploadRoutes from "./routes/upload";
 import statsRoutes from "./routes/stats";
 import settingsRoutes from "./routes/settings";
 import branchesRoutes from "./routes/branches";
+import categoriesRoutes from "./routes/categories";
 import saunasRoutes from "./routes/saunas";
 import pricesRoutes from "./routes/prices";
 import promotionsRoutes from "./routes/promotions";
