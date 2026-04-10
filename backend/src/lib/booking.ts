@@ -52,7 +52,8 @@ export async function getSaunaAvailability(saunaId: number, dateISO: string) {
   const sauna = await prisma.sauna.findUnique({ where: { id: saunaId } });
   if (!sauna) return null;
 
-  const dayStart = new Date(dateISO);
+  // Полночь Москвы для запрошенного дня (process.env.TZ=Europe/Moscow обеспечивает локаль)
+  const dayStart = parseMoscowDate(dateISO);
   dayStart.setHours(0, 0, 0, 0);
   const dayEnd = new Date(dayStart);
   dayEnd.setDate(dayEnd.getDate() + 1);
