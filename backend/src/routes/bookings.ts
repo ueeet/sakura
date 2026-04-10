@@ -32,7 +32,31 @@ router.get("/", requireAdmin, asyncHandler(async (req, res) => {
 router.get("/:id", requireAdmin, asyncHandler(async (req, res) => {
   const item = await prisma.booking.findUnique({
     where: { id: Number(req.params.id) },
-    include: { branch: true, sauna: true },
+    include: { branch: true, sauna: true, payments: true },
+  });
+  if (!item) { res.status(404).json({ error: "Не найдено" }); return; }
+  res.json(item);
+}));
+
+// Публичный read-only endpoint для страницы статуса оплаты
+// Возвращает только безопасные поля
+router.get("/:id/public", asyncHandler(async (req, res) => {
+  const item = await prisma.booking.findUnique({
+    where: { id: Number(req.params.id) },
+    select: {
+      id: true,
+      clientName: true,
+      phone: true,
+      startAt: true,
+      endAt: true,
+      guests: true,
+      status: true,
+      paymentStatus: true,
+      paidAmount: true,
+      totalPrice: true,
+      branch: { select: { id: true, slug: true, name: true } },
+      sauna: { select: { id: true, slug: true, name: true } },
+    },
   });
   if (!item) { res.status(404).json({ error: "Не найдено" }); return; }
   res.json(item);
