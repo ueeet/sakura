@@ -140,10 +140,7 @@ router.put("/:id", requireAdmin, validate(updateBookingSchema), asyncHandler(asy
   broadcast("booking_updated", item);
 
   if (req.body.status === "confirmed") {
-    const dateStr = new Date(item.startAt).toLocaleString("ru-RU", {
-      day: "2-digit", month: "2-digit", year: "numeric",
-      hour: "2-digit", minute: "2-digit",
-    });
+    const dateStr = formatMoscowHuman(item.startAt);
     sendBookingConfirmedSms(item.phone, item.clientName, dateStr, "");
   } else if (req.body.status === "cancelled") {
     sendBookingCancelledSms(item.phone, item.clientName);
