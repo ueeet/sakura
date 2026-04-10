@@ -30,33 +30,35 @@ async function main() {
   console.log("✅ Settings initialized");
 
   // ========== Branches ==========
+  const branch9Data = {
+    slug: "complex-9",
+    name: "Сауна 9 комплекс",
+    address: "пр. Мира, д. 9/04А",
+    phone: "+7 (927) 465-1000",
+    description: "Сауны в Новом городе с категориями: Семейные и Обычные. Бассейны, мангал, банкеты.",
+    latitude: 55.7387,
+    longitude: 52.4063,
+    sortOrder: 1,
+  };
+  const branch50Data = {
+    slug: "complex-50",
+    name: "Сауна 50 комплекс",
+    address: "ул. Нижняя Боровецкая, 20",
+    phone: "+7 (8552) 784 000",
+    description: "Финские сауны с бассейнами и шашлычной зоной.",
+    latitude: 55.7019,
+    longitude: 52.3550,
+    sortOrder: 2,
+  };
   const branch9 = await prisma.branch.upsert({
     where: { slug: "complex-9" },
-    update: {},
-    create: {
-      slug: "complex-9",
-      name: "Сауна 9 комплекс",
-      address: "пр. Мира, д. 9/04А",
-      phone: "+7 (927) 465-1000",
-      description: "Сауны в Новом городе с категориями: Семейные и Обычные. Бассейны, мангал, банкеты.",
-      latitude: 55.7387,
-      longitude: 52.4063,
-      sortOrder: 1,
-    },
+    update: branch9Data,
+    create: branch9Data,
   });
   const branch50 = await prisma.branch.upsert({
     where: { slug: "complex-50" },
-    update: {},
-    create: {
-      slug: "complex-50",
-      name: "Сауна 50 комплекс",
-      address: "ул. Нижняя Боровецкая, 20",
-      phone: "+7 (8552) 784 000",
-      description: "Финские сауны с бассейнами и шашлычной зоной.",
-      latitude: 55.7019,
-      longitude: 52.3550,
-      sortOrder: 2,
-    },
+    update: branch50Data,
+    create: branch50Data,
   });
   console.log("✅ 2 branches seeded");
 
