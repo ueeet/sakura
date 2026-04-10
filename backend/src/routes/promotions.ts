@@ -18,8 +18,10 @@ router.get("/", asyncHandler(async (_req, res) => {
   const data = await prisma.promotion.findMany({
     where: {
       isActive: true,
-      startDate: { lte: now },
-      OR: [{ endDate: null }, { endDate: { gte: now } }],
+      AND: [
+        { OR: [{ startDate: null }, { startDate: { lte: now } }] },
+        { OR: [{ endDate: null }, { endDate: { gte: now } }] },
+      ],
     },
     orderBy: [{ sortOrder: "asc" }, { id: "desc" }],
   });
