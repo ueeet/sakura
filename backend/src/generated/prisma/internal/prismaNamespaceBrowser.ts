@@ -54,9 +54,8 @@ export const ModelName = {
   Admin: 'Admin',
   Settings: 'Settings',
   Branch: 'Branch',
+  SaunaCategory: 'SaunaCategory',
   Sauna: 'Sauna',
-  SaunaImage: 'SaunaImage',
-  SaunaAmenity: 'SaunaAmenity',
   PriceSlot: 'PriceSlot',
   Promotion: 'Promotion',
   Booking: 'Booking',
@@ -127,16 +126,36 @@ export const BranchScalarFieldEnum = {
 export type BranchScalarFieldEnum = (typeof BranchScalarFieldEnum)[keyof typeof BranchScalarFieldEnum]
 
 
+export const SaunaCategoryScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  branchId: 'branchId',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SaunaCategoryScalarFieldEnum = (typeof SaunaCategoryScalarFieldEnum)[keyof typeof SaunaCategoryScalarFieldEnum]
+
+
 export const SaunaScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
   name: 'name',
   type: 'type',
+  typeLabel: 'typeLabel',
+  size: 'size',
+  sizeLabel: 'sizeLabel',
   description: 'description',
   capacity: 'capacity',
   area: 'area',
-  hasPool: 'hasPool',
+  poolSize: 'poolSize',
   hasBBQ: 'hasBBQ',
+  mainImage: 'mainImage',
+  images: 'images',
+  amenities: 'amenities',
+  extras: 'extras',
   isActive: 'isActive',
   sortOrder: 'sortOrder',
   cleaningMinutes: 'cleaningMinutes',
@@ -144,32 +163,12 @@ export const SaunaScalarFieldEnum = {
   openHour: 'openHour',
   closeHour: 'closeHour',
   branchId: 'branchId',
+  categoryId: 'categoryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type SaunaScalarFieldEnum = (typeof SaunaScalarFieldEnum)[keyof typeof SaunaScalarFieldEnum]
-
-
-export const SaunaImageScalarFieldEnum = {
-  id: 'id',
-  url: 'url',
-  alt: 'alt',
-  sortOrder: 'sortOrder',
-  saunaId: 'saunaId'
-} as const
-
-export type SaunaImageScalarFieldEnum = (typeof SaunaImageScalarFieldEnum)[keyof typeof SaunaImageScalarFieldEnum]
-
-
-export const SaunaAmenityScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  icon: 'icon',
-  saunaId: 'saunaId'
-} as const
-
-export type SaunaAmenityScalarFieldEnum = (typeof SaunaAmenityScalarFieldEnum)[keyof typeof SaunaAmenityScalarFieldEnum]
 
 
 export const PriceSlotScalarFieldEnum = {
@@ -189,6 +188,8 @@ export const PromotionScalarFieldEnum = {
   slug: 'slug',
   title: 'title',
   description: 'description',
+  note: 'note',
+  icon: 'icon',
   image: 'image',
   promoCode: 'promoCode',
   discount: 'discount',

@@ -36,6 +36,7 @@ export type SaunaAvgAggregateOutputType = {
   openHour: number | null
   closeHour: number | null
   branchId: number | null
+  categoryId: number | null
 }
 
 export type SaunaSumAggregateOutputType = {
@@ -48,6 +49,7 @@ export type SaunaSumAggregateOutputType = {
   openHour: number | null
   closeHour: number | null
   branchId: number | null
+  categoryId: number | null
 }
 
 export type SaunaMinAggregateOutputType = {
@@ -55,11 +57,15 @@ export type SaunaMinAggregateOutputType = {
   slug: string | null
   name: string | null
   type: string | null
+  typeLabel: string | null
+  size: string | null
+  sizeLabel: string | null
   description: string | null
   capacity: number | null
   area: number | null
-  hasPool: boolean | null
+  poolSize: string | null
   hasBBQ: boolean | null
+  mainImage: string | null
   isActive: boolean | null
   sortOrder: number | null
   cleaningMinutes: number | null
@@ -67,6 +73,7 @@ export type SaunaMinAggregateOutputType = {
   openHour: number | null
   closeHour: number | null
   branchId: number | null
+  categoryId: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -76,11 +83,15 @@ export type SaunaMaxAggregateOutputType = {
   slug: string | null
   name: string | null
   type: string | null
+  typeLabel: string | null
+  size: string | null
+  sizeLabel: string | null
   description: string | null
   capacity: number | null
   area: number | null
-  hasPool: boolean | null
+  poolSize: string | null
   hasBBQ: boolean | null
+  mainImage: string | null
   isActive: boolean | null
   sortOrder: number | null
   cleaningMinutes: number | null
@@ -88,6 +99,7 @@ export type SaunaMaxAggregateOutputType = {
   openHour: number | null
   closeHour: number | null
   branchId: number | null
+  categoryId: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -97,11 +109,18 @@ export type SaunaCountAggregateOutputType = {
   slug: number
   name: number
   type: number
+  typeLabel: number
+  size: number
+  sizeLabel: number
   description: number
   capacity: number
   area: number
-  hasPool: number
+  poolSize: number
   hasBBQ: number
+  mainImage: number
+  images: number
+  amenities: number
+  extras: number
   isActive: number
   sortOrder: number
   cleaningMinutes: number
@@ -109,6 +128,7 @@ export type SaunaCountAggregateOutputType = {
   openHour: number
   closeHour: number
   branchId: number
+  categoryId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -125,6 +145,7 @@ export type SaunaAvgAggregateInputType = {
   openHour?: true
   closeHour?: true
   branchId?: true
+  categoryId?: true
 }
 
 export type SaunaSumAggregateInputType = {
@@ -137,6 +158,7 @@ export type SaunaSumAggregateInputType = {
   openHour?: true
   closeHour?: true
   branchId?: true
+  categoryId?: true
 }
 
 export type SaunaMinAggregateInputType = {
@@ -144,11 +166,15 @@ export type SaunaMinAggregateInputType = {
   slug?: true
   name?: true
   type?: true
+  typeLabel?: true
+  size?: true
+  sizeLabel?: true
   description?: true
   capacity?: true
   area?: true
-  hasPool?: true
+  poolSize?: true
   hasBBQ?: true
+  mainImage?: true
   isActive?: true
   sortOrder?: true
   cleaningMinutes?: true
@@ -156,6 +182,7 @@ export type SaunaMinAggregateInputType = {
   openHour?: true
   closeHour?: true
   branchId?: true
+  categoryId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -165,11 +192,15 @@ export type SaunaMaxAggregateInputType = {
   slug?: true
   name?: true
   type?: true
+  typeLabel?: true
+  size?: true
+  sizeLabel?: true
   description?: true
   capacity?: true
   area?: true
-  hasPool?: true
+  poolSize?: true
   hasBBQ?: true
+  mainImage?: true
   isActive?: true
   sortOrder?: true
   cleaningMinutes?: true
@@ -177,6 +208,7 @@ export type SaunaMaxAggregateInputType = {
   openHour?: true
   closeHour?: true
   branchId?: true
+  categoryId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -186,11 +218,18 @@ export type SaunaCountAggregateInputType = {
   slug?: true
   name?: true
   type?: true
+  typeLabel?: true
+  size?: true
+  sizeLabel?: true
   description?: true
   capacity?: true
   area?: true
-  hasPool?: true
+  poolSize?: true
   hasBBQ?: true
+  mainImage?: true
+  images?: true
+  amenities?: true
+  extras?: true
   isActive?: true
   sortOrder?: true
   cleaningMinutes?: true
@@ -198,6 +237,7 @@ export type SaunaCountAggregateInputType = {
   openHour?: true
   closeHour?: true
   branchId?: true
+  categoryId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -294,11 +334,18 @@ export type SaunaGroupByOutputType = {
   slug: string
   name: string
   type: string
+  typeLabel: string | null
+  size: string | null
+  sizeLabel: string | null
   description: string | null
   capacity: number
   area: number | null
-  hasPool: boolean
+  poolSize: string | null
   hasBBQ: boolean
+  mainImage: string | null
+  images: runtime.JsonValue | null
+  amenities: runtime.JsonValue | null
+  extras: runtime.JsonValue | null
   isActive: boolean
   sortOrder: number
   cleaningMinutes: number
@@ -306,6 +353,7 @@ export type SaunaGroupByOutputType = {
   openHour: number
   closeHour: number
   branchId: number
+  categoryId: number | null
   createdAt: Date
   updatedAt: Date
   _count: SaunaCountAggregateOutputType | null
@@ -338,11 +386,18 @@ export type SaunaWhereInput = {
   slug?: Prisma.StringFilter<"Sauna"> | string
   name?: Prisma.StringFilter<"Sauna"> | string
   type?: Prisma.StringFilter<"Sauna"> | string
+  typeLabel?: Prisma.StringNullableFilter<"Sauna"> | string | null
+  size?: Prisma.StringNullableFilter<"Sauna"> | string | null
+  sizeLabel?: Prisma.StringNullableFilter<"Sauna"> | string | null
   description?: Prisma.StringNullableFilter<"Sauna"> | string | null
   capacity?: Prisma.IntFilter<"Sauna"> | number
   area?: Prisma.FloatNullableFilter<"Sauna"> | number | null
-  hasPool?: Prisma.BoolFilter<"Sauna"> | boolean
+  poolSize?: Prisma.StringNullableFilter<"Sauna"> | string | null
   hasBBQ?: Prisma.BoolFilter<"Sauna"> | boolean
+  mainImage?: Prisma.StringNullableFilter<"Sauna"> | string | null
+  images?: Prisma.JsonNullableFilter<"Sauna">
+  amenities?: Prisma.JsonNullableFilter<"Sauna">
+  extras?: Prisma.JsonNullableFilter<"Sauna">
   isActive?: Prisma.BoolFilter<"Sauna"> | boolean
   sortOrder?: Prisma.IntFilter<"Sauna"> | number
   cleaningMinutes?: Prisma.IntFilter<"Sauna"> | number
@@ -350,11 +405,11 @@ export type SaunaWhereInput = {
   openHour?: Prisma.IntFilter<"Sauna"> | number
   closeHour?: Prisma.IntFilter<"Sauna"> | number
   branchId?: Prisma.IntFilter<"Sauna"> | number
+  categoryId?: Prisma.IntNullableFilter<"Sauna"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Sauna"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Sauna"> | Date | string
   branch?: Prisma.XOR<Prisma.BranchScalarRelationFilter, Prisma.BranchWhereInput>
-  images?: Prisma.SaunaImageListRelationFilter
-  amenities?: Prisma.SaunaAmenityListRelationFilter
+  category?: Prisma.XOR<Prisma.SaunaCategoryNullableScalarRelationFilter, Prisma.SaunaCategoryWhereInput> | null
   prices?: Prisma.PriceSlotListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
 }
@@ -364,11 +419,18 @@ export type SaunaOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  typeLabel?: Prisma.SortOrderInput | Prisma.SortOrder
+  size?: Prisma.SortOrderInput | Prisma.SortOrder
+  sizeLabel?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   capacity?: Prisma.SortOrder
   area?: Prisma.SortOrderInput | Prisma.SortOrder
-  hasPool?: Prisma.SortOrder
+  poolSize?: Prisma.SortOrderInput | Prisma.SortOrder
   hasBBQ?: Prisma.SortOrder
+  mainImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  images?: Prisma.SortOrderInput | Prisma.SortOrder
+  amenities?: Prisma.SortOrderInput | Prisma.SortOrder
+  extras?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   cleaningMinutes?: Prisma.SortOrder
@@ -376,11 +438,11 @@ export type SaunaOrderByWithRelationInput = {
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   branch?: Prisma.BranchOrderByWithRelationInput
-  images?: Prisma.SaunaImageOrderByRelationAggregateInput
-  amenities?: Prisma.SaunaAmenityOrderByRelationAggregateInput
+  category?: Prisma.SaunaCategoryOrderByWithRelationInput
   prices?: Prisma.PriceSlotOrderByRelationAggregateInput
   bookings?: Prisma.BookingOrderByRelationAggregateInput
 }
@@ -393,11 +455,18 @@ export type SaunaWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.SaunaWhereInput | Prisma.SaunaWhereInput[]
   name?: Prisma.StringFilter<"Sauna"> | string
   type?: Prisma.StringFilter<"Sauna"> | string
+  typeLabel?: Prisma.StringNullableFilter<"Sauna"> | string | null
+  size?: Prisma.StringNullableFilter<"Sauna"> | string | null
+  sizeLabel?: Prisma.StringNullableFilter<"Sauna"> | string | null
   description?: Prisma.StringNullableFilter<"Sauna"> | string | null
   capacity?: Prisma.IntFilter<"Sauna"> | number
   area?: Prisma.FloatNullableFilter<"Sauna"> | number | null
-  hasPool?: Prisma.BoolFilter<"Sauna"> | boolean
+  poolSize?: Prisma.StringNullableFilter<"Sauna"> | string | null
   hasBBQ?: Prisma.BoolFilter<"Sauna"> | boolean
+  mainImage?: Prisma.StringNullableFilter<"Sauna"> | string | null
+  images?: Prisma.JsonNullableFilter<"Sauna">
+  amenities?: Prisma.JsonNullableFilter<"Sauna">
+  extras?: Prisma.JsonNullableFilter<"Sauna">
   isActive?: Prisma.BoolFilter<"Sauna"> | boolean
   sortOrder?: Prisma.IntFilter<"Sauna"> | number
   cleaningMinutes?: Prisma.IntFilter<"Sauna"> | number
@@ -405,11 +474,11 @@ export type SaunaWhereUniqueInput = Prisma.AtLeast<{
   openHour?: Prisma.IntFilter<"Sauna"> | number
   closeHour?: Prisma.IntFilter<"Sauna"> | number
   branchId?: Prisma.IntFilter<"Sauna"> | number
+  categoryId?: Prisma.IntNullableFilter<"Sauna"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Sauna"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Sauna"> | Date | string
   branch?: Prisma.XOR<Prisma.BranchScalarRelationFilter, Prisma.BranchWhereInput>
-  images?: Prisma.SaunaImageListRelationFilter
-  amenities?: Prisma.SaunaAmenityListRelationFilter
+  category?: Prisma.XOR<Prisma.SaunaCategoryNullableScalarRelationFilter, Prisma.SaunaCategoryWhereInput> | null
   prices?: Prisma.PriceSlotListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
 }, "id" | "slug">
@@ -419,11 +488,18 @@ export type SaunaOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  typeLabel?: Prisma.SortOrderInput | Prisma.SortOrder
+  size?: Prisma.SortOrderInput | Prisma.SortOrder
+  sizeLabel?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   capacity?: Prisma.SortOrder
   area?: Prisma.SortOrderInput | Prisma.SortOrder
-  hasPool?: Prisma.SortOrder
+  poolSize?: Prisma.SortOrderInput | Prisma.SortOrder
   hasBBQ?: Prisma.SortOrder
+  mainImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  images?: Prisma.SortOrderInput | Prisma.SortOrder
+  amenities?: Prisma.SortOrderInput | Prisma.SortOrder
+  extras?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   cleaningMinutes?: Prisma.SortOrder
@@ -431,6 +507,7 @@ export type SaunaOrderByWithAggregationInput = {
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SaunaCountOrderByAggregateInput
@@ -448,11 +525,18 @@ export type SaunaScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"Sauna"> | string
   name?: Prisma.StringWithAggregatesFilter<"Sauna"> | string
   type?: Prisma.StringWithAggregatesFilter<"Sauna"> | string
+  typeLabel?: Prisma.StringNullableWithAggregatesFilter<"Sauna"> | string | null
+  size?: Prisma.StringNullableWithAggregatesFilter<"Sauna"> | string | null
+  sizeLabel?: Prisma.StringNullableWithAggregatesFilter<"Sauna"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Sauna"> | string | null
   capacity?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
   area?: Prisma.FloatNullableWithAggregatesFilter<"Sauna"> | number | null
-  hasPool?: Prisma.BoolWithAggregatesFilter<"Sauna"> | boolean
+  poolSize?: Prisma.StringNullableWithAggregatesFilter<"Sauna"> | string | null
   hasBBQ?: Prisma.BoolWithAggregatesFilter<"Sauna"> | boolean
+  mainImage?: Prisma.StringNullableWithAggregatesFilter<"Sauna"> | string | null
+  images?: Prisma.JsonNullableWithAggregatesFilter<"Sauna">
+  amenities?: Prisma.JsonNullableWithAggregatesFilter<"Sauna">
+  extras?: Prisma.JsonNullableWithAggregatesFilter<"Sauna">
   isActive?: Prisma.BoolWithAggregatesFilter<"Sauna"> | boolean
   sortOrder?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
   cleaningMinutes?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
@@ -460,6 +544,7 @@ export type SaunaScalarWhereWithAggregatesInput = {
   openHour?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
   closeHour?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
   branchId?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
+  categoryId?: Prisma.IntNullableWithAggregatesFilter<"Sauna"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Sauna"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Sauna"> | Date | string
 }
@@ -468,11 +553,18 @@ export type SaunaCreateInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
@@ -482,8 +574,7 @@ export type SaunaCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutSaunasInput
-  images?: Prisma.SaunaImageCreateNestedManyWithoutSaunaInput
-  amenities?: Prisma.SaunaAmenityCreateNestedManyWithoutSaunaInput
+  category?: Prisma.SaunaCategoryCreateNestedOneWithoutSaunasInput
   prices?: Prisma.PriceSlotCreateNestedManyWithoutSaunaInput
   bookings?: Prisma.BookingCreateNestedManyWithoutSaunaInput
 }
@@ -493,11 +584,18 @@ export type SaunaUncheckedCreateInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
@@ -505,10 +603,9 @@ export type SaunaUncheckedCreateInput = {
   openHour?: number
   closeHour?: number
   branchId: number
+  categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  images?: Prisma.SaunaImageUncheckedCreateNestedManyWithoutSaunaInput
-  amenities?: Prisma.SaunaAmenityUncheckedCreateNestedManyWithoutSaunaInput
   prices?: Prisma.PriceSlotUncheckedCreateNestedManyWithoutSaunaInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSaunaInput
 }
@@ -517,11 +614,18 @@ export type SaunaUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
@@ -531,8 +635,7 @@ export type SaunaUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutSaunasNestedInput
-  images?: Prisma.SaunaImageUpdateManyWithoutSaunaNestedInput
-  amenities?: Prisma.SaunaAmenityUpdateManyWithoutSaunaNestedInput
+  category?: Prisma.SaunaCategoryUpdateOneWithoutSaunasNestedInput
   prices?: Prisma.PriceSlotUpdateManyWithoutSaunaNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutSaunaNestedInput
 }
@@ -542,11 +645,18 @@ export type SaunaUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
@@ -554,10 +664,9 @@ export type SaunaUncheckedUpdateInput = {
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  images?: Prisma.SaunaImageUncheckedUpdateManyWithoutSaunaNestedInput
-  amenities?: Prisma.SaunaAmenityUncheckedUpdateManyWithoutSaunaNestedInput
   prices?: Prisma.PriceSlotUncheckedUpdateManyWithoutSaunaNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutSaunaNestedInput
 }
@@ -567,11 +676,18 @@ export type SaunaCreateManyInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
@@ -579,6 +695,7 @@ export type SaunaCreateManyInput = {
   openHour?: number
   closeHour?: number
   branchId: number
+  categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -587,11 +704,18 @@ export type SaunaUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
@@ -607,11 +731,18 @@ export type SaunaUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
@@ -619,6 +750,7 @@ export type SaunaUncheckedUpdateManyInput = {
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -638,11 +770,18 @@ export type SaunaCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  typeLabel?: Prisma.SortOrder
+  size?: Prisma.SortOrder
+  sizeLabel?: Prisma.SortOrder
   description?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
   area?: Prisma.SortOrder
-  hasPool?: Prisma.SortOrder
+  poolSize?: Prisma.SortOrder
   hasBBQ?: Prisma.SortOrder
+  mainImage?: Prisma.SortOrder
+  images?: Prisma.SortOrder
+  amenities?: Prisma.SortOrder
+  extras?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   cleaningMinutes?: Prisma.SortOrder
@@ -650,6 +789,7 @@ export type SaunaCountOrderByAggregateInput = {
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -664,6 +804,7 @@ export type SaunaAvgOrderByAggregateInput = {
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
 }
 
 export type SaunaMaxOrderByAggregateInput = {
@@ -671,11 +812,15 @@ export type SaunaMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  typeLabel?: Prisma.SortOrder
+  size?: Prisma.SortOrder
+  sizeLabel?: Prisma.SortOrder
   description?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
   area?: Prisma.SortOrder
-  hasPool?: Prisma.SortOrder
+  poolSize?: Prisma.SortOrder
   hasBBQ?: Prisma.SortOrder
+  mainImage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   cleaningMinutes?: Prisma.SortOrder
@@ -683,6 +828,7 @@ export type SaunaMaxOrderByAggregateInput = {
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -692,11 +838,15 @@ export type SaunaMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  typeLabel?: Prisma.SortOrder
+  size?: Prisma.SortOrder
+  sizeLabel?: Prisma.SortOrder
   description?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
   area?: Prisma.SortOrder
-  hasPool?: Prisma.SortOrder
+  poolSize?: Prisma.SortOrder
   hasBBQ?: Prisma.SortOrder
+  mainImage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   cleaningMinutes?: Prisma.SortOrder
@@ -704,6 +854,7 @@ export type SaunaMinOrderByAggregateInput = {
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -718,6 +869,7 @@ export type SaunaSumOrderByAggregateInput = {
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
 }
 
 export type SaunaScalarRelationFilter = {
@@ -767,6 +919,48 @@ export type SaunaUncheckedUpdateManyWithoutBranchNestedInput = {
   deleteMany?: Prisma.SaunaScalarWhereInput | Prisma.SaunaScalarWhereInput[]
 }
 
+export type SaunaCreateNestedManyWithoutCategoryInput = {
+  create?: Prisma.XOR<Prisma.SaunaCreateWithoutCategoryInput, Prisma.SaunaUncheckedCreateWithoutCategoryInput> | Prisma.SaunaCreateWithoutCategoryInput[] | Prisma.SaunaUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.SaunaCreateOrConnectWithoutCategoryInput | Prisma.SaunaCreateOrConnectWithoutCategoryInput[]
+  createMany?: Prisma.SaunaCreateManyCategoryInputEnvelope
+  connect?: Prisma.SaunaWhereUniqueInput | Prisma.SaunaWhereUniqueInput[]
+}
+
+export type SaunaUncheckedCreateNestedManyWithoutCategoryInput = {
+  create?: Prisma.XOR<Prisma.SaunaCreateWithoutCategoryInput, Prisma.SaunaUncheckedCreateWithoutCategoryInput> | Prisma.SaunaCreateWithoutCategoryInput[] | Prisma.SaunaUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.SaunaCreateOrConnectWithoutCategoryInput | Prisma.SaunaCreateOrConnectWithoutCategoryInput[]
+  createMany?: Prisma.SaunaCreateManyCategoryInputEnvelope
+  connect?: Prisma.SaunaWhereUniqueInput | Prisma.SaunaWhereUniqueInput[]
+}
+
+export type SaunaUpdateManyWithoutCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.SaunaCreateWithoutCategoryInput, Prisma.SaunaUncheckedCreateWithoutCategoryInput> | Prisma.SaunaCreateWithoutCategoryInput[] | Prisma.SaunaUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.SaunaCreateOrConnectWithoutCategoryInput | Prisma.SaunaCreateOrConnectWithoutCategoryInput[]
+  upsert?: Prisma.SaunaUpsertWithWhereUniqueWithoutCategoryInput | Prisma.SaunaUpsertWithWhereUniqueWithoutCategoryInput[]
+  createMany?: Prisma.SaunaCreateManyCategoryInputEnvelope
+  set?: Prisma.SaunaWhereUniqueInput | Prisma.SaunaWhereUniqueInput[]
+  disconnect?: Prisma.SaunaWhereUniqueInput | Prisma.SaunaWhereUniqueInput[]
+  delete?: Prisma.SaunaWhereUniqueInput | Prisma.SaunaWhereUniqueInput[]
+  connect?: Prisma.SaunaWhereUniqueInput | Prisma.SaunaWhereUniqueInput[]
+  update?: Prisma.SaunaUpdateWithWhereUniqueWithoutCategoryInput | Prisma.SaunaUpdateWithWhereUniqueWithoutCategoryInput[]
+  updateMany?: Prisma.SaunaUpdateManyWithWhereWithoutCategoryInput | Prisma.SaunaUpdateManyWithWhereWithoutCategoryInput[]
+  deleteMany?: Prisma.SaunaScalarWhereInput | Prisma.SaunaScalarWhereInput[]
+}
+
+export type SaunaUncheckedUpdateManyWithoutCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.SaunaCreateWithoutCategoryInput, Prisma.SaunaUncheckedCreateWithoutCategoryInput> | Prisma.SaunaCreateWithoutCategoryInput[] | Prisma.SaunaUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.SaunaCreateOrConnectWithoutCategoryInput | Prisma.SaunaCreateOrConnectWithoutCategoryInput[]
+  upsert?: Prisma.SaunaUpsertWithWhereUniqueWithoutCategoryInput | Prisma.SaunaUpsertWithWhereUniqueWithoutCategoryInput[]
+  createMany?: Prisma.SaunaCreateManyCategoryInputEnvelope
+  set?: Prisma.SaunaWhereUniqueInput | Prisma.SaunaWhereUniqueInput[]
+  disconnect?: Prisma.SaunaWhereUniqueInput | Prisma.SaunaWhereUniqueInput[]
+  delete?: Prisma.SaunaWhereUniqueInput | Prisma.SaunaWhereUniqueInput[]
+  connect?: Prisma.SaunaWhereUniqueInput | Prisma.SaunaWhereUniqueInput[]
+  update?: Prisma.SaunaUpdateWithWhereUniqueWithoutCategoryInput | Prisma.SaunaUpdateWithWhereUniqueWithoutCategoryInput[]
+  updateMany?: Prisma.SaunaUpdateManyWithWhereWithoutCategoryInput | Prisma.SaunaUpdateManyWithWhereWithoutCategoryInput[]
+  deleteMany?: Prisma.SaunaScalarWhereInput | Prisma.SaunaScalarWhereInput[]
+}
+
 export type NullableFloatFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number
@@ -775,32 +969,12 @@ export type NullableFloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type SaunaCreateNestedOneWithoutImagesInput = {
-  create?: Prisma.XOR<Prisma.SaunaCreateWithoutImagesInput, Prisma.SaunaUncheckedCreateWithoutImagesInput>
-  connectOrCreate?: Prisma.SaunaCreateOrConnectWithoutImagesInput
-  connect?: Prisma.SaunaWhereUniqueInput
-}
-
-export type SaunaUpdateOneRequiredWithoutImagesNestedInput = {
-  create?: Prisma.XOR<Prisma.SaunaCreateWithoutImagesInput, Prisma.SaunaUncheckedCreateWithoutImagesInput>
-  connectOrCreate?: Prisma.SaunaCreateOrConnectWithoutImagesInput
-  upsert?: Prisma.SaunaUpsertWithoutImagesInput
-  connect?: Prisma.SaunaWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SaunaUpdateToOneWithWhereWithoutImagesInput, Prisma.SaunaUpdateWithoutImagesInput>, Prisma.SaunaUncheckedUpdateWithoutImagesInput>
-}
-
-export type SaunaCreateNestedOneWithoutAmenitiesInput = {
-  create?: Prisma.XOR<Prisma.SaunaCreateWithoutAmenitiesInput, Prisma.SaunaUncheckedCreateWithoutAmenitiesInput>
-  connectOrCreate?: Prisma.SaunaCreateOrConnectWithoutAmenitiesInput
-  connect?: Prisma.SaunaWhereUniqueInput
-}
-
-export type SaunaUpdateOneRequiredWithoutAmenitiesNestedInput = {
-  create?: Prisma.XOR<Prisma.SaunaCreateWithoutAmenitiesInput, Prisma.SaunaUncheckedCreateWithoutAmenitiesInput>
-  connectOrCreate?: Prisma.SaunaCreateOrConnectWithoutAmenitiesInput
-  upsert?: Prisma.SaunaUpsertWithoutAmenitiesInput
-  connect?: Prisma.SaunaWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SaunaUpdateToOneWithWhereWithoutAmenitiesInput, Prisma.SaunaUpdateWithoutAmenitiesInput>, Prisma.SaunaUncheckedUpdateWithoutAmenitiesInput>
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type SaunaCreateNestedOneWithoutPricesInput = {
@@ -835,11 +1009,18 @@ export type SaunaCreateWithoutBranchInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
@@ -848,8 +1029,7 @@ export type SaunaCreateWithoutBranchInput = {
   closeHour?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  images?: Prisma.SaunaImageCreateNestedManyWithoutSaunaInput
-  amenities?: Prisma.SaunaAmenityCreateNestedManyWithoutSaunaInput
+  category?: Prisma.SaunaCategoryCreateNestedOneWithoutSaunasInput
   prices?: Prisma.PriceSlotCreateNestedManyWithoutSaunaInput
   bookings?: Prisma.BookingCreateNestedManyWithoutSaunaInput
 }
@@ -859,21 +1039,27 @@ export type SaunaUncheckedCreateWithoutBranchInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
   minHours?: number
   openHour?: number
   closeHour?: number
+  categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  images?: Prisma.SaunaImageUncheckedCreateNestedManyWithoutSaunaInput
-  amenities?: Prisma.SaunaAmenityUncheckedCreateNestedManyWithoutSaunaInput
   prices?: Prisma.PriceSlotUncheckedCreateNestedManyWithoutSaunaInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSaunaInput
 }
@@ -912,11 +1098,18 @@ export type SaunaScalarWhereInput = {
   slug?: Prisma.StringFilter<"Sauna"> | string
   name?: Prisma.StringFilter<"Sauna"> | string
   type?: Prisma.StringFilter<"Sauna"> | string
+  typeLabel?: Prisma.StringNullableFilter<"Sauna"> | string | null
+  size?: Prisma.StringNullableFilter<"Sauna"> | string | null
+  sizeLabel?: Prisma.StringNullableFilter<"Sauna"> | string | null
   description?: Prisma.StringNullableFilter<"Sauna"> | string | null
   capacity?: Prisma.IntFilter<"Sauna"> | number
   area?: Prisma.FloatNullableFilter<"Sauna"> | number | null
-  hasPool?: Prisma.BoolFilter<"Sauna"> | boolean
+  poolSize?: Prisma.StringNullableFilter<"Sauna"> | string | null
   hasBBQ?: Prisma.BoolFilter<"Sauna"> | boolean
+  mainImage?: Prisma.StringNullableFilter<"Sauna"> | string | null
+  images?: Prisma.JsonNullableFilter<"Sauna">
+  amenities?: Prisma.JsonNullableFilter<"Sauna">
+  extras?: Prisma.JsonNullableFilter<"Sauna">
   isActive?: Prisma.BoolFilter<"Sauna"> | boolean
   sortOrder?: Prisma.IntFilter<"Sauna"> | number
   cleaningMinutes?: Prisma.IntFilter<"Sauna"> | number
@@ -924,19 +1117,27 @@ export type SaunaScalarWhereInput = {
   openHour?: Prisma.IntFilter<"Sauna"> | number
   closeHour?: Prisma.IntFilter<"Sauna"> | number
   branchId?: Prisma.IntFilter<"Sauna"> | number
+  categoryId?: Prisma.IntNullableFilter<"Sauna"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Sauna"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Sauna"> | Date | string
 }
 
-export type SaunaCreateWithoutImagesInput = {
+export type SaunaCreateWithoutCategoryInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
@@ -946,21 +1147,27 @@ export type SaunaCreateWithoutImagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutSaunasInput
-  amenities?: Prisma.SaunaAmenityCreateNestedManyWithoutSaunaInput
   prices?: Prisma.PriceSlotCreateNestedManyWithoutSaunaInput
   bookings?: Prisma.BookingCreateNestedManyWithoutSaunaInput
 }
 
-export type SaunaUncheckedCreateWithoutImagesInput = {
+export type SaunaUncheckedCreateWithoutCategoryInput = {
   id?: number
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
@@ -970,193 +1177,52 @@ export type SaunaUncheckedCreateWithoutImagesInput = {
   branchId: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  amenities?: Prisma.SaunaAmenityUncheckedCreateNestedManyWithoutSaunaInput
   prices?: Prisma.PriceSlotUncheckedCreateNestedManyWithoutSaunaInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSaunaInput
 }
 
-export type SaunaCreateOrConnectWithoutImagesInput = {
+export type SaunaCreateOrConnectWithoutCategoryInput = {
   where: Prisma.SaunaWhereUniqueInput
-  create: Prisma.XOR<Prisma.SaunaCreateWithoutImagesInput, Prisma.SaunaUncheckedCreateWithoutImagesInput>
+  create: Prisma.XOR<Prisma.SaunaCreateWithoutCategoryInput, Prisma.SaunaUncheckedCreateWithoutCategoryInput>
 }
 
-export type SaunaUpsertWithoutImagesInput = {
-  update: Prisma.XOR<Prisma.SaunaUpdateWithoutImagesInput, Prisma.SaunaUncheckedUpdateWithoutImagesInput>
-  create: Prisma.XOR<Prisma.SaunaCreateWithoutImagesInput, Prisma.SaunaUncheckedCreateWithoutImagesInput>
-  where?: Prisma.SaunaWhereInput
+export type SaunaCreateManyCategoryInputEnvelope = {
+  data: Prisma.SaunaCreateManyCategoryInput | Prisma.SaunaCreateManyCategoryInput[]
+  skipDuplicates?: boolean
 }
 
-export type SaunaUpdateToOneWithWhereWithoutImagesInput = {
-  where?: Prisma.SaunaWhereInput
-  data: Prisma.XOR<Prisma.SaunaUpdateWithoutImagesInput, Prisma.SaunaUncheckedUpdateWithoutImagesInput>
-}
-
-export type SaunaUpdateWithoutImagesInput = {
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  capacity?: Prisma.IntFieldUpdateOperationsInput | number
-  area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
-  minHours?: Prisma.IntFieldUpdateOperationsInput | number
-  openHour?: Prisma.IntFieldUpdateOperationsInput | number
-  closeHour?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  branch?: Prisma.BranchUpdateOneRequiredWithoutSaunasNestedInput
-  amenities?: Prisma.SaunaAmenityUpdateManyWithoutSaunaNestedInput
-  prices?: Prisma.PriceSlotUpdateManyWithoutSaunaNestedInput
-  bookings?: Prisma.BookingUpdateManyWithoutSaunaNestedInput
-}
-
-export type SaunaUncheckedUpdateWithoutImagesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  capacity?: Prisma.IntFieldUpdateOperationsInput | number
-  area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
-  minHours?: Prisma.IntFieldUpdateOperationsInput | number
-  openHour?: Prisma.IntFieldUpdateOperationsInput | number
-  closeHour?: Prisma.IntFieldUpdateOperationsInput | number
-  branchId?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  amenities?: Prisma.SaunaAmenityUncheckedUpdateManyWithoutSaunaNestedInput
-  prices?: Prisma.PriceSlotUncheckedUpdateManyWithoutSaunaNestedInput
-  bookings?: Prisma.BookingUncheckedUpdateManyWithoutSaunaNestedInput
-}
-
-export type SaunaCreateWithoutAmenitiesInput = {
-  slug: string
-  name: string
-  type: string
-  description?: string | null
-  capacity: number
-  area?: number | null
-  hasPool?: boolean
-  hasBBQ?: boolean
-  isActive?: boolean
-  sortOrder?: number
-  cleaningMinutes?: number
-  minHours?: number
-  openHour?: number
-  closeHour?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  branch: Prisma.BranchCreateNestedOneWithoutSaunasInput
-  images?: Prisma.SaunaImageCreateNestedManyWithoutSaunaInput
-  prices?: Prisma.PriceSlotCreateNestedManyWithoutSaunaInput
-  bookings?: Prisma.BookingCreateNestedManyWithoutSaunaInput
-}
-
-export type SaunaUncheckedCreateWithoutAmenitiesInput = {
-  id?: number
-  slug: string
-  name: string
-  type: string
-  description?: string | null
-  capacity: number
-  area?: number | null
-  hasPool?: boolean
-  hasBBQ?: boolean
-  isActive?: boolean
-  sortOrder?: number
-  cleaningMinutes?: number
-  minHours?: number
-  openHour?: number
-  closeHour?: number
-  branchId: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  images?: Prisma.SaunaImageUncheckedCreateNestedManyWithoutSaunaInput
-  prices?: Prisma.PriceSlotUncheckedCreateNestedManyWithoutSaunaInput
-  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSaunaInput
-}
-
-export type SaunaCreateOrConnectWithoutAmenitiesInput = {
+export type SaunaUpsertWithWhereUniqueWithoutCategoryInput = {
   where: Prisma.SaunaWhereUniqueInput
-  create: Prisma.XOR<Prisma.SaunaCreateWithoutAmenitiesInput, Prisma.SaunaUncheckedCreateWithoutAmenitiesInput>
+  update: Prisma.XOR<Prisma.SaunaUpdateWithoutCategoryInput, Prisma.SaunaUncheckedUpdateWithoutCategoryInput>
+  create: Prisma.XOR<Prisma.SaunaCreateWithoutCategoryInput, Prisma.SaunaUncheckedCreateWithoutCategoryInput>
 }
 
-export type SaunaUpsertWithoutAmenitiesInput = {
-  update: Prisma.XOR<Prisma.SaunaUpdateWithoutAmenitiesInput, Prisma.SaunaUncheckedUpdateWithoutAmenitiesInput>
-  create: Prisma.XOR<Prisma.SaunaCreateWithoutAmenitiesInput, Prisma.SaunaUncheckedCreateWithoutAmenitiesInput>
-  where?: Prisma.SaunaWhereInput
+export type SaunaUpdateWithWhereUniqueWithoutCategoryInput = {
+  where: Prisma.SaunaWhereUniqueInput
+  data: Prisma.XOR<Prisma.SaunaUpdateWithoutCategoryInput, Prisma.SaunaUncheckedUpdateWithoutCategoryInput>
 }
 
-export type SaunaUpdateToOneWithWhereWithoutAmenitiesInput = {
-  where?: Prisma.SaunaWhereInput
-  data: Prisma.XOR<Prisma.SaunaUpdateWithoutAmenitiesInput, Prisma.SaunaUncheckedUpdateWithoutAmenitiesInput>
-}
-
-export type SaunaUpdateWithoutAmenitiesInput = {
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  capacity?: Prisma.IntFieldUpdateOperationsInput | number
-  area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
-  minHours?: Prisma.IntFieldUpdateOperationsInput | number
-  openHour?: Prisma.IntFieldUpdateOperationsInput | number
-  closeHour?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  branch?: Prisma.BranchUpdateOneRequiredWithoutSaunasNestedInput
-  images?: Prisma.SaunaImageUpdateManyWithoutSaunaNestedInput
-  prices?: Prisma.PriceSlotUpdateManyWithoutSaunaNestedInput
-  bookings?: Prisma.BookingUpdateManyWithoutSaunaNestedInput
-}
-
-export type SaunaUncheckedUpdateWithoutAmenitiesInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  capacity?: Prisma.IntFieldUpdateOperationsInput | number
-  area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
-  minHours?: Prisma.IntFieldUpdateOperationsInput | number
-  openHour?: Prisma.IntFieldUpdateOperationsInput | number
-  closeHour?: Prisma.IntFieldUpdateOperationsInput | number
-  branchId?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  images?: Prisma.SaunaImageUncheckedUpdateManyWithoutSaunaNestedInput
-  prices?: Prisma.PriceSlotUncheckedUpdateManyWithoutSaunaNestedInput
-  bookings?: Prisma.BookingUncheckedUpdateManyWithoutSaunaNestedInput
+export type SaunaUpdateManyWithWhereWithoutCategoryInput = {
+  where: Prisma.SaunaScalarWhereInput
+  data: Prisma.XOR<Prisma.SaunaUpdateManyMutationInput, Prisma.SaunaUncheckedUpdateManyWithoutCategoryInput>
 }
 
 export type SaunaCreateWithoutPricesInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
@@ -1166,8 +1232,7 @@ export type SaunaCreateWithoutPricesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutSaunasInput
-  images?: Prisma.SaunaImageCreateNestedManyWithoutSaunaInput
-  amenities?: Prisma.SaunaAmenityCreateNestedManyWithoutSaunaInput
+  category?: Prisma.SaunaCategoryCreateNestedOneWithoutSaunasInput
   bookings?: Prisma.BookingCreateNestedManyWithoutSaunaInput
 }
 
@@ -1176,11 +1241,18 @@ export type SaunaUncheckedCreateWithoutPricesInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
@@ -1188,10 +1260,9 @@ export type SaunaUncheckedCreateWithoutPricesInput = {
   openHour?: number
   closeHour?: number
   branchId: number
+  categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  images?: Prisma.SaunaImageUncheckedCreateNestedManyWithoutSaunaInput
-  amenities?: Prisma.SaunaAmenityUncheckedCreateNestedManyWithoutSaunaInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutSaunaInput
 }
 
@@ -1215,11 +1286,18 @@ export type SaunaUpdateWithoutPricesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1229,8 +1307,7 @@ export type SaunaUpdateWithoutPricesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutSaunasNestedInput
-  images?: Prisma.SaunaImageUpdateManyWithoutSaunaNestedInput
-  amenities?: Prisma.SaunaAmenityUpdateManyWithoutSaunaNestedInput
+  category?: Prisma.SaunaCategoryUpdateOneWithoutSaunasNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutSaunaNestedInput
 }
 
@@ -1239,11 +1316,18 @@ export type SaunaUncheckedUpdateWithoutPricesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1251,10 +1335,9 @@ export type SaunaUncheckedUpdateWithoutPricesInput = {
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  images?: Prisma.SaunaImageUncheckedUpdateManyWithoutSaunaNestedInput
-  amenities?: Prisma.SaunaAmenityUncheckedUpdateManyWithoutSaunaNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutSaunaNestedInput
 }
 
@@ -1262,11 +1345,18 @@ export type SaunaCreateWithoutBookingsInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
@@ -1276,8 +1366,7 @@ export type SaunaCreateWithoutBookingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutSaunasInput
-  images?: Prisma.SaunaImageCreateNestedManyWithoutSaunaInput
-  amenities?: Prisma.SaunaAmenityCreateNestedManyWithoutSaunaInput
+  category?: Prisma.SaunaCategoryCreateNestedOneWithoutSaunasInput
   prices?: Prisma.PriceSlotCreateNestedManyWithoutSaunaInput
 }
 
@@ -1286,11 +1375,18 @@ export type SaunaUncheckedCreateWithoutBookingsInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
@@ -1298,10 +1394,9 @@ export type SaunaUncheckedCreateWithoutBookingsInput = {
   openHour?: number
   closeHour?: number
   branchId: number
+  categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  images?: Prisma.SaunaImageUncheckedCreateNestedManyWithoutSaunaInput
-  amenities?: Prisma.SaunaAmenityUncheckedCreateNestedManyWithoutSaunaInput
   prices?: Prisma.PriceSlotUncheckedCreateNestedManyWithoutSaunaInput
 }
 
@@ -1325,11 +1420,18 @@ export type SaunaUpdateWithoutBookingsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1339,8 +1441,7 @@ export type SaunaUpdateWithoutBookingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutSaunasNestedInput
-  images?: Prisma.SaunaImageUpdateManyWithoutSaunaNestedInput
-  amenities?: Prisma.SaunaAmenityUpdateManyWithoutSaunaNestedInput
+  category?: Prisma.SaunaCategoryUpdateOneWithoutSaunasNestedInput
   prices?: Prisma.PriceSlotUpdateManyWithoutSaunaNestedInput
 }
 
@@ -1349,11 +1450,18 @@ export type SaunaUncheckedUpdateWithoutBookingsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1361,10 +1469,9 @@ export type SaunaUncheckedUpdateWithoutBookingsInput = {
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  images?: Prisma.SaunaImageUncheckedUpdateManyWithoutSaunaNestedInput
-  amenities?: Prisma.SaunaAmenityUncheckedUpdateManyWithoutSaunaNestedInput
   prices?: Prisma.PriceSlotUncheckedUpdateManyWithoutSaunaNestedInput
 }
 
@@ -1373,17 +1480,25 @@ export type SaunaCreateManyBranchInput = {
   slug: string
   name: string
   type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
   description?: string | null
-  capacity: number
+  capacity?: number
   area?: number | null
-  hasPool?: boolean
+  poolSize?: string | null
   hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: boolean
   sortOrder?: number
   cleaningMinutes?: number
   minHours?: number
   openHour?: number
   closeHour?: number
+  categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1392,11 +1507,18 @@ export type SaunaUpdateWithoutBranchInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1405,8 +1527,7 @@ export type SaunaUpdateWithoutBranchInput = {
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  images?: Prisma.SaunaImageUpdateManyWithoutSaunaNestedInput
-  amenities?: Prisma.SaunaAmenityUpdateManyWithoutSaunaNestedInput
+  category?: Prisma.SaunaCategoryUpdateOneWithoutSaunasNestedInput
   prices?: Prisma.PriceSlotUpdateManyWithoutSaunaNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutSaunaNestedInput
 }
@@ -1416,21 +1537,27 @@ export type SaunaUncheckedUpdateWithoutBranchInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  images?: Prisma.SaunaImageUncheckedUpdateManyWithoutSaunaNestedInput
-  amenities?: Prisma.SaunaAmenityUncheckedUpdateManyWithoutSaunaNestedInput
   prices?: Prisma.PriceSlotUncheckedUpdateManyWithoutSaunaNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutSaunaNestedInput
 }
@@ -1440,17 +1567,140 @@ export type SaunaUncheckedUpdateManyWithoutBranchInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
   area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  hasPool?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SaunaCreateManyCategoryInput = {
+  id?: number
+  slug: string
+  name: string
+  type: string
+  typeLabel?: string | null
+  size?: string | null
+  sizeLabel?: string | null
+  description?: string | null
+  capacity?: number
+  area?: number | null
+  poolSize?: string | null
+  hasBBQ?: boolean
+  mainImage?: string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: boolean
+  sortOrder?: number
+  cleaningMinutes?: number
+  minHours?: number
+  openHour?: number
+  closeHour?: number
+  branchId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SaunaUpdateWithoutCategoryInput = {
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  minHours?: Prisma.IntFieldUpdateOperationsInput | number
+  openHour?: Prisma.IntFieldUpdateOperationsInput | number
+  closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  branch?: Prisma.BranchUpdateOneRequiredWithoutSaunasNestedInput
+  prices?: Prisma.PriceSlotUpdateManyWithoutSaunaNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutSaunaNestedInput
+}
+
+export type SaunaUncheckedUpdateWithoutCategoryInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  minHours?: Prisma.IntFieldUpdateOperationsInput | number
+  openHour?: Prisma.IntFieldUpdateOperationsInput | number
+  closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  branchId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  prices?: Prisma.PriceSlotUncheckedUpdateManyWithoutSaunaNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutSaunaNestedInput
+}
+
+export type SaunaUncheckedUpdateManyWithoutCategoryInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  typeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  area?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  poolSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasBBQ?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mainImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amenities?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  extras?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  cleaningMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  minHours?: Prisma.IntFieldUpdateOperationsInput | number
+  openHour?: Prisma.IntFieldUpdateOperationsInput | number
+  closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  branchId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1461,15 +1711,11 @@ export type SaunaUncheckedUpdateManyWithoutBranchInput = {
  */
 
 export type SaunaCountOutputType = {
-  images: number
-  amenities: number
   prices: number
   bookings: number
 }
 
 export type SaunaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  images?: boolean | SaunaCountOutputTypeCountImagesArgs
-  amenities?: boolean | SaunaCountOutputTypeCountAmenitiesArgs
   prices?: boolean | SaunaCountOutputTypeCountPricesArgs
   bookings?: boolean | SaunaCountOutputTypeCountBookingsArgs
 }
@@ -1482,20 +1728,6 @@ export type SaunaCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extens
    * Select specific fields to fetch from the SaunaCountOutputType
    */
   select?: Prisma.SaunaCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * SaunaCountOutputType without action
- */
-export type SaunaCountOutputTypeCountImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.SaunaImageWhereInput
-}
-
-/**
- * SaunaCountOutputType without action
- */
-export type SaunaCountOutputTypeCountAmenitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.SaunaAmenityWhereInput
 }
 
 /**
@@ -1518,11 +1750,18 @@ export type SaunaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   slug?: boolean
   name?: boolean
   type?: boolean
+  typeLabel?: boolean
+  size?: boolean
+  sizeLabel?: boolean
   description?: boolean
   capacity?: boolean
   area?: boolean
-  hasPool?: boolean
+  poolSize?: boolean
   hasBBQ?: boolean
+  mainImage?: boolean
+  images?: boolean
+  amenities?: boolean
+  extras?: boolean
   isActive?: boolean
   sortOrder?: boolean
   cleaningMinutes?: boolean
@@ -1530,11 +1769,11 @@ export type SaunaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   openHour?: boolean
   closeHour?: boolean
   branchId?: boolean
+  categoryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
-  images?: boolean | Prisma.Sauna$imagesArgs<ExtArgs>
-  amenities?: boolean | Prisma.Sauna$amenitiesArgs<ExtArgs>
+  category?: boolean | Prisma.Sauna$categoryArgs<ExtArgs>
   prices?: boolean | Prisma.Sauna$pricesArgs<ExtArgs>
   bookings?: boolean | Prisma.Sauna$bookingsArgs<ExtArgs>
   _count?: boolean | Prisma.SaunaCountOutputTypeDefaultArgs<ExtArgs>
@@ -1545,11 +1784,18 @@ export type SaunaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   slug?: boolean
   name?: boolean
   type?: boolean
+  typeLabel?: boolean
+  size?: boolean
+  sizeLabel?: boolean
   description?: boolean
   capacity?: boolean
   area?: boolean
-  hasPool?: boolean
+  poolSize?: boolean
   hasBBQ?: boolean
+  mainImage?: boolean
+  images?: boolean
+  amenities?: boolean
+  extras?: boolean
   isActive?: boolean
   sortOrder?: boolean
   cleaningMinutes?: boolean
@@ -1557,9 +1803,11 @@ export type SaunaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   openHour?: boolean
   closeHour?: boolean
   branchId?: boolean
+  categoryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.Sauna$categoryArgs<ExtArgs>
 }, ExtArgs["result"]["sauna"]>
 
 export type SaunaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1567,11 +1815,18 @@ export type SaunaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   slug?: boolean
   name?: boolean
   type?: boolean
+  typeLabel?: boolean
+  size?: boolean
+  sizeLabel?: boolean
   description?: boolean
   capacity?: boolean
   area?: boolean
-  hasPool?: boolean
+  poolSize?: boolean
   hasBBQ?: boolean
+  mainImage?: boolean
+  images?: boolean
+  amenities?: boolean
+  extras?: boolean
   isActive?: boolean
   sortOrder?: boolean
   cleaningMinutes?: boolean
@@ -1579,9 +1834,11 @@ export type SaunaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   openHour?: boolean
   closeHour?: boolean
   branchId?: boolean
+  categoryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.Sauna$categoryArgs<ExtArgs>
 }, ExtArgs["result"]["sauna"]>
 
 export type SaunaSelectScalar = {
@@ -1589,11 +1846,18 @@ export type SaunaSelectScalar = {
   slug?: boolean
   name?: boolean
   type?: boolean
+  typeLabel?: boolean
+  size?: boolean
+  sizeLabel?: boolean
   description?: boolean
   capacity?: boolean
   area?: boolean
-  hasPool?: boolean
+  poolSize?: boolean
   hasBBQ?: boolean
+  mainImage?: boolean
+  images?: boolean
+  amenities?: boolean
+  extras?: boolean
   isActive?: boolean
   sortOrder?: boolean
   cleaningMinutes?: boolean
@@ -1601,32 +1865,33 @@ export type SaunaSelectScalar = {
   openHour?: boolean
   closeHour?: boolean
   branchId?: boolean
+  categoryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SaunaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "type" | "description" | "capacity" | "area" | "hasPool" | "hasBBQ" | "isActive" | "sortOrder" | "cleaningMinutes" | "minHours" | "openHour" | "closeHour" | "branchId" | "createdAt" | "updatedAt", ExtArgs["result"]["sauna"]>
+export type SaunaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "type" | "typeLabel" | "size" | "sizeLabel" | "description" | "capacity" | "area" | "poolSize" | "hasBBQ" | "mainImage" | "images" | "amenities" | "extras" | "isActive" | "sortOrder" | "cleaningMinutes" | "minHours" | "openHour" | "closeHour" | "branchId" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["sauna"]>
 export type SaunaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
-  images?: boolean | Prisma.Sauna$imagesArgs<ExtArgs>
-  amenities?: boolean | Prisma.Sauna$amenitiesArgs<ExtArgs>
+  category?: boolean | Prisma.Sauna$categoryArgs<ExtArgs>
   prices?: boolean | Prisma.Sauna$pricesArgs<ExtArgs>
   bookings?: boolean | Prisma.Sauna$bookingsArgs<ExtArgs>
   _count?: boolean | Prisma.SaunaCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SaunaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.Sauna$categoryArgs<ExtArgs>
 }
 export type SaunaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.Sauna$categoryArgs<ExtArgs>
 }
 
 export type $SaunaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Sauna"
   objects: {
     branch: Prisma.$BranchPayload<ExtArgs>
-    images: Prisma.$SaunaImagePayload<ExtArgs>[]
-    amenities: Prisma.$SaunaAmenityPayload<ExtArgs>[]
+    category: Prisma.$SaunaCategoryPayload<ExtArgs> | null
     prices: Prisma.$PriceSlotPayload<ExtArgs>[]
     bookings: Prisma.$BookingPayload<ExtArgs>[]
   }
@@ -1635,11 +1900,18 @@ export type $SaunaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     slug: string
     name: string
     type: string
+    typeLabel: string | null
+    size: string | null
+    sizeLabel: string | null
     description: string | null
     capacity: number
     area: number | null
-    hasPool: boolean
+    poolSize: string | null
     hasBBQ: boolean
+    mainImage: string | null
+    images: runtime.JsonValue | null
+    amenities: runtime.JsonValue | null
+    extras: runtime.JsonValue | null
     isActive: boolean
     sortOrder: number
     cleaningMinutes: number
@@ -1647,6 +1919,7 @@ export type $SaunaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     openHour: number
     closeHour: number
     branchId: number
+    categoryId: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["sauna"]>
@@ -2044,8 +2317,7 @@ readonly fields: SaunaFieldRefs;
 export interface Prisma__SaunaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   branch<T extends Prisma.BranchDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BranchDefaultArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  images<T extends Prisma.Sauna$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sauna$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SaunaImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  amenities<T extends Prisma.Sauna$amenitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sauna$amenitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SaunaAmenityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  category<T extends Prisma.Sauna$categoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sauna$categoryArgs<ExtArgs>>): Prisma.Prisma__SaunaCategoryClient<runtime.Types.Result.GetResult<Prisma.$SaunaCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   prices<T extends Prisma.Sauna$pricesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sauna$pricesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PriceSlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bookings<T extends Prisma.Sauna$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sauna$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2081,11 +2353,18 @@ export interface SaunaFieldRefs {
   readonly slug: Prisma.FieldRef<"Sauna", 'String'>
   readonly name: Prisma.FieldRef<"Sauna", 'String'>
   readonly type: Prisma.FieldRef<"Sauna", 'String'>
+  readonly typeLabel: Prisma.FieldRef<"Sauna", 'String'>
+  readonly size: Prisma.FieldRef<"Sauna", 'String'>
+  readonly sizeLabel: Prisma.FieldRef<"Sauna", 'String'>
   readonly description: Prisma.FieldRef<"Sauna", 'String'>
   readonly capacity: Prisma.FieldRef<"Sauna", 'Int'>
   readonly area: Prisma.FieldRef<"Sauna", 'Float'>
-  readonly hasPool: Prisma.FieldRef<"Sauna", 'Boolean'>
+  readonly poolSize: Prisma.FieldRef<"Sauna", 'String'>
   readonly hasBBQ: Prisma.FieldRef<"Sauna", 'Boolean'>
+  readonly mainImage: Prisma.FieldRef<"Sauna", 'String'>
+  readonly images: Prisma.FieldRef<"Sauna", 'Json'>
+  readonly amenities: Prisma.FieldRef<"Sauna", 'Json'>
+  readonly extras: Prisma.FieldRef<"Sauna", 'Json'>
   readonly isActive: Prisma.FieldRef<"Sauna", 'Boolean'>
   readonly sortOrder: Prisma.FieldRef<"Sauna", 'Int'>
   readonly cleaningMinutes: Prisma.FieldRef<"Sauna", 'Int'>
@@ -2093,6 +2372,7 @@ export interface SaunaFieldRefs {
   readonly openHour: Prisma.FieldRef<"Sauna", 'Int'>
   readonly closeHour: Prisma.FieldRef<"Sauna", 'Int'>
   readonly branchId: Prisma.FieldRef<"Sauna", 'Int'>
+  readonly categoryId: Prisma.FieldRef<"Sauna", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Sauna", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Sauna", 'DateTime'>
 }
@@ -2496,51 +2776,22 @@ export type SaunaDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 /**
- * Sauna.images
+ * Sauna.category
  */
-export type Sauna$imagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Sauna$categoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the SaunaImage
+   * Select specific fields to fetch from the SaunaCategory
    */
-  select?: Prisma.SaunaImageSelect<ExtArgs> | null
+  select?: Prisma.SaunaCategorySelect<ExtArgs> | null
   /**
-   * Omit specific fields from the SaunaImage
+   * Omit specific fields from the SaunaCategory
    */
-  omit?: Prisma.SaunaImageOmit<ExtArgs> | null
+  omit?: Prisma.SaunaCategoryOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.SaunaImageInclude<ExtArgs> | null
-  where?: Prisma.SaunaImageWhereInput
-  orderBy?: Prisma.SaunaImageOrderByWithRelationInput | Prisma.SaunaImageOrderByWithRelationInput[]
-  cursor?: Prisma.SaunaImageWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.SaunaImageScalarFieldEnum | Prisma.SaunaImageScalarFieldEnum[]
-}
-
-/**
- * Sauna.amenities
- */
-export type Sauna$amenitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the SaunaAmenity
-   */
-  select?: Prisma.SaunaAmenitySelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the SaunaAmenity
-   */
-  omit?: Prisma.SaunaAmenityOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.SaunaAmenityInclude<ExtArgs> | null
-  where?: Prisma.SaunaAmenityWhereInput
-  orderBy?: Prisma.SaunaAmenityOrderByWithRelationInput | Prisma.SaunaAmenityOrderByWithRelationInput[]
-  cursor?: Prisma.SaunaAmenityWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.SaunaAmenityScalarFieldEnum | Prisma.SaunaAmenityScalarFieldEnum[]
+  include?: Prisma.SaunaCategoryInclude<ExtArgs> | null
+  where?: Prisma.SaunaCategoryWhereInput
 }
 
 /**

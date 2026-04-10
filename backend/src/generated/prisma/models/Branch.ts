@@ -304,6 +304,7 @@ export type BranchWhereInput = {
   sortOrder?: Prisma.IntFilter<"Branch"> | number
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
+  categories?: Prisma.SaunaCategoryListRelationFilter
   saunas?: Prisma.SaunaListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
@@ -325,6 +326,7 @@ export type BranchOrderByWithRelationInput = {
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  categories?: Prisma.SaunaCategoryOrderByRelationAggregateInput
   saunas?: Prisma.SaunaOrderByRelationAggregateInput
   bookings?: Prisma.BookingOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
@@ -349,6 +351,7 @@ export type BranchWhereUniqueInput = Prisma.AtLeast<{
   sortOrder?: Prisma.IntFilter<"Branch"> | number
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
+  categories?: Prisma.SaunaCategoryListRelationFilter
   saunas?: Prisma.SaunaListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
@@ -413,6 +416,7 @@ export type BranchCreateInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  categories?: Prisma.SaunaCategoryCreateNestedManyWithoutBranchInput
   saunas?: Prisma.SaunaCreateNestedManyWithoutBranchInput
   bookings?: Prisma.BookingCreateNestedManyWithoutBranchInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutBranchInput
@@ -434,6 +438,7 @@ export type BranchUncheckedCreateInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  categories?: Prisma.SaunaCategoryUncheckedCreateNestedManyWithoutBranchInput
   saunas?: Prisma.SaunaUncheckedCreateNestedManyWithoutBranchInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutBranchInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutBranchInput
@@ -454,6 +459,7 @@ export type BranchUpdateInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.SaunaCategoryUpdateManyWithoutBranchNestedInput
   saunas?: Prisma.SaunaUpdateManyWithoutBranchNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutBranchNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutBranchNestedInput
@@ -475,6 +481,7 @@ export type BranchUncheckedUpdateInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.SaunaCategoryUncheckedUpdateManyWithoutBranchNestedInput
   saunas?: Prisma.SaunaUncheckedUpdateManyWithoutBranchNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutBranchNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutBranchNestedInput
@@ -621,6 +628,20 @@ export type FloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type BranchCreateNestedOneWithoutCategoriesInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutCategoriesInput, Prisma.BranchUncheckedCreateWithoutCategoriesInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutCategoriesInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneRequiredWithoutCategoriesNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutCategoriesInput, Prisma.BranchUncheckedCreateWithoutCategoriesInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutCategoriesInput
+  upsert?: Prisma.BranchUpsertWithoutCategoriesInput
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutCategoriesInput, Prisma.BranchUpdateWithoutCategoriesInput>, Prisma.BranchUncheckedUpdateWithoutCategoriesInput>
+}
+
 export type BranchCreateNestedOneWithoutSaunasInput = {
   create?: Prisma.XOR<Prisma.BranchCreateWithoutSaunasInput, Prisma.BranchUncheckedCreateWithoutSaunasInput>
   connectOrCreate?: Prisma.BranchCreateOrConnectWithoutSaunasInput
@@ -665,6 +686,104 @@ export type BranchUpdateOneWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutReviewsInput, Prisma.BranchUpdateWithoutReviewsInput>, Prisma.BranchUncheckedUpdateWithoutReviewsInput>
 }
 
+export type BranchCreateWithoutCategoriesInput = {
+  slug: string
+  name: string
+  address: string
+  phone: string
+  description?: string | null
+  latitude: number
+  longitude: number
+  coverImage?: string | null
+  tourUrl?: string | null
+  workingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: boolean
+  sortOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  saunas?: Prisma.SaunaCreateNestedManyWithoutBranchInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutBranchInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutCategoriesInput = {
+  id?: number
+  slug: string
+  name: string
+  address: string
+  phone: string
+  description?: string | null
+  latitude: number
+  longitude: number
+  coverImage?: string | null
+  tourUrl?: string | null
+  workingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: boolean
+  sortOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  saunas?: Prisma.SaunaUncheckedCreateNestedManyWithoutBranchInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutBranchInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutCategoriesInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutCategoriesInput, Prisma.BranchUncheckedCreateWithoutCategoriesInput>
+}
+
+export type BranchUpsertWithoutCategoriesInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutCategoriesInput, Prisma.BranchUncheckedUpdateWithoutCategoriesInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutCategoriesInput, Prisma.BranchUncheckedCreateWithoutCategoriesInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutCategoriesInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutCategoriesInput, Prisma.BranchUncheckedUpdateWithoutCategoriesInput>
+}
+
+export type BranchUpdateWithoutCategoriesInput = {
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  longitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tourUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  saunas?: Prisma.SaunaUpdateManyWithoutBranchNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutBranchNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutCategoriesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  longitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tourUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  saunas?: Prisma.SaunaUncheckedUpdateManyWithoutBranchNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutBranchNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutBranchNestedInput
+}
+
 export type BranchCreateWithoutSaunasInput = {
   slug: string
   name: string
@@ -680,6 +799,7 @@ export type BranchCreateWithoutSaunasInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  categories?: Prisma.SaunaCategoryCreateNestedManyWithoutBranchInput
   bookings?: Prisma.BookingCreateNestedManyWithoutBranchInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutBranchInput
 }
@@ -700,6 +820,7 @@ export type BranchUncheckedCreateWithoutSaunasInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  categories?: Prisma.SaunaCategoryUncheckedCreateNestedManyWithoutBranchInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutBranchInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutBranchInput
 }
@@ -735,6 +856,7 @@ export type BranchUpdateWithoutSaunasInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.SaunaCategoryUpdateManyWithoutBranchNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutBranchNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutBranchNestedInput
 }
@@ -755,6 +877,7 @@ export type BranchUncheckedUpdateWithoutSaunasInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.SaunaCategoryUncheckedUpdateManyWithoutBranchNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutBranchNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutBranchNestedInput
 }
@@ -774,6 +897,7 @@ export type BranchCreateWithoutBookingsInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  categories?: Prisma.SaunaCategoryCreateNestedManyWithoutBranchInput
   saunas?: Prisma.SaunaCreateNestedManyWithoutBranchInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutBranchInput
 }
@@ -794,6 +918,7 @@ export type BranchUncheckedCreateWithoutBookingsInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  categories?: Prisma.SaunaCategoryUncheckedCreateNestedManyWithoutBranchInput
   saunas?: Prisma.SaunaUncheckedCreateNestedManyWithoutBranchInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutBranchInput
 }
@@ -829,6 +954,7 @@ export type BranchUpdateWithoutBookingsInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.SaunaCategoryUpdateManyWithoutBranchNestedInput
   saunas?: Prisma.SaunaUpdateManyWithoutBranchNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutBranchNestedInput
 }
@@ -849,6 +975,7 @@ export type BranchUncheckedUpdateWithoutBookingsInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.SaunaCategoryUncheckedUpdateManyWithoutBranchNestedInput
   saunas?: Prisma.SaunaUncheckedUpdateManyWithoutBranchNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutBranchNestedInput
 }
@@ -868,6 +995,7 @@ export type BranchCreateWithoutReviewsInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  categories?: Prisma.SaunaCategoryCreateNestedManyWithoutBranchInput
   saunas?: Prisma.SaunaCreateNestedManyWithoutBranchInput
   bookings?: Prisma.BookingCreateNestedManyWithoutBranchInput
 }
@@ -888,6 +1016,7 @@ export type BranchUncheckedCreateWithoutReviewsInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  categories?: Prisma.SaunaCategoryUncheckedCreateNestedManyWithoutBranchInput
   saunas?: Prisma.SaunaUncheckedCreateNestedManyWithoutBranchInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutBranchInput
 }
@@ -923,6 +1052,7 @@ export type BranchUpdateWithoutReviewsInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.SaunaCategoryUpdateManyWithoutBranchNestedInput
   saunas?: Prisma.SaunaUpdateManyWithoutBranchNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutBranchNestedInput
 }
@@ -943,6 +1073,7 @@ export type BranchUncheckedUpdateWithoutReviewsInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  categories?: Prisma.SaunaCategoryUncheckedUpdateManyWithoutBranchNestedInput
   saunas?: Prisma.SaunaUncheckedUpdateManyWithoutBranchNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutBranchNestedInput
 }
@@ -953,12 +1084,14 @@ export type BranchUncheckedUpdateWithoutReviewsInput = {
  */
 
 export type BranchCountOutputType = {
+  categories: number
   saunas: number
   bookings: number
   reviews: number
 }
 
 export type BranchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  categories?: boolean | BranchCountOutputTypeCountCategoriesArgs
   saunas?: boolean | BranchCountOutputTypeCountSaunasArgs
   bookings?: boolean | BranchCountOutputTypeCountBookingsArgs
   reviews?: boolean | BranchCountOutputTypeCountReviewsArgs
@@ -972,6 +1105,13 @@ export type BranchCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
    * Select specific fields to fetch from the BranchCountOutputType
    */
   select?: Prisma.BranchCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountCategoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SaunaCategoryWhereInput
 }
 
 /**
@@ -1012,6 +1152,7 @@ export type BranchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   sortOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  categories?: boolean | Prisma.Branch$categoriesArgs<ExtArgs>
   saunas?: boolean | Prisma.Branch$saunasArgs<ExtArgs>
   bookings?: boolean | Prisma.Branch$bookingsArgs<ExtArgs>
   reviews?: boolean | Prisma.Branch$reviewsArgs<ExtArgs>
@@ -1074,6 +1215,7 @@ export type BranchSelectScalar = {
 
 export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "address" | "phone" | "description" | "latitude" | "longitude" | "coverImage" | "tourUrl" | "workingHours" | "isActive" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["branch"]>
 export type BranchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  categories?: boolean | Prisma.Branch$categoriesArgs<ExtArgs>
   saunas?: boolean | Prisma.Branch$saunasArgs<ExtArgs>
   bookings?: boolean | Prisma.Branch$bookingsArgs<ExtArgs>
   reviews?: boolean | Prisma.Branch$reviewsArgs<ExtArgs>
@@ -1085,6 +1227,7 @@ export type BranchIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type $BranchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Branch"
   objects: {
+    categories: Prisma.$SaunaCategoryPayload<ExtArgs>[]
     saunas: Prisma.$SaunaPayload<ExtArgs>[]
     bookings: Prisma.$BookingPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
@@ -1499,6 +1642,7 @@ readonly fields: BranchFieldRefs;
  */
 export interface Prisma__BranchClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  categories<T extends Prisma.Branch$categoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SaunaCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   saunas<T extends Prisma.Branch$saunasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$saunasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SaunaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bookings<T extends Prisma.Branch$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.Branch$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1936,6 +2080,30 @@ export type BranchDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Limit how many Branches to delete.
    */
   limit?: number
+}
+
+/**
+ * Branch.categories
+ */
+export type Branch$categoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SaunaCategory
+   */
+  select?: Prisma.SaunaCategorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SaunaCategory
+   */
+  omit?: Prisma.SaunaCategoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SaunaCategoryInclude<ExtArgs> | null
+  where?: Prisma.SaunaCategoryWhereInput
+  orderBy?: Prisma.SaunaCategoryOrderByWithRelationInput | Prisma.SaunaCategoryOrderByWithRelationInput[]
+  cursor?: Prisma.SaunaCategoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SaunaCategoryScalarFieldEnum | Prisma.SaunaCategoryScalarFieldEnum[]
 }
 
 /**

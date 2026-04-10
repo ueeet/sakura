@@ -29,41 +29,44 @@ export const updateBranchSchema = createBranchSchema.partial().extend({
   isActive: z.boolean().optional(),
 });
 
+// ========== SaunaCategory ==========
+export const createCategorySchema = z.object({
+  slug: z.string().min(1),
+  name: z.string().min(1),
+  branchId: z.number().int().min(1),
+  sortOrder: z.number().int().optional(),
+});
+
+export const updateCategorySchema = createCategorySchema.partial();
+
 // ========== Sauna ==========
 export const createSaunaSchema = z.object({
   slug: z.string().min(1),
   name: z.string().min(1),
-  type: z.enum(["russian", "finnish", "hammam"]),
+  type: z.enum(["russian", "finnish", "hamam"]),
+  typeLabel: z.string().optional(),
+  size: z.enum(["small", "large"]).optional(),
+  sizeLabel: z.string().optional(),
   description: z.string().optional(),
-  capacity: z.number().int().min(1),
+  capacity: z.number().int().min(0).optional(),
   area: z.number().optional(),
-  hasPool: z.boolean().optional(),
+  poolSize: z.string().optional(),
   hasBBQ: z.boolean().optional(),
+  mainImage: z.string().optional(),
+  images: z.array(z.string()).optional(),
+  amenities: z.array(z.string()).optional(),
+  extras: z.array(z.string()).optional(),
   cleaningMinutes: z.number().int().min(0).max(240).optional(),
   minHours: z.number().int().min(1).max(24).optional(),
   openHour: z.number().int().min(0).max(24).optional(),
   closeHour: z.number().int().min(0).max(24).optional(),
   branchId: z.number().int().min(1),
+  categoryId: z.number().int().min(1).nullable().optional(),
   sortOrder: z.number().int().optional(),
 });
 
 export const updateSaunaSchema = createSaunaSchema.partial().extend({
   isActive: z.boolean().optional(),
-});
-
-// ========== SaunaImage ==========
-export const createSaunaImageSchema = z.object({
-  url: z.string().min(1),
-  alt: z.string().optional(),
-  sortOrder: z.number().int().optional(),
-  saunaId: z.number().int().min(1),
-});
-
-// ========== SaunaAmenity ==========
-export const createSaunaAmenitySchema = z.object({
-  name: z.string().min(1),
-  icon: z.string().optional(),
-  saunaId: z.number().int().min(1),
 });
 
 // ========== PriceSlot ==========
@@ -82,10 +85,12 @@ export const createPromotionSchema = z.object({
   slug: z.string().min(1),
   title: z.string().min(1),
   description: z.string().min(1),
+  note: z.string().optional(),
+  icon: z.string().optional(),
   image: z.string().optional(),
   promoCode: z.string().optional(),
   discount: z.number().int().min(0).max(100).optional(),
-  startDate: z.string().min(1),
+  startDate: z.string().optional(),
   endDate: z.string().optional(),
   sortOrder: z.number().int().optional(),
 });

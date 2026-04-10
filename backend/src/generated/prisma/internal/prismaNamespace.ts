@@ -387,9 +387,8 @@ export const ModelName = {
   Admin: 'Admin',
   Settings: 'Settings',
   Branch: 'Branch',
+  SaunaCategory: 'SaunaCategory',
   Sauna: 'Sauna',
-  SaunaImage: 'SaunaImage',
-  SaunaAmenity: 'SaunaAmenity',
   PriceSlot: 'PriceSlot',
   Promotion: 'Promotion',
   Booking: 'Booking',
@@ -409,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "admin" | "settings" | "branch" | "sauna" | "saunaImage" | "saunaAmenity" | "priceSlot" | "promotion" | "booking" | "review"
+    modelProps: "admin" | "settings" | "branch" | "saunaCategory" | "sauna" | "priceSlot" | "promotion" | "booking" | "review"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -635,6 +634,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SaunaCategory: {
+      payload: Prisma.$SaunaCategoryPayload<ExtArgs>
+      fields: Prisma.SaunaCategoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SaunaCategoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SaunaCategoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload>
+        }
+        findFirst: {
+          args: Prisma.SaunaCategoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SaunaCategoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload>
+        }
+        findMany: {
+          args: Prisma.SaunaCategoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload>[]
+        }
+        create: {
+          args: Prisma.SaunaCategoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload>
+        }
+        createMany: {
+          args: Prisma.SaunaCategoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SaunaCategoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload>[]
+        }
+        delete: {
+          args: Prisma.SaunaCategoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload>
+        }
+        update: {
+          args: Prisma.SaunaCategoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.SaunaCategoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SaunaCategoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SaunaCategoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.SaunaCategoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaCategoryPayload>
+        }
+        aggregate: {
+          args: Prisma.SaunaCategoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSaunaCategory>
+        }
+        groupBy: {
+          args: Prisma.SaunaCategoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SaunaCategoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SaunaCategoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SaunaCategoryCountAggregateOutputType> | number
+        }
+      }
+    }
     Sauna: {
       payload: Prisma.$SaunaPayload<ExtArgs>
       fields: Prisma.SaunaFieldRefs
@@ -706,154 +779,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.SaunaCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.SaunaCountAggregateOutputType> | number
-        }
-      }
-    }
-    SaunaImage: {
-      payload: Prisma.$SaunaImagePayload<ExtArgs>
-      fields: Prisma.SaunaImageFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.SaunaImageFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.SaunaImageFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload>
-        }
-        findFirst: {
-          args: Prisma.SaunaImageFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.SaunaImageFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload>
-        }
-        findMany: {
-          args: Prisma.SaunaImageFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload>[]
-        }
-        create: {
-          args: Prisma.SaunaImageCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload>
-        }
-        createMany: {
-          args: Prisma.SaunaImageCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.SaunaImageCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload>[]
-        }
-        delete: {
-          args: Prisma.SaunaImageDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload>
-        }
-        update: {
-          args: Prisma.SaunaImageUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload>
-        }
-        deleteMany: {
-          args: Prisma.SaunaImageDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.SaunaImageUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.SaunaImageUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload>[]
-        }
-        upsert: {
-          args: Prisma.SaunaImageUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaImagePayload>
-        }
-        aggregate: {
-          args: Prisma.SaunaImageAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateSaunaImage>
-        }
-        groupBy: {
-          args: Prisma.SaunaImageGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SaunaImageGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.SaunaImageCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SaunaImageCountAggregateOutputType> | number
-        }
-      }
-    }
-    SaunaAmenity: {
-      payload: Prisma.$SaunaAmenityPayload<ExtArgs>
-      fields: Prisma.SaunaAmenityFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.SaunaAmenityFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.SaunaAmenityFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload>
-        }
-        findFirst: {
-          args: Prisma.SaunaAmenityFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.SaunaAmenityFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload>
-        }
-        findMany: {
-          args: Prisma.SaunaAmenityFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload>[]
-        }
-        create: {
-          args: Prisma.SaunaAmenityCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload>
-        }
-        createMany: {
-          args: Prisma.SaunaAmenityCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.SaunaAmenityCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload>[]
-        }
-        delete: {
-          args: Prisma.SaunaAmenityDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload>
-        }
-        update: {
-          args: Prisma.SaunaAmenityUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload>
-        }
-        deleteMany: {
-          args: Prisma.SaunaAmenityDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.SaunaAmenityUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.SaunaAmenityUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload>[]
-        }
-        upsert: {
-          args: Prisma.SaunaAmenityUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SaunaAmenityPayload>
-        }
-        aggregate: {
-          args: Prisma.SaunaAmenityAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateSaunaAmenity>
-        }
-        groupBy: {
-          args: Prisma.SaunaAmenityGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SaunaAmenityGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.SaunaAmenityCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SaunaAmenityCountAggregateOutputType> | number
         }
       }
     }
@@ -1240,16 +1165,36 @@ export const BranchScalarFieldEnum = {
 export type BranchScalarFieldEnum = (typeof BranchScalarFieldEnum)[keyof typeof BranchScalarFieldEnum]
 
 
+export const SaunaCategoryScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  branchId: 'branchId',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SaunaCategoryScalarFieldEnum = (typeof SaunaCategoryScalarFieldEnum)[keyof typeof SaunaCategoryScalarFieldEnum]
+
+
 export const SaunaScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
   name: 'name',
   type: 'type',
+  typeLabel: 'typeLabel',
+  size: 'size',
+  sizeLabel: 'sizeLabel',
   description: 'description',
   capacity: 'capacity',
   area: 'area',
-  hasPool: 'hasPool',
+  poolSize: 'poolSize',
   hasBBQ: 'hasBBQ',
+  mainImage: 'mainImage',
+  images: 'images',
+  amenities: 'amenities',
+  extras: 'extras',
   isActive: 'isActive',
   sortOrder: 'sortOrder',
   cleaningMinutes: 'cleaningMinutes',
@@ -1257,32 +1202,12 @@ export const SaunaScalarFieldEnum = {
   openHour: 'openHour',
   closeHour: 'closeHour',
   branchId: 'branchId',
+  categoryId: 'categoryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type SaunaScalarFieldEnum = (typeof SaunaScalarFieldEnum)[keyof typeof SaunaScalarFieldEnum]
-
-
-export const SaunaImageScalarFieldEnum = {
-  id: 'id',
-  url: 'url',
-  alt: 'alt',
-  sortOrder: 'sortOrder',
-  saunaId: 'saunaId'
-} as const
-
-export type SaunaImageScalarFieldEnum = (typeof SaunaImageScalarFieldEnum)[keyof typeof SaunaImageScalarFieldEnum]
-
-
-export const SaunaAmenityScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  icon: 'icon',
-  saunaId: 'saunaId'
-} as const
-
-export type SaunaAmenityScalarFieldEnum = (typeof SaunaAmenityScalarFieldEnum)[keyof typeof SaunaAmenityScalarFieldEnum]
 
 
 export const PriceSlotScalarFieldEnum = {
@@ -1302,6 +1227,8 @@ export const PromotionScalarFieldEnum = {
   slug: 'slug',
   title: 'title',
   description: 'description',
+  note: 'note',
+  icon: 'icon',
   image: 'image',
   promoCode: 'promoCode',
   discount: 'discount',
@@ -1574,9 +1501,8 @@ export type GlobalOmitConfig = {
   admin?: Prisma.AdminOmit
   settings?: Prisma.SettingsOmit
   branch?: Prisma.BranchOmit
+  saunaCategory?: Prisma.SaunaCategoryOmit
   sauna?: Prisma.SaunaOmit
-  saunaImage?: Prisma.SaunaImageOmit
-  saunaAmenity?: Prisma.SaunaAmenityOmit
   priceSlot?: Prisma.PriceSlotOmit
   promotion?: Prisma.PromotionOmit
   booking?: Prisma.BookingOmit

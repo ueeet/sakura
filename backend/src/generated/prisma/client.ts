@@ -55,20 +55,15 @@ export type Settings = Prisma.SettingsModel
  */
 export type Branch = Prisma.BranchModel
 /**
+ * Model SaunaCategory
+ * 
+ */
+export type SaunaCategory = Prisma.SaunaCategoryModel
+/**
  * Model Sauna
  * 
  */
 export type Sauna = Prisma.SaunaModel
-/**
- * Model SaunaImage
- * 
- */
-export type SaunaImage = Prisma.SaunaImageModel
-/**
- * Model SaunaAmenity
- * 
- */
-export type SaunaAmenity = Prisma.SaunaAmenityModel
 /**
  * Model PriceSlot
  * 
