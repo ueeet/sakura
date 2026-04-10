@@ -74,6 +74,10 @@ router.post("/", validate(createBookingSchema), asyncHandler(async (req, res) =>
     return;
   }
 
+  // Тип оплаты — фронт может прислать "deposit" (по умолчанию) или "full"
+  const paymentType: "deposit" | "full" =
+    (clean.paymentType as "deposit" | "full") === "full" ? "full" : "deposit";
+
   const item = await prisma.booking.create({
     data: {
       clientName: clean.clientName as string,
@@ -85,15 +89,49 @@ router.post("/", validate(createBookingSchema), asyncHandler(async (req, res) =>
       branchId: clean.branchId as number,
       saunaId: clean.saunaId as number,
       totalPrice: (clean.totalPrice as number) ?? null,
+      status: "pending_payment",
+      paymentStatus: "pending",
     },
     include: { branch: true, sauna: true },
   });
+
+  // Создаём платёж: depositPercent% от totalPrice или полная сумма
+  let payment = null;
+  if (item.totalPrice && item.totalPrice > 0) {
+    const amount = paymentType === "full"
+      ? item.totalPrice
+      : Math.round((item.totalPrice * (sauna.depositPercent ?? 30)) / 100);
+
+    const provider = getPaymentProvider();
+    const returnUrl = `${process.env.FRONTEND_URL}/booking/status?bookingId=${item.id}`;
+
+    const created = await provider.createPayment({
+      bookingId: item.id,
+      amount,
+      type: paymentType,
+      description: `Бронь №${item.id} — ${sauna.name}, ${formatMoscowHuman(item.startAt)}`,
+      customerPhone: item.phone,
+      returnUrl,
+    });
+
+    payment = await prisma.payment.create({
+      data: {
+        bookingId: item.id,
+        provider: provider.name,
+        externalId: created.externalId,
+        amount,
+        type: paymentType,
+        status: "pending",
+        confirmationUrl: created.confirmationUrl,
+      },
+    });
+  }
 
   broadcast("new_booking", item);
   notifyNewBooking(item);
   sendBookingCreatedSms(item.phone, item.clientName);
 
-  res.status(201).json(item);
+  res.status(201).json({ ...item, payment });
 }));
 
 router.put("/:id", requireAdmin, validate(updateBookingSchema), asyncHandler(async (req, res) => {
