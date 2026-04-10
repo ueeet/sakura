@@ -43,13 +43,13 @@ router.get("/:slug", asyncHandler(async (req, res) => {
 }));
 
 router.post("/", requireAdmin, validate(createPromotionSchema), asyncHandler(async (req, res) => {
-  const clean = sanitizeObject(req.body);
+  const clean = sanitizeObject(req.body) as Record<string, unknown>;
   const item = await prisma.promotion.create({
     data: {
       ...clean,
-      startDate: new Date(clean.startDate as string),
+      startDate: clean.startDate ? new Date(clean.startDate as string) : null,
       endDate: clean.endDate ? new Date(clean.endDate as string) : null,
-    },
+    } as never,
   });
   cacheInvalidate("promotions:");
   res.status(201).json(item);
