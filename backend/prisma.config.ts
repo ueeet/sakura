@@ -8,6 +8,9 @@ export default defineConfig({
   migrations: {
     path: path.join("prisma", "migrations"),
   },
+  datasource: {
+    url: process.env.DATABASE_URL!,
+  },
   experimental: {
     adapter: true,
   },
