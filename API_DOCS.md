@@ -265,6 +265,86 @@ Response: [
 
 ---
 
+## 💳 Платежи (Payments)
+
+**Текущий провайдер:** `mock` (демо без реальных денег). Контролируется через `PAYMENT_PROVIDER` в `.env`.
+
+### Поток оплаты
+
+```
+1. Фронт: POST /api/bookings { ..., paymentType: "deposit" | "full" }
+   ↓
+2. Бэк создаёт Booking (status: "pending_payment") + Payment + возвращает payment с confirmationUrl
+   ↓
+3. Фронт: window.location = response.payment.confirmationUrl
+   ↓
+4. Юзер на странице оплаты (демо: /payment/[externalId])
+   ↓
+5. После "оплаты" → редирект на returnUrl (/booking/status?bookingId=X)
+   ↓
+6. Параллельно: POST /api/payments/mock/confirm (имитация webhook)
+   → Booking.paymentStatus = "deposit_paid"
+   → Booking.status = "new"
+   → SSE broadcast
+```
+
+Если за **15 минут** оплата не пришла → cron автоматически отменяет бронь, слот освобождается.
+
+### POST `/payments/create`
+Создание дополнительного платежа для существующей брони (например, доплата).
+
+```json
+Request:  { "bookingId": 1, "type": "deposit" | "full" }
+Response: {
+  "id": 1,
+  "bookingId": 1,
+  "externalId": "mock_xxxxxx",
+  "amount": 1260,
+  "type": "deposit",
+  "status": "pending",
+  "confirmationUrl": "http://localhost:3000/payment/mock_xxxxxx?return_url=..."
+}
+```
+
+### GET `/payments/:idOrExternalId`
+Получение статуса платежа. Принимает либо числовой `id`, либо `externalId`.
+
+### POST `/payments/mock/confirm`
+**(только для mock-провайдера, имитация webhook)**
+
+Подтверждает оплату — обновляет статус Payment и Booking.
+
+```json
+Request: { "externalId": "mock_xxxxxx" }
+Response: { "payment": {...}, "booking": {...} }
+```
+
+### POST `/payments/mock/cancel`
+**(только для mock-провайдера)**
+
+Отменяет неоплаченный платёж и связанную бронь.
+
+### POST `/payments/:id/refund` (Admin)
+Возврат платежа.
+
+```json
+Request: { "amount": 1260, "reason": "По просьбе клиента" }
+```
+
+### Замена на реальную YooKassa
+
+Когда хозяин одобрит проект:
+1. Регистрация в YooKassa, получение `shopId` и `secretKey`
+2. Установка `@a2seven/yoo-checkout` или официального SDK
+3. Создание `backend/src/lib/payment/yookassa.ts` (реализация `PaymentProvider`)
+4. Регистрация в `backend/src/lib/payment/index.ts`
+5. В `.env`: `PAYMENT_PROVIDER=yookassa` + `YOOKASSA_SHOP_ID` + `YOOKASSA_SECRET_KEY`
+6. Webhook handler: `POST /api/payments/yookassa/webhook`
+
+**Frontend не меняется.** Тот же `confirmationUrl` будет указывать на реальную страницу YooKassa.
+
+---
+
 ## Бронирования (Bookings)
 
 ### GET `/bookings` (Admin)
