@@ -32,8 +32,8 @@ model Settings {
 
 // ========== Филиал ==========
 model Branch {
-  id           Int      @id @default(autoincrement())
-  slug         String   @unique
+  id           Int             @id @default(autoincrement())
+  slug         String          @unique
   name         String
   address      String
   phone        String
@@ -43,14 +43,31 @@ model Branch {
   coverImage   String?
   tourUrl      String?
   workingHours Json?
-  isActive     Boolean  @default(true)
-  sortOrder    Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  isActive     Boolean         @default(true)
+  sortOrder    Int             @default(0)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 
+  categories   SaunaCategory[]
   saunas       Sauna[]
   bookings     Booking[]
   reviews      Review[]
+}
+
+// ========== Категория саун (например "Семейная" / "Обычная" в 9-м комплексе) ==========
+model SaunaCategory {
+  id        Int      @id @default(autoincrement())
+  slug      String                                // "family", "regular"
+  name      String                                // "Семейная сауна"
+  branchId  Int
+  branch    Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  saunas    Sauna[]
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([branchId, slug])
+  @@index([branchId])
 }
 
 // ========== Сауна ==========
@@ -58,26 +75,33 @@ model Sauna {
   id              Int      @id @default(autoincrement())
   slug            String   @unique
   name            String
-  type            String                              // "russian" | "finnish" | "hammam"
+  type            String                              // "russian" | "finnish" | "hamam"
+  typeLabel       String?                             // "Финская сауна"
+  size            String?                             // "small" | "large"
+  sizeLabel       String?                             // "Малый зал" | "Большой зал"
   description     String?
-  capacity        Int
+  capacity        Int      @default(0)
   area            Float?
-  hasPool         Boolean  @default(false)
+  poolSize        String?                             // "3×4 м" — null если нет бассейна
   hasBBQ          Boolean  @default(false)
+  mainImage       String?                             // URL обложки
+  images          Json?                               // string[] — URL'ы фото
+  amenities       Json?                               // string[] — основные удобства
+  extras          Json?                               // string[] — доп. удобства
   isActive        Boolean  @default(true)
   sortOrder       Int      @default(0)
 
   // Настройки бронирования
-  cleaningMinutes Int      @default(60)               // буфер уборки после брони
-  minHours        Int      @default(2)                // минимум часов
-  openHour        Int      @default(0)                // 0-24, час открытия
-  closeHour       Int      @default(24)               // 0-24, час закрытия (24 = круглосуточно)
+  cleaningMinutes Int      @default(60)
+  minHours        Int      @default(2)
+  openHour        Int      @default(0)
+  closeHour       Int      @default(24)
 
   branchId        Int
-  branch          Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  branch          Branch         @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  categoryId      Int?
+  category        SaunaCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
-  images          SaunaImage[]
-  amenities       SaunaAmenity[]
   prices          PriceSlot[]
   bookings        Booking[]
 
@@ -85,29 +109,7 @@ model Sauna {
   updatedAt       DateTime @updatedAt
 
   @@index([branchId])
-}
-
-// ========== Фото сауны ==========
-model SaunaImage {
-  id        Int     @id @default(autoincrement())
-  url       String
-  alt       String?
-  sortOrder Int     @default(0)
-  saunaId   Int
-  sauna     Sauna   @relation(fields: [saunaId], references: [id], onDelete: Cascade)
-
-  @@index([saunaId])
-}
-
-// ========== Удобства сауны ==========
-model SaunaAmenity {
-  id      Int     @id @default(autoincrement())
-  name    String
-  icon    String?
-  saunaId Int
-  sauna   Sauna   @relation(fields: [saunaId], references: [id], onDelete: Cascade)
-
-  @@index([saunaId])
+  @@index([categoryId])
 }
 
 // ========== Цена за час по слотам ==========
@@ -130,10 +132,12 @@ model Promotion {
   slug        String    @unique
   title       String
   description String
+  note        String?                                 // дополнительная подпись
+  icon        String?                                 // имя иконки lucide ("flame", "gift", "cake")
   image       String?
   promoCode   String?
   discount    Int?
-  startDate   DateTime
+  startDate   DateTime?                               // опционально для бессрочных
   endDate     DateTime?
   isActive    Boolean   @default(true)
   sortOrder   Int       @default(0)
