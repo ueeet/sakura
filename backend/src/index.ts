@@ -26,6 +26,7 @@ import saunasRoutes from "./routes/saunas";
 import pricesRoutes from "./routes/prices";
 import promotionsRoutes from "./routes/promotions";
 import bookingsRoutes from "./routes/bookings";
+import paymentsRoutes from "./routes/payments";
 import reviewsRoutes from "./routes/reviews";
 
 const app = express();
