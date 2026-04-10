@@ -77,9 +77,9 @@ export async function getSaunaAvailability(saunaId: number, dateISO: string) {
       const cleaningEnd = new Date(b.endAt.getTime() + cleaningMs);
       return {
         bookingId: b.id,
-        start: b.startAt.toISOString(),
-        end: b.endAt.toISOString(),
-        cleaningEnd: cleaningEnd.toISOString(),
+        start: b.startAt,            // Date — JSON replacer сериализует в Москву
+        end: b.endAt,
+        cleaningEnd,
         _startMs: b.startAt.getTime(),
         _endMs: b.endAt.getTime(),
         _cleanEndMs: cleaningEnd.getTime(),
