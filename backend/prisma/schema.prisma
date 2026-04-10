@@ -5,9 +5,10 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["sakura"]
+  url      = env("DATABASE_URL")
 }
 
+// ========== Админ ==========
 model Admin {
   id           Int      @id @default(autoincrement())
   login        String   @unique
@@ -15,92 +16,173 @@ model Admin {
   role         String   @default("admin")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  @@schema("sakura")
 }
 
+// ========== Глобальные настройки (singleton) ==========
 model Settings {
   id             Int      @id @default(1)
   companyName    String   @default("Сакура")
-  phone          String   @default("")
-  address        String   @default("")
-  workingHours   Json?
+  mainPhone      String   @default("")
+  email          String   @default("")
+  vk             String   @default("")
+  instagram      String   @default("")
   telegramChatId String   @default("")
   smsEnabled     Boolean  @default(false)
   updatedAt      DateTime @updatedAt
-  @@schema("sakura")
 }
 
-model Staff {
-  id          Int             @id @default(autoincrement())
-  name        String
-  role        String
-  experience  Int             @default(0)
-  photo       String?
-  description String?
-  isActive    Boolean         @default(true)
-  schedule    Json?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  bookings    Booking[]
-  portfolio   PortfolioWork[]
-  @@schema("sakura")
+// ========== Филиал ==========
+model Branch {
+  id           Int      @id @default(autoincrement())
+  slug         String   @unique
+  name         String
+  address      String
+  phone        String
+  description  String?
+  latitude     Float
+  longitude    Float
+  coverImage   String?
+  tourUrl      String?
+  workingHours Json?
+  isActive     Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  saunas       Sauna[]
+  bookings     Booking[]
+  reviews      Review[]
 }
 
-model Service {
+// ========== Сауна ==========
+model Sauna {
+  id              Int      @id @default(autoincrement())
+  slug            String   @unique
+  name            String
+  type            String                              // "russian" | "finnish" | "hammam"
+  description     String?
+  capacity        Int
+  area            Float?
+  hasPool         Boolean  @default(false)
+  hasBBQ          Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+
+  // Настройки бронирования
+  cleaningMinutes Int      @default(60)               // буфер уборки после брони
+  minHours        Int      @default(2)                // минимум часов
+  openHour        Int      @default(0)                // 0-24, час открытия
+  closeHour       Int      @default(24)               // 0-24, час закрытия (24 = круглосуточно)
+
+  branchId        Int
+  branch          Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  images          SaunaImage[]
+  amenities       SaunaAmenity[]
+  prices          PriceSlot[]
+  bookings        Booking[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([branchId])
+}
+
+// ========== Фото сауны ==========
+model SaunaImage {
+  id        Int     @id @default(autoincrement())
+  url       String
+  alt       String?
+  sortOrder Int     @default(0)
+  saunaId   Int
+  sauna     Sauna   @relation(fields: [saunaId], references: [id], onDelete: Cascade)
+
+  @@index([saunaId])
+}
+
+// ========== Удобства сауны ==========
+model SaunaAmenity {
+  id      Int     @id @default(autoincrement())
+  name    String
+  icon    String?
+  saunaId Int
+  sauna   Sauna   @relation(fields: [saunaId], references: [id], onDelete: Cascade)
+
+  @@index([saunaId])
+}
+
+// ========== Цена за час по слотам ==========
+model PriceSlot {
+  id           Int    @id @default(autoincrement())
+  saunaId      Int
+  sauna        Sauna  @relation(fields: [saunaId], references: [id], onDelete: Cascade)
+  dayType      String                                // "weekday" | "weekend"
+  timeSlot     String                                // "day" | "evening" | "night"
+  pricePerHour Int
+  minHours     Int    @default(2)
+
+  @@unique([saunaId, dayType, timeSlot])
+  @@index([saunaId])
+}
+
+// ========== Акция ==========
+model Promotion {
   id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  price       Int
-  duration    Int       @default(30)
-  category    String?
+  slug        String    @unique
+  title       String
+  description String
+  image       String?
+  promoCode   String?
+  discount    Int?
+  startDate   DateTime
+  endDate     DateTime?
   isActive    Boolean   @default(true)
+  sortOrder   Int       @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  bookings    Booking[]
-  @@schema("sakura")
 }
 
+// ========== Бронирование ==========
 model Booking {
   id         Int      @id @default(autoincrement())
   clientName String
   phone      String
-  date       DateTime
-  time       String
+  startAt    DateTime
+  endAt      DateTime
+  guests     Int      @default(2)
   comment    String?
-  status     String   @default("new")
-  staffId    Int
-  staff      Staff    @relation(fields: [staffId], references: [id])
-  serviceId  Int
-  service    Service  @relation(fields: [serviceId], references: [id])
+  status     String   @default("new")                // "new" | "confirmed" | "cancelled" | "completed"
+  totalPrice Int?
   smsSent    Boolean  @default(false)
+
+  branchId   Int
+  branch     Branch   @relation(fields: [branchId], references: [id])
+  saunaId    Int
+  sauna      Sauna    @relation(fields: [saunaId], references: [id])
+
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  @@schema("sakura")
+
+  @@index([saunaId, startAt])
+  @@index([branchId, startAt])
+  @@index([status])
 }
 
-model PortfolioWork {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  beforePhoto String?
-  afterPhoto  String?
-  category    String?
-  staffId     Int
-  staff       Staff    @relation(fields: [staffId], references: [id])
-  createdAt   DateTime @default(now())
-  @@schema("sakura")
-}
-
+// ========== Отзыв ==========
 model Review {
   id         Int      @id @default(autoincrement())
   authorName String
   text       String
   rating     Int
-  source     String   @default("site")
+  source     String   @default("site")               // "site" | "2gis" | "yandex"
   sourceId   String?  @unique
+  branchId   Int?
+  branch     Branch?  @relation(fields: [branchId], references: [id])
   isApproved Boolean  @default(false)
   isVisible  Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  @@schema("sakura")
+
+  @@index([branchId])
+  @@index([isApproved, isVisible])
 }
