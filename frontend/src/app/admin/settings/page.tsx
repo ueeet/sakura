@@ -5,14 +5,16 @@ import { api } from "@/lib/api";
 import type { Settings } from "@/lib/types";
 
 export default function AdminSettingsPage() {
-  const [settings, setSettings] = useState<Settings | null>(null);
+  const [, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [form, setForm] = useState({
     companyName: "",
-    phone: "",
-    address: "",
+    mainPhone: "",
+    email: "",
+    vk: "",
+    instagram: "",
     telegramChatId: "",
     smsEnabled: false,
   });
@@ -23,8 +25,10 @@ export default function AdminSettingsPage() {
         setSettings(s);
         setForm({
           companyName: s.companyName,
-          phone: s.phone,
-          address: s.address,
+          mainPhone: s.mainPhone,
+          email: s.email,
+          vk: s.vk,
+          instagram: s.instagram,
           telegramChatId: s.telegramChatId,
           smsEnabled: s.smsEnabled,
         });
@@ -63,12 +67,20 @@ export default function AdminSettingsPage() {
           <input type="text" value={form.companyName} onChange={(e) => setForm({ ...form, companyName: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Телефон</label>
-          <input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Основной телефон</label>
+          <input type="tel" value={form.mainPhone} onChange={(e) => setForm({ ...form, mainPhone: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Адрес</label>
-          <input type="text" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+          <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ВКонтакте</label>
+          <input type="url" value={form.vk} onChange={(e) => setForm({ ...form, vk: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instagram</label>
+          <input type="url" value={form.instagram} onChange={(e) => setForm({ ...form, instagram: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Telegram Chat ID</label>
