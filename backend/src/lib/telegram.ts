@@ -55,14 +55,34 @@ export async function notifyNewBooking(booking: {
   id: number;
   clientName: string;
   phone: string;
-  date: Date;
-  time: string;
+  startAt: Date;
+  endAt: Date;
+  guests?: number;
+  totalPrice?: number | null;
+  branch?: { name: string } | null;
+  sauna?: { name: string } | null;
 }) {
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!bot || !chatId) return;
 
-  const dateStr = new Date(booking.date).toLocaleDateString("ru-RU");
-  const text = `Новая запись!\n\nИмя: ${booking.clientName}\nТелефон: ${booking.phone}\nДата: ${dateStr}\nВремя: ${booking.time}`;
+  const fmt = (d: Date) => new Date(d).toLocaleString("ru-RU", {
+    day: "2-digit", month: "2-digit", year: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  });
+
+  const lines = [
+    "Новая бронь!",
+    "",
+    `Имя: ${booking.clientName}`,
+    `Телефон: ${booking.phone}`,
+    booking.branch && `Филиал: ${booking.branch.name}`,
+    booking.sauna && `Сауна: ${booking.sauna.name}`,
+    `Начало: ${fmt(booking.startAt)}`,
+    `Конец: ${fmt(booking.endAt)}`,
+    booking.guests != null && `Гостей: ${booking.guests}`,
+    booking.totalPrice != null && `Сумма: ${booking.totalPrice}₽`,
+  ].filter(Boolean);
+  const text = lines.join("\n");
 
   try {
     await bot.telegram.sendMessage(chatId, text, {
