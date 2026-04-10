@@ -7,15 +7,12 @@ import { isAuthenticated, clearTokens } from "@/lib/api";
 import { SSEToast } from "@/components/admin/SSEToast";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
-  LayoutDashboard, Calendar, Users, Briefcase, Image, Star, Settings, LogOut, Menu, X,
+  LayoutDashboard, Calendar, Star, Settings, LogOut, Menu, X,
 } from "lucide-react";
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Дашборд" },
-  { href: "/admin/bookings", icon: Calendar, label: "Записи" },
-  { href: "/admin/staff", icon: Users, label: "Сотрудники" },
-  { href: "/admin/services", icon: Briefcase, label: "Услуги" },
-  { href: "/admin/portfolio", icon: Image, label: "Портфолио" },
+  { href: "/admin/bookings", icon: Calendar, label: "Брони" },
   { href: "/admin/reviews", icon: Star, label: "Отзывы" },
   { href: "/admin/settings", icon: Settings, label: "Настройки" },
 ];
