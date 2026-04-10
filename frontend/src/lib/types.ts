@@ -1,57 +1,155 @@
-export interface Staff {
+// ========== Branch ==========
+export interface Branch {
   id: number;
+  slug: string;
   name: string;
-  role: string;
-  experience: number;
-  photo: string | null;
+  address: string;
+  phone: string;
   description: string | null;
+  latitude: number;
+  longitude: number;
+  coverImage: string | null;
+  tourUrl: string | null;
+  workingHours: Record<string, unknown> | null;
   isActive: boolean;
-  schedule: Record<string, unknown> | null;
+  sortOrder: number;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Service {
+export interface BranchWithSaunas extends Branch {
+  categories: Array<SaunaCategory & { saunas: Sauna[] }>;
+  saunas: Sauna[];
+}
+
+// ========== SaunaCategory ==========
+export interface SaunaCategory {
   id: number;
+  slug: string;
   name: string;
-  description: string | null;
-  price: number;
-  duration: number;
-  category: string | null;
-  isActive: boolean;
+  branchId: number;
+  sortOrder: number;
   createdAt: string;
   updatedAt: string;
 }
+
+// ========== Sauna ==========
+export type SaunaType = "russian" | "finnish" | "hamam";
+export type SaunaSize = "small" | "large";
+
+export interface Sauna {
+  id: number;
+  slug: string;
+  name: string;
+  type: SaunaType;
+  typeLabel: string | null;
+  size: SaunaSize | null;
+  sizeLabel: string | null;
+  description: string | null;
+  capacity: number;
+  area: number | null;
+  poolSize: string | null;
+  hasBBQ: boolean;
+  mainImage: string | null;
+  images: string[] | null;
+  amenities: string[] | null;
+  extras: string[] | null;
+  isActive: boolean;
+  sortOrder: number;
+  cleaningMinutes: number;
+  minHours: number;
+  openHour: number;
+  closeHour: number;
+  branchId: number;
+  categoryId: number | null;
+  branch?: Pick<Branch, "id" | "slug" | "name">;
+  category?: Pick<SaunaCategory, "id" | "slug" | "name"> | null;
+  prices?: PriceSlot[];
+  priceFrom?: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ========== PriceSlot ==========
+export type DayType = "weekday" | "weekend";
+export type TimeSlot = "day" | "evening" | "night";
+
+export interface PriceSlot {
+  id: number;
+  saunaId: number;
+  dayType: DayType;
+  timeSlot: TimeSlot;
+  pricePerHour: number;
+  minHours: number;
+}
+
+// ========== Promotion ==========
+export interface Promotion {
+  id: number;
+  slug: string;
+  title: string;
+  description: string;
+  note: string | null;
+  icon: string | null;
+  image: string | null;
+  promoCode: string | null;
+  discount: number | null;
+  startDate: string | null;
+  endDate: string | null;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ========== Booking ==========
+export type BookingStatus = "new" | "confirmed" | "cancelled" | "completed";
 
 export interface Booking {
   id: number;
   clientName: string;
   phone: string;
-  date: string;
-  time: string;
+  startAt: string;
+  endAt: string;
+  guests: number;
   comment: string | null;
-  status: "new" | "confirmed" | "cancelled" | "completed";
-  staffId: number;
-  serviceId: number;
-  staff: Staff;
-  service: Service;
+  status: BookingStatus;
+  totalPrice: number | null;
   smsSent: boolean;
+  branchId: number;
+  saunaId: number;
+  branch?: Branch;
+  sauna?: Sauna;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface PortfolioWork {
-  id: number;
-  title: string;
-  description: string | null;
-  beforePhoto: string | null;
-  afterPhoto: string | null;
-  category: string | null;
-  staffId: number;
-  staff: Staff;
-  createdAt: string;
+// ========== Availability ==========
+export interface OccupiedInterval {
+  bookingId: number;
+  start: string;
+  end: string;
+  cleaningEnd: string;
 }
 
+export interface AvailabilitySlot {
+  hour: number;
+  available: boolean;
+  reason?: "booked" | "cleaning" | "closed";
+}
+
+export interface SaunaAvailability {
+  date: string;
+  saunaId: number;
+  openHour: number;
+  closeHour: number;
+  minHours: number;
+  cleaningMinutes: number;
+  occupied: OccupiedInterval[];
+  slots: AvailabilitySlot[];
+}
+
+// ========== Review ==========
 export interface Review {
   id: number;
   authorName: string;
@@ -59,27 +157,31 @@ export interface Review {
   rating: number;
   source: "site" | "2gis" | "yandex";
   sourceId: string | null;
+  branchId: number | null;
   isApproved: boolean;
   isVisible: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
+// ========== Settings ==========
 export interface Settings {
   id: number;
   companyName: string;
-  phone: string;
-  address: string;
-  workingHours: Record<string, unknown> | null;
+  mainPhone: string;
+  email: string;
+  vk: string;
+  instagram: string;
   telegramChatId: string;
   smsEnabled: boolean;
   updatedAt: string;
 }
 
+// ========== Stats ==========
 export interface Stats {
   bookings: { total: number; new: number; confirmed: number };
-  staff: number;
-  services: number;
-  portfolio: number;
+  branches: number;
+  saunas: number;
+  promotions: number;
   reviews: { total: number; pending: number };
 }
