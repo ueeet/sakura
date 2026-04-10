@@ -369,6 +369,9 @@ Response: [
 ]
 ```
 
+### GET `/bookings/:id/public`
+Публичный read-only эндпоинт для страницы статуса оплаты. Возвращает только безопасные поля брони (без админ-данных). Используется на `/booking/status`.
+
 ### POST `/bookings`
 Создание бронирования (публичный, rate-limit: 10/30мин).
 
@@ -376,15 +379,32 @@ Response: [
 Request: {
   "clientName": "string",
   "phone": "string",
-  "startAt": "2026-04-15T11:00:00.000Z",
-  "endAt": "2026-04-15T14:00:00.000Z",
+  "startAt": "2026-04-15T11:00:00",
+  "endAt": "2026-04-15T14:00:00",
   "guests": 6,
   "comment": "string?",
   "branchId": 1,
   "saunaId": 1,
-  "totalPrice": 4200
+  "totalPrice": 4200,
+  "paymentType": "deposit"  // или "full"
+}
+
+Response: {
+  "id": 1,
+  ...поля брони...,
+  "status": "pending_payment",
+  "paymentStatus": "pending",
+  "payment": {
+    "id": 1,
+    "externalId": "mock_xxxxxx",
+    "amount": 1260,
+    "type": "deposit",
+    "confirmationUrl": "http://localhost:3000/payment/mock_xxxxxx?return_url=..."
+  }
 }
 ```
+
+После получения ответа фронт делает `window.location = response.payment.confirmationUrl`.
 
 **Валидация:**
 - `startAt < endAt`
