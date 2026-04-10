@@ -77,6 +77,7 @@ app.use("/api/saunas", saunasRoutes);
 app.use("/api/prices", pricesRoutes);
 app.use("/api/promotions", promotionsRoutes);
 app.use("/api/bookings", bookingsRoutes);
+app.use("/api/payments", paymentsRoutes);
 app.use("/api/reviews", reviewsRoutes);
 
 // SSE
