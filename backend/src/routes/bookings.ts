@@ -107,8 +107,8 @@ router.put("/:id", requireAdmin, validate(updateBookingSchema), asyncHandler(asy
     });
     if (!existing) { res.status(404).json({ error: "Не найдено" }); return; }
 
-    const newStart = clean.startAt ? new Date(clean.startAt as string) : existing.startAt;
-    const newEnd = clean.endAt ? new Date(clean.endAt as string) : existing.endAt;
+    const newStart = clean.startAt ? parseMoscowDate(clean.startAt as string) : existing.startAt;
+    const newEnd = clean.endAt ? parseMoscowDate(clean.endAt as string) : existing.endAt;
 
     if (newStart >= newEnd) {
       res.status(400).json({ error: "Время окончания должно быть позже времени начала" });
