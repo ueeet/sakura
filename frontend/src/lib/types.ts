@@ -103,7 +103,8 @@ export interface Promotion {
 }
 
 // ========== Booking ==========
-export type BookingStatus = "new" | "confirmed" | "cancelled" | "completed";
+export type BookingStatus = "pending_payment" | "new" | "confirmed" | "cancelled" | "completed";
+export type PaymentStatus = "pending" | "deposit_paid" | "fully_paid" | "refunded";
 
 export interface Booking {
   id: number;
@@ -115,11 +116,37 @@ export interface Booking {
   comment: string | null;
   status: BookingStatus;
   totalPrice: number | null;
+  paymentStatus: PaymentStatus;
+  paidAmount: number;
   smsSent: boolean;
   branchId: number;
   saunaId: number;
   branch?: Branch;
   sauna?: Sauna;
+  payments?: Payment[];
+  payment?: Payment | null;          // возвращается в POST /bookings response
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ========== Payment ==========
+export type PaymentStatusType = "pending" | "succeeded" | "canceled";
+export type PaymentType = "deposit" | "full";
+
+export interface Payment {
+  id: number;
+  bookingId: number;
+  provider: "mock" | "yookassa";
+  externalId: string | null;
+  amount: number;
+  currency: string;
+  status: PaymentStatusType;
+  type: PaymentType;
+  paymentMethod: string | null;
+  confirmationUrl: string | null;
+  paidAt: string | null;
+  refundedAt: string | null;
+  refundedAmount: number | null;
   createdAt: string;
   updatedAt: string;
 }
