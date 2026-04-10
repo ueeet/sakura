@@ -57,6 +57,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/branches", branchesRoutes);
+app.use("/api/categories", categoriesRoutes);
 app.use("/api/saunas", saunasRoutes);
 app.use("/api/prices", pricesRoutes);
 app.use("/api/promotions", promotionsRoutes);
