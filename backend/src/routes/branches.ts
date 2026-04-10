@@ -9,6 +9,20 @@ import prisma from "../prismaClient";
 
 const router = Router();
 
+type SaunaWithRelations = {
+  id: number;
+  categoryId: number | null;
+  prices?: { pricePerHour: number }[];
+  [key: string]: unknown;
+};
+
+function withPriceFrom<T extends SaunaWithRelations>(s: T): T & { priceFrom: number | null } {
+  const min = s.prices && s.prices.length > 0
+    ? Math.min(...s.prices.map((p) => p.pricePerHour))
+    : null;
+  return { ...s, priceFrom: min };
+}
+
 router.get("/", asyncHandler(async (_req, res) => {
   const cacheKey = "branches:list";
   const cached = cacheGet(cacheKey);
@@ -26,19 +40,42 @@ router.get("/:slug", asyncHandler(async (req, res) => {
   const branch = await prisma.branch.findUnique({
     where: { slug: String(req.params.slug) },
     include: {
+      categories: {
+        orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
+      },
       saunas: {
         where: { isActive: true },
         orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
-        include: {
-          images: { orderBy: { sortOrder: "asc" } },
-          amenities: true,
-          prices: true,
-        },
+        include: { prices: true },
       },
     },
   });
   if (!branch) { res.status(404).json({ error: "Филиал не найден" }); return; }
-  res.json(branch);
+
+  const saunasWithPrice = branch.saunas.map(withPriceFrom);
+
+  // Если есть категории — группируем сауны по ним
+  if (branch.categories.length > 0) {
+    const grouped = branch.categories.map((cat) => ({
+      ...cat,
+      saunas: saunasWithPrice.filter((s) => s.categoryId === cat.id),
+    }));
+    // Сауны без категории (на всякий случай)
+    const uncategorized = saunasWithPrice.filter((s) => s.categoryId === null);
+    res.json({
+      ...branch,
+      categories: grouped,
+      saunas: uncategorized,
+    });
+    return;
+  }
+
+  // Без категорий — плоский массив
+  res.json({
+    ...branch,
+    categories: [],
+    saunas: saunasWithPrice,
+  });
 }));
 
 router.post("/", requireAdmin, validate(createBranchSchema), asyncHandler(async (req, res) => {
