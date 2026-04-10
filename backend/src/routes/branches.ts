@@ -24,7 +24,7 @@ router.get("/", asyncHandler(async (_req, res) => {
 
 router.get("/:slug", asyncHandler(async (req, res) => {
   const branch = await prisma.branch.findUnique({
-    where: { slug: req.params.slug },
+    where: { slug: String(req.params.slug) },
     include: {
       saunas: {
         where: { isActive: true },
