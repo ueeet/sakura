@@ -14,6 +14,7 @@ import logger from "./lib/logger";
 import { addSSEClient } from "./lib/sse";
 import { initTelegramBot } from "./lib/telegram";
 import { initReviewParser } from "./lib/reviewParser";
+import { initBookingCleanup } from "./lib/bookingCleanup";
 
 import authRoutes from "./routes/auth";
 import uploadRoutes from "./routes/upload";
