@@ -30,6 +30,15 @@ import reviewsRoutes from "./routes/reviews";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Все Date в JSON-ответах сериализуются с московским смещением (+03:00)
+app.set("json replacer", function (this: Record<string, unknown>, key: string, value: unknown) {
+  const original = this?.[key];
+  if (original instanceof Date) {
+    return formatMoscowISO(original);
+  }
+  return value;
+});
+
 // Безопасность
 app.use(helmet());
 app.use(cors({ origin: process.env.FRONTEND_URL || false, credentials: true }));
