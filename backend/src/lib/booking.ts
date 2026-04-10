@@ -127,8 +127,11 @@ export async function getSaunaAvailability(saunaId: number, dateISO: string) {
     else slots.push({ hour: h, available: true });
   }
 
+  // Возвращаем YYYY-MM-DD как пришло (без TZ-конверсии)
+  const dateStr = dateISO.slice(0, 10);
+
   return {
-    date: dayStart.toISOString().slice(0, 10),
+    date: dateStr,
     saunaId: sauna.id,
     openHour: sauna.openHour,
     closeHour: sauna.closeHour,
