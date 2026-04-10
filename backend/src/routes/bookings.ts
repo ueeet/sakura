@@ -39,8 +39,8 @@ router.get("/:id", requireAdmin, asyncHandler(async (req, res) => {
 
 router.post("/", validate(createBookingSchema), asyncHandler(async (req, res) => {
   const clean = sanitizeObject(req.body);
-  const startAt = new Date(clean.startAt as string);
-  const endAt = new Date(clean.endAt as string);
+  const startAt = parseMoscowDate(clean.startAt as string);
+  const endAt = parseMoscowDate(clean.endAt as string);
 
   if (Number.isNaN(startAt.getTime()) || Number.isNaN(endAt.getTime())) {
     res.status(400).json({ error: "Неверный формат даты" });
