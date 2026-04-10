@@ -2,7 +2,7 @@
 
 Base URL: `http://localhost:4000/api`
 
-Все ответы в JSON. Авторизация через `Authorization: Bearer <accessToken>` (только для admin-эндпоинтов).
+Все ответы JSON. Авторизация через `Authorization: Bearer <accessToken>` (для admin-эндпоинтов).
 
 ---
 
@@ -21,11 +21,7 @@ Response: { "accessToken": "string", "refreshToken": "string" }
 ```
 
 ### POST `/auth/setup`
-Создание первого админа (работает только если в БД нет ни одного админа).
-```json
-Request:  { "login": "string", "password": "string" }
-Response: { "accessToken": "string", "refreshToken": "string" }
-```
+Создание первого админа (только если БД пуста).
 
 ---
 
@@ -33,87 +29,118 @@ Response: { "accessToken": "string", "refreshToken": "string" }
 
 ### GET `/branches`
 Список активных филиалов (публичный, кеш 120с).
-```json
-Response: [
-  {
-    "id": 1,
-    "slug": "complex-9",
-    "name": "9-й комплекс (Новый город)",
-    "address": "пр-т Мира, 9/04А",
-    "phone": "+7 (8552) 782-000",
-    "description": "...",
-    "latitude": 55.7387,
-    "longitude": 52.4063,
-    "coverImage": null,
-    "tourUrl": null,
-    "workingHours": null,
-    "isActive": true,
-    "sortOrder": 1
-  }
-]
-```
 
 ### GET `/branches/:slug`
-Филиал по slug + все его сауны (с фото, удобствами, ценами).
+Филиал + сауны. **Если у филиала есть категории — сауны сгруппированы по ним.**
 
-### POST `/branches` (Admin)
 ```json
-Request: {
-  "slug": "string",
-  "name": "string",
-  "address": "string",
-  "phone": "string",
-  "description": "string?",
-  "latitude": 0,
-  "longitude": 0,
-  "coverImage": "string?",
-  "tourUrl": "string?",
-  "workingHours": {}?,
-  "sortOrder": 0
+Response: {
+  "id": 1,
+  "slug": "complex-9",
+  "name": "Сауна 9 комплекс",
+  "address": "пр. Мира, д. 9/04А",
+  "phone": "+7 (927) 465-1000",
+  "description": "...",
+  "latitude": 55.7387,
+  "longitude": 52.4063,
+  "categories": [
+    {
+      "id": 1,
+      "slug": "family",
+      "name": "Семейная сауна",
+      "sortOrder": 1,
+      "saunas": [ /* Sauna[] */ ]
+    },
+    {
+      "id": 2,
+      "slug": "regular",
+      "name": "Обычная сауна",
+      "sortOrder": 2,
+      "saunas": [ /* Sauna[] */ ]
+    }
+  ],
+  "saunas": []   // сауны без категории (пусто если все сгруппированы)
 }
 ```
 
-### PUT `/branches/:id` (Admin)
-### DELETE `/branches/:id` (Admin)
+Для филиала **без категорий** (например `complex-50`):
+```json
+Response: {
+  "id": 2,
+  "slug": "complex-50",
+  ...,
+  "categories": [],
+  "saunas": [ /* все сауны филиала */ ]
+}
+```
+
+### POST / PUT / DELETE `/branches[/:id]` (Admin) — CRUD
+
+---
+
+## Категории саун (SaunaCategory)
+
+### GET `/categories?branchId=1`
+Список категорий, опционально по филиалу.
+
+### POST `/categories` (Admin)
+```json
+Request: { "slug": "family", "name": "Семейная сауна", "branchId": 1, "sortOrder": 0 }
+```
+
+### PUT / DELETE `/categories/:id` (Admin)
 
 ---
 
 ## Сауны (Saunas)
 
 ### GET `/saunas`
-Список саун. Фильтры:
-- `?branchId=1` — только из конкретного филиала
-- `?type=russian|finnish|hammam` — по типу
+Фильтры: `?branchId=1`, `?categoryId=2`, `?type=russian|finnish|hamam`.
 
 ```json
 Response: [
   {
     "id": 1,
-    "slug": "russkaya-banya-1",
-    "name": "Русская баня №1",
-    "type": "russian",
+    "slug": "complex-9-family-1",
+    "name": "Сауна №1",
+    "type": "finnish",
+    "typeLabel": "Финская сауна",
+    "size": "small",
+    "sizeLabel": "С джакузи",
     "description": "...",
-    "capacity": 8,
-    "area": 60,
-    "hasPool": true,
-    "hasBBQ": true,
+    "capacity": 6,
+    "area": null,
+    "poolSize": null,
+    "hasBBQ": false,
+    "mainImage": "/images/saunas/complex-9/family/1/2.webp",
+    "images": ["/images/.../1.webp", "/images/.../2.webp"],
+    "amenities": ["Комната отдыха", "Сауна", "Wi-Fi", ...],
+    "extras": ["Массажное кресло"],
+    "isActive": true,
     "cleaningMinutes": 60,
     "minHours": 2,
     "openHour": 0,
     "closeHour": 24,
-    "branch": { "id": 1, "slug": "complex-9", "name": "9-й комплекс" },
-    "images": [{ "id": 1, "url": "...", "alt": "...", "sortOrder": 0 }],
-    "amenities": [{ "id": 1, "name": "Бассейн с гейзером", "icon": "waves" }],
-    "prices": [{ "dayType": "weekday", "timeSlot": "day", "pricePerHour": 1000, "minHours": 2 }]
+    "branchId": 1,
+    "categoryId": 1,
+    "branch": { "id": 1, "slug": "complex-9", "name": "Сауна 9 комплекс" },
+    "category": { "id": 1, "slug": "family", "name": "Семейная сауна" },
+    "prices": [
+      { "id": 1, "saunaId": 1, "dayType": "weekday", "timeSlot": "day", "pricePerHour": 800, "minHours": 2 },
+      ...
+    ],
+    "priceFrom": 800
   }
 ]
 ```
 
+`priceFrom` — минимальная цена за час среди всех ценовых слотов. Удобно для отображения "от 800₽".
+
 ### GET `/saunas/:slug`
-Сауна по slug со всеми связанными данными.
+Детальная сауна (по slug).
 
 ### GET `/saunas/:id/availability?date=YYYY-MM-DD`
-Занятые интервалы сауны на указанный день. Используется фронтом для отрисовки таймлайна и валидации формы бронирования.
+Занятые интервалы и почасовые слоты.
 
 ```json
 Response: {
@@ -127,117 +154,82 @@ Response: {
     {
       "bookingId": 12,
       "start": "2026-04-15T11:00:00.000Z",
-      "end":   "2026-04-15T14:00:00.000Z",
+      "end": "2026-04-15T14:00:00.000Z",
       "cleaningEnd": "2026-04-15T15:00:00.000Z"
     }
+  ],
+  "slots": [
+    { "hour": 0, "available": true },
+    { "hour": 1, "available": true },
+    ...
+    { "hour": 11, "available": false, "reason": "booked" },
+    { "hour": 12, "available": false, "reason": "booked" },
+    { "hour": 13, "available": false, "reason": "booked" },
+    { "hour": 14, "available": false, "reason": "cleaning" },
+    { "hour": 15, "available": true },
+    ...
   ]
 }
 ```
 
-`cleaningEnd = end + cleaningMinutes`. Любая новая бронь не должна пересекаться с интервалом `[start, cleaningEnd]`.
+`slots` — массив 24 элементов, по часам. `reason`:
+- `"booked"` — занято бронью
+- `"cleaning"` — занято уборкой
+- `"closed"` — вне рабочих часов сауны
 
-### POST `/saunas` (Admin)
-```json
-Request: {
-  "slug": "string",
-  "name": "string",
-  "type": "russian|finnish|hammam",
-  "description": "string?",
-  "capacity": 1,
-  "area": 0?,
-  "hasPool": false,
-  "hasBBQ": false,
-  "cleaningMinutes": 60,
-  "minHours": 2,
-  "openHour": 0,
-  "closeHour": 24,
-  "branchId": 1,
-  "sortOrder": 0
-}
-```
+### POST / PUT / DELETE `/saunas[/:id]` (Admin) — CRUD
 
-### PUT `/saunas/:id` (Admin)
-### DELETE `/saunas/:id` (Admin)
+POST принимает все поля сауны включая `images: string[]`, `amenities: string[]`, `extras: string[]`, `categoryId` (nullable).
 
 ---
 
 ## Цены (PriceSlot)
 
 ### GET `/prices?saunaId=1`
-Все ценовые слоты. Опционально фильтр по сауне.
+### POST / PUT / DELETE `/prices[/:id]` (Admin)
 
-```json
-Response: [
-  { "id": 1, "saunaId": 1, "dayType": "weekday", "timeSlot": "day", "pricePerHour": 1000, "minHours": 2 }
-]
-```
-
-`dayType`: `weekday` | `weekend`
+`dayType`: `weekday | weekend`
 `timeSlot`: `day` (09–15) | `evening` (15–00) | `night` (00–09)
-
-### POST `/prices` (Admin)
-```json
-Request: { "saunaId": 1, "dayType": "weekday", "timeSlot": "day", "pricePerHour": 1000, "minHours": 2 }
-```
-
-### PUT `/prices/:id` (Admin)
-### DELETE `/prices/:id` (Admin)
 
 ---
 
 ## Акции (Promotions)
 
 ### GET `/promotions`
-Активные акции (публичный, кеш 120с). Фильтрация по `isActive=true`, `startDate <= now`, `endDate >= now OR null`.
+Активные акции (публичный, кеш 120с).
 
 ```json
 Response: [
   {
     "id": 1,
-    "slug": "birthday-discount",
-    "title": "Скидка 10% в день рождения",
-    "description": "...",
+    "slug": "promo-1",
+    "title": "Сауны от 800 ₽",
+    "description": "С понедельника по пятницу с 9:00 до 15:00",
+    "note": "Кроме предпраздничных и праздничных выходных",
+    "icon": "flame",
     "image": null,
     "promoCode": null,
-    "discount": 10,
-    "startDate": "2026-01-01T00:00:00.000Z",
-    "endDate": "2026-12-31T00:00:00.000Z",
+    "discount": null,
+    "startDate": null,
+    "endDate": null,
     "isActive": true,
     "sortOrder": 1
   }
 ]
 ```
 
+`startDate` опциональна — для бессрочных акций. `icon` — имя иконки lucide (`flame`, `gift`, `cake`, ...).
+
 ### GET `/promotions/all` (Admin)
-Все акции, включая неактивные и просроченные.
-
 ### GET `/promotions/:slug`
-Акция по slug.
-
-### POST `/promotions` (Admin)
-```json
-Request: {
-  "slug": "string",
-  "title": "string",
-  "description": "string",
-  "image": "string?",
-  "promoCode": "string?",
-  "discount": 10?,
-  "startDate": "ISO date string",
-  "endDate": "ISO date string?",
-  "sortOrder": 0
-}
-```
-
-### PUT `/promotions/:id` (Admin)
-### DELETE `/promotions/:id` (Admin)
+### POST / PUT / DELETE `/promotions[/:id]` (Admin)
 
 ---
 
 ## Бронирования (Bookings)
 
 ### GET `/bookings` (Admin)
-Все бронирования. Фильтры: `?status=new|confirmed|cancelled|completed`, `?branchId=1`.
+Фильтры: `?status=...`, `?branchId=...`.
 
 ```json
 Response: [
@@ -252,14 +244,11 @@ Response: [
     "status": "new",
     "totalPrice": 4200,
     "smsSent": false,
-    "branch": {...},
-    "sauna": {...},
-    "createdAt": "..."
+    "branch": { /* Branch */ },
+    "sauna": { /* Sauna */ }
   }
 ]
 ```
-
-### GET `/bookings/:id` (Admin)
 
 ### POST `/bookings`
 Создание бронирования (публичный, rate-limit: 10/30мин).
@@ -278,78 +267,37 @@ Request: {
 }
 ```
 
-**Валидация на бэке:**
+**Валидация:**
 - `startAt < endAt`
-- `startAt > now` (нельзя в прошлом)
-- `endAt - startAt >= sauna.minHours` (минимум часов)
-- **Проверка конфликта:** новое время не должно пересекаться с `[existing.startAt, existing.endAt + cleaningMinutes]` других актуальных броней той же сауны
+- `startAt > now`
+- `endAt - startAt >= sauna.minHours`
+- Проверка конфликта: новое время не пересекается с `[existing.startAt, existing.endAt + cleaningMinutes]`
 
-**Возможные ошибки:**
-- `400` — `"Неверный формат даты"`, `"Время окончания должно быть позже времени начала"`, `"Нельзя бронировать в прошлом"`, `"Минимальное время бронирования — N ч."`
-- `404` — `"Сауна не найдена"`
-- **`409`** — `"Выбранное время уже занято"` ← конфликт с уборкой
+**Ошибки:**
+- `400` — валидация (`"Нельзя бронировать в прошлом"`, `"Минимальное время — N ч."`)
+- `404` — сауна не найдена
+- `409` — `"Выбранное время уже занято"` (конфликт)
 
-**Side effects при успехе:**
-1. SSE broadcast `new_booking` → админка обновляется
-2. Telegram-уведомление с inline-кнопками "Подтвердить"/"Отклонить"
-3. SMS клиенту через sms.ru
+**Side effects:** SSE broadcast → Telegram-уведомление → SMS клиенту.
 
 ### PUT `/bookings/:id` (Admin)
-```json
-Request: {
-  "status": "new|confirmed|cancelled|completed",
-  "startAt": "ISO?",
-  "endAt": "ISO?",
-  "guests": 0?,
-  "comment": "string?",
-  "totalPrice": 0?
-}
-```
-Если меняется `startAt`/`endAt` — те же проверки конфликта (исключая саму бронь). При смене статуса на `confirmed`/`cancelled` отправляется SMS.
+Обновление, включая смену времени (та же проверка конфликтов).
 
 ### DELETE `/bookings/:id` (Admin)
 
 ---
 
-## Отзывы (Reviews)
+## Отзывы / Загрузка / Стата / Настройки / SSE / Health
 
 ### GET `/reviews`
-Одобренные и видимые отзывы (публичный, кеш 120с).
+Одобренные отзывы (публичный).
 
-```json
-Response: [
-  { "id": 1, "authorName": "string", "text": "string", "rating": 5, "source": "site|2gis|yandex", "branchId": 1?, "createdAt": "..." }
-]
-```
-
-### GET `/reviews/all` (Admin)
-Все отзывы (включая не модерированные из 2GIS/Yandex).
-
-### PUT `/reviews/:id` (Admin)
-```json
-Request: { "isApproved": true, "isVisible": true }
-```
-
-### DELETE `/reviews/:id` (Admin)
-
----
-
-## Загрузка файлов
-
-### POST `/upload` (Admin)
-multipart/form-data, поле `file`. Картинка конвертится в WebP (600px, q=82) и заливается в Supabase Storage bucket `photos`.
-
-```json
-Response: { "url": "https://...supabase.co/storage/v1/object/public/photos/<filename>.webp" }
-```
-
----
-
-## Статистика
+### POST `/upload` (Admin) → `{ url }`
+multipart/form-data, поле `file`. Ресайз → WebP → Supabase Storage.
 
 ### GET `/stats` (Admin)
 ```json
-Response: {
+{
   "bookings": { "total": 0, "new": 0, "confirmed": 0 },
   "branches": 0,
   "saunas": 0,
@@ -358,42 +306,10 @@ Response: {
 }
 ```
 
----
+### GET / PUT `/settings` (Admin)
+Поля: `companyName`, `mainPhone`, `email`, `vk`, `instagram`, `telegramChatId`, `smsEnabled`.
 
-## Настройки
+### GET `/events` — SSE realtime
+События: `new_booking`, `booking_updated`, `booking_deleted`, `new_review`.
 
-### GET `/settings` (Admin)
-### PUT `/settings` (Admin)
-```json
-Request: {
-  "companyName": "string?",
-  "mainPhone": "string?",
-  "email": "string?",
-  "vk": "string?",
-  "instagram": "string?",
-  "telegramChatId": "string?",
-  "smsEnabled": true
-}
-```
-
----
-
-## SSE Realtime
-
-### GET `/events`
-Server-Sent Events stream. События:
-- `new_booking` — новая бронь
-- `booking_updated` — обновление брони (включая action из Telegram)
-- `booking_deleted` — удаление
-- `new_review` — новый отзыв (из парсера 2GIS/Yandex)
-
-Heartbeat каждые 30с.
-
----
-
-## Health
-
-### GET `/health`
-```json
-Response: { "status": "ok", "uptime": 123.45 }
-```
+### GET `/health` → `{ status: "ok", uptime }`
