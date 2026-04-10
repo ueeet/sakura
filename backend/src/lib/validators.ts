@@ -110,6 +110,7 @@ export const createBookingSchema = z.object({
   branchId: z.number().int().min(1),
   saunaId: z.number().int().min(1),
   totalPrice: z.number().int().min(0).optional(),
+  paymentType: z.enum(["deposit", "full"]).optional(),
 });
 
 export const updateBookingSchema = z.object({
