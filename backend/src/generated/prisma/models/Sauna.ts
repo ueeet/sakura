@@ -35,6 +35,7 @@ export type SaunaAvgAggregateOutputType = {
   minHours: number | null
   openHour: number | null
   closeHour: number | null
+  depositPercent: number | null
   branchId: number | null
   categoryId: number | null
 }
@@ -48,6 +49,7 @@ export type SaunaSumAggregateOutputType = {
   minHours: number | null
   openHour: number | null
   closeHour: number | null
+  depositPercent: number | null
   branchId: number | null
   categoryId: number | null
 }
@@ -72,6 +74,7 @@ export type SaunaMinAggregateOutputType = {
   minHours: number | null
   openHour: number | null
   closeHour: number | null
+  depositPercent: number | null
   branchId: number | null
   categoryId: number | null
   createdAt: Date | null
@@ -98,6 +101,7 @@ export type SaunaMaxAggregateOutputType = {
   minHours: number | null
   openHour: number | null
   closeHour: number | null
+  depositPercent: number | null
   branchId: number | null
   categoryId: number | null
   createdAt: Date | null
@@ -127,6 +131,7 @@ export type SaunaCountAggregateOutputType = {
   minHours: number
   openHour: number
   closeHour: number
+  depositPercent: number
   branchId: number
   categoryId: number
   createdAt: number
@@ -144,6 +149,7 @@ export type SaunaAvgAggregateInputType = {
   minHours?: true
   openHour?: true
   closeHour?: true
+  depositPercent?: true
   branchId?: true
   categoryId?: true
 }
@@ -157,6 +163,7 @@ export type SaunaSumAggregateInputType = {
   minHours?: true
   openHour?: true
   closeHour?: true
+  depositPercent?: true
   branchId?: true
   categoryId?: true
 }
@@ -181,6 +188,7 @@ export type SaunaMinAggregateInputType = {
   minHours?: true
   openHour?: true
   closeHour?: true
+  depositPercent?: true
   branchId?: true
   categoryId?: true
   createdAt?: true
@@ -207,6 +215,7 @@ export type SaunaMaxAggregateInputType = {
   minHours?: true
   openHour?: true
   closeHour?: true
+  depositPercent?: true
   branchId?: true
   categoryId?: true
   createdAt?: true
@@ -236,6 +245,7 @@ export type SaunaCountAggregateInputType = {
   minHours?: true
   openHour?: true
   closeHour?: true
+  depositPercent?: true
   branchId?: true
   categoryId?: true
   createdAt?: true
@@ -352,6 +362,7 @@ export type SaunaGroupByOutputType = {
   minHours: number
   openHour: number
   closeHour: number
+  depositPercent: number
   branchId: number
   categoryId: number | null
   createdAt: Date
@@ -404,6 +415,7 @@ export type SaunaWhereInput = {
   minHours?: Prisma.IntFilter<"Sauna"> | number
   openHour?: Prisma.IntFilter<"Sauna"> | number
   closeHour?: Prisma.IntFilter<"Sauna"> | number
+  depositPercent?: Prisma.IntFilter<"Sauna"> | number
   branchId?: Prisma.IntFilter<"Sauna"> | number
   categoryId?: Prisma.IntNullableFilter<"Sauna"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Sauna"> | Date | string
@@ -437,6 +449,7 @@ export type SaunaOrderByWithRelationInput = {
   minHours?: Prisma.SortOrder
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
+  depositPercent?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -473,6 +486,7 @@ export type SaunaWhereUniqueInput = Prisma.AtLeast<{
   minHours?: Prisma.IntFilter<"Sauna"> | number
   openHour?: Prisma.IntFilter<"Sauna"> | number
   closeHour?: Prisma.IntFilter<"Sauna"> | number
+  depositPercent?: Prisma.IntFilter<"Sauna"> | number
   branchId?: Prisma.IntFilter<"Sauna"> | number
   categoryId?: Prisma.IntNullableFilter<"Sauna"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Sauna"> | Date | string
@@ -506,6 +520,7 @@ export type SaunaOrderByWithAggregationInput = {
   minHours?: Prisma.SortOrder
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
+  depositPercent?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -543,6 +558,7 @@ export type SaunaScalarWhereWithAggregatesInput = {
   minHours?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
   openHour?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
   closeHour?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
+  depositPercent?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
   branchId?: Prisma.IntWithAggregatesFilter<"Sauna"> | number
   categoryId?: Prisma.IntNullableWithAggregatesFilter<"Sauna"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Sauna"> | Date | string
@@ -571,6 +587,7 @@ export type SaunaCreateInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutSaunasInput
@@ -602,6 +619,7 @@ export type SaunaUncheckedCreateInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   branchId: number
   categoryId?: number | null
   createdAt?: Date | string
@@ -632,6 +650,7 @@ export type SaunaUpdateInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutSaunasNestedInput
@@ -663,6 +682,7 @@ export type SaunaUncheckedUpdateInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -694,6 +714,7 @@ export type SaunaCreateManyInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   branchId: number
   categoryId?: number | null
   createdAt?: Date | string
@@ -722,6 +743,7 @@ export type SaunaUpdateManyMutationInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -749,6 +771,7 @@ export type SaunaUncheckedUpdateManyInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -788,6 +811,7 @@ export type SaunaCountOrderByAggregateInput = {
   minHours?: Prisma.SortOrder
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
+  depositPercent?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -803,6 +827,7 @@ export type SaunaAvgOrderByAggregateInput = {
   minHours?: Prisma.SortOrder
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
+  depositPercent?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
 }
@@ -827,6 +852,7 @@ export type SaunaMaxOrderByAggregateInput = {
   minHours?: Prisma.SortOrder
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
+  depositPercent?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -853,6 +879,7 @@ export type SaunaMinOrderByAggregateInput = {
   minHours?: Prisma.SortOrder
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
+  depositPercent?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -868,6 +895,7 @@ export type SaunaSumOrderByAggregateInput = {
   minHours?: Prisma.SortOrder
   openHour?: Prisma.SortOrder
   closeHour?: Prisma.SortOrder
+  depositPercent?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
 }
@@ -1027,6 +1055,7 @@ export type SaunaCreateWithoutBranchInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   category?: Prisma.SaunaCategoryCreateNestedOneWithoutSaunasInput
@@ -1057,6 +1086,7 @@ export type SaunaUncheckedCreateWithoutBranchInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1116,6 +1146,7 @@ export type SaunaScalarWhereInput = {
   minHours?: Prisma.IntFilter<"Sauna"> | number
   openHour?: Prisma.IntFilter<"Sauna"> | number
   closeHour?: Prisma.IntFilter<"Sauna"> | number
+  depositPercent?: Prisma.IntFilter<"Sauna"> | number
   branchId?: Prisma.IntFilter<"Sauna"> | number
   categoryId?: Prisma.IntNullableFilter<"Sauna"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Sauna"> | Date | string
@@ -1144,6 +1175,7 @@ export type SaunaCreateWithoutCategoryInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutSaunasInput
@@ -1174,6 +1206,7 @@ export type SaunaUncheckedCreateWithoutCategoryInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   branchId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1229,6 +1262,7 @@ export type SaunaCreateWithoutPricesInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutSaunasInput
@@ -1259,6 +1293,7 @@ export type SaunaUncheckedCreateWithoutPricesInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   branchId: number
   categoryId?: number | null
   createdAt?: Date | string
@@ -1304,6 +1339,7 @@ export type SaunaUpdateWithoutPricesInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutSaunasNestedInput
@@ -1334,6 +1370,7 @@ export type SaunaUncheckedUpdateWithoutPricesInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1363,6 +1400,7 @@ export type SaunaCreateWithoutBookingsInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutSaunasInput
@@ -1393,6 +1431,7 @@ export type SaunaUncheckedCreateWithoutBookingsInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   branchId: number
   categoryId?: number | null
   createdAt?: Date | string
@@ -1438,6 +1477,7 @@ export type SaunaUpdateWithoutBookingsInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutSaunasNestedInput
@@ -1468,6 +1508,7 @@ export type SaunaUncheckedUpdateWithoutBookingsInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1498,6 +1539,7 @@ export type SaunaCreateManyBranchInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   categoryId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1525,6 +1567,7 @@ export type SaunaUpdateWithoutBranchInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.SaunaCategoryUpdateOneWithoutSaunasNestedInput
@@ -1555,6 +1598,7 @@ export type SaunaUncheckedUpdateWithoutBranchInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1585,6 +1629,7 @@ export type SaunaUncheckedUpdateManyWithoutBranchInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1613,6 +1658,7 @@ export type SaunaCreateManyCategoryInput = {
   minHours?: number
   openHour?: number
   closeHour?: number
+  depositPercent?: number
   branchId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1640,6 +1686,7 @@ export type SaunaUpdateWithoutCategoryInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutSaunasNestedInput
@@ -1670,6 +1717,7 @@ export type SaunaUncheckedUpdateWithoutCategoryInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1700,6 +1748,7 @@ export type SaunaUncheckedUpdateManyWithoutCategoryInput = {
   minHours?: Prisma.IntFieldUpdateOperationsInput | number
   openHour?: Prisma.IntFieldUpdateOperationsInput | number
   closeHour?: Prisma.IntFieldUpdateOperationsInput | number
+  depositPercent?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1768,6 +1817,7 @@ export type SaunaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   minHours?: boolean
   openHour?: boolean
   closeHour?: boolean
+  depositPercent?: boolean
   branchId?: boolean
   categoryId?: boolean
   createdAt?: boolean
@@ -1802,6 +1852,7 @@ export type SaunaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   minHours?: boolean
   openHour?: boolean
   closeHour?: boolean
+  depositPercent?: boolean
   branchId?: boolean
   categoryId?: boolean
   createdAt?: boolean
@@ -1833,6 +1884,7 @@ export type SaunaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   minHours?: boolean
   openHour?: boolean
   closeHour?: boolean
+  depositPercent?: boolean
   branchId?: boolean
   categoryId?: boolean
   createdAt?: boolean
@@ -1864,13 +1916,14 @@ export type SaunaSelectScalar = {
   minHours?: boolean
   openHour?: boolean
   closeHour?: boolean
+  depositPercent?: boolean
   branchId?: boolean
   categoryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SaunaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "type" | "typeLabel" | "size" | "sizeLabel" | "description" | "capacity" | "area" | "poolSize" | "hasBBQ" | "mainImage" | "images" | "amenities" | "extras" | "isActive" | "sortOrder" | "cleaningMinutes" | "minHours" | "openHour" | "closeHour" | "branchId" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["sauna"]>
+export type SaunaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "type" | "typeLabel" | "size" | "sizeLabel" | "description" | "capacity" | "area" | "poolSize" | "hasBBQ" | "mainImage" | "images" | "amenities" | "extras" | "isActive" | "sortOrder" | "cleaningMinutes" | "minHours" | "openHour" | "closeHour" | "depositPercent" | "branchId" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["sauna"]>
 export type SaunaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
   category?: boolean | Prisma.Sauna$categoryArgs<ExtArgs>
@@ -1918,6 +1971,7 @@ export type $SaunaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     minHours: number
     openHour: number
     closeHour: number
+    depositPercent: number
     branchId: number
     categoryId: number | null
     createdAt: Date
@@ -2371,6 +2425,7 @@ export interface SaunaFieldRefs {
   readonly minHours: Prisma.FieldRef<"Sauna", 'Int'>
   readonly openHour: Prisma.FieldRef<"Sauna", 'Int'>
   readonly closeHour: Prisma.FieldRef<"Sauna", 'Int'>
+  readonly depositPercent: Prisma.FieldRef<"Sauna", 'Int'>
   readonly branchId: Prisma.FieldRef<"Sauna", 'Int'>
   readonly categoryId: Prisma.FieldRef<"Sauna", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Sauna", 'DateTime'>

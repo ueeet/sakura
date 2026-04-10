@@ -59,6 +59,7 @@ export const ModelName = {
   PriceSlot: 'PriceSlot',
   Promotion: 'Promotion',
   Booking: 'Booking',
+  Payment: 'Payment',
   Review: 'Review'
 } as const
 
@@ -162,6 +163,7 @@ export const SaunaScalarFieldEnum = {
   minHours: 'minHours',
   openHour: 'openHour',
   closeHour: 'closeHour',
+  depositPercent: 'depositPercent',
   branchId: 'branchId',
   categoryId: 'categoryId',
   createdAt: 'createdAt',
@@ -215,6 +217,8 @@ export const BookingScalarFieldEnum = {
   status: 'status',
   totalPrice: 'totalPrice',
   smsSent: 'smsSent',
+  paymentStatus: 'paymentStatus',
+  paidAmount: 'paidAmount',
   branchId: 'branchId',
   saunaId: 'saunaId',
   createdAt: 'createdAt',
@@ -222,6 +226,28 @@ export const BookingScalarFieldEnum = {
 } as const
 
 export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  provider: 'provider',
+  externalId: 'externalId',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  type: 'type',
+  paymentMethod: 'paymentMethod',
+  confirmationUrl: 'confirmationUrl',
+  paidAt: 'paidAt',
+  refundedAt: 'refundedAt',
+  refundedAmount: 'refundedAmount',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
 
 
 export const ReviewScalarFieldEnum = {

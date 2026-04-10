@@ -80,6 +80,11 @@ export type Promotion = Prisma.PromotionModel
  */
 export type Booking = Prisma.BookingModel
 /**
+ * Model Payment
+ * 
+ */
+export type Payment = Prisma.PaymentModel
+/**
  * Model Review
  * 
  */
