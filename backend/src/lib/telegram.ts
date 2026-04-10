@@ -66,10 +66,7 @@ export async function notifyNewBooking(booking: {
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!bot || !chatId) return;
 
-  const fmt = (d: Date) => new Date(d).toLocaleString("ru-RU", {
-    day: "2-digit", month: "2-digit", year: "numeric",
-    hour: "2-digit", minute: "2-digit",
-  });
+  const fmt = (d: Date) => formatMoscowHuman(d);
 
   const lines = [
     "Новая бронь!",
