@@ -35,7 +35,7 @@ router.get("/all", requireAdmin, asyncHandler(async (_req, res) => {
 }));
 
 router.get("/:slug", asyncHandler(async (req, res) => {
-  const item = await prisma.promotion.findUnique({ where: { slug: req.params.slug } });
+  const item = await prisma.promotion.findUnique({ where: { slug: String(req.params.slug) } });
   if (!item) { res.status(404).json({ error: "Акция не найдена" }); return; }
   res.json(item);
 }));
