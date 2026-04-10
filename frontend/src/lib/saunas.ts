@@ -10,6 +10,7 @@ export interface Sauna {
   amenities: string[];
   extras: string[];
   image: string;
+  images: string[];
 }
 
 export interface SaunaComplex {
@@ -46,7 +47,13 @@ const familySaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/family/1/2.png",
+    images: [
+      "/images/saunas/complex-9/family/1/1.png",
+      "/images/saunas/complex-9/family/1/2.png",
+      "/images/saunas/complex-9/family/1/3.png",
+      "/images/saunas/complex-9/family/1/4.png",
+    ],
   },
   {
     id: "family-2",
@@ -69,7 +76,13 @@ const familySaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/family/2/2.png",
+    images: [
+      "/images/saunas/complex-9/family/2/1.png",
+      "/images/saunas/complex-9/family/2/2.png",
+      "/images/saunas/complex-9/family/2/3.png",
+      "/images/saunas/complex-9/family/2/4.png",
+    ],
   },
   {
     id: "family-3",
@@ -92,7 +105,13 @@ const familySaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/family/3/3.png",
+    images: [
+      "/images/saunas/complex-9/family/3/1.png",
+      "/images/saunas/complex-9/family/3/2.png",
+      "/images/saunas/complex-9/family/3/3.png",
+      "/images/saunas/complex-9/family/3/4.png",
+    ],
   },
   {
     id: "family-4",
@@ -114,7 +133,13 @@ const familySaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/family/4/1.png",
+    images: [
+      "/images/saunas/complex-9/family/4/1.png",
+      "/images/saunas/complex-9/family/4/2.png",
+      "/images/saunas/complex-9/family/4/3.png",
+      "/images/saunas/complex-9/family/4/4.png",
+    ],
   },
   {
     id: "family-5",
@@ -136,7 +161,13 @@ const familySaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/family/5/1.png",
+    images: [
+      "/images/saunas/complex-9/family/5/1.png",
+      "/images/saunas/complex-9/family/5/2.png",
+      "/images/saunas/complex-9/family/5/3.png",
+      "/images/saunas/complex-9/family/5/4.png",
+    ],
   },
   {
     id: "family-6",
@@ -158,7 +189,13 @@ const familySaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/family/6/1.png",
+    images: [
+      "/images/saunas/complex-9/family/6/1.png",
+      "/images/saunas/complex-9/family/6/2.jpeg",
+      "/images/saunas/complex-9/family/6/3.png",
+      "/images/saunas/complex-9/family/6/4.jpeg",
+    ],
   },
   {
     id: "family-7",
@@ -181,7 +218,13 @@ const familySaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/family/7/1.png",
+    images: [
+      "/images/saunas/complex-9/family/7/1.png",
+      "/images/saunas/complex-9/family/7/2.png",
+      "/images/saunas/complex-9/family/7/3.png",
+      "/images/saunas/complex-9/family/7/4.png",
+    ],
   },
 ];
 
@@ -207,7 +250,13 @@ const regularSaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/regular/1/1.png",
+    images: [
+      "/images/saunas/complex-9/regular/1/1.png",
+      "/images/saunas/complex-9/regular/1/2.png",
+      "/images/saunas/complex-9/regular/1/3.png",
+      "/images/saunas/complex-9/regular/1/4.png",
+    ],
   },
   {
     id: "regular-2",
@@ -229,7 +278,13 @@ const regularSaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/regular/2/1.png",
+    images: [
+      "/images/saunas/complex-9/regular/2/1.png",
+      "/images/saunas/complex-9/regular/2/2.png",
+      "/images/saunas/complex-9/regular/2/3.png",
+      "/images/saunas/complex-9/regular/2/4.png",
+    ],
   },
   {
     id: "regular-3",
@@ -251,7 +306,13 @@ const regularSaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/regular/3/1.png",
+    images: [
+      "/images/saunas/complex-9/regular/3/1.png",
+      "/images/saunas/complex-9/regular/3/2.png",
+      "/images/saunas/complex-9/regular/3/3.png",
+      "/images/saunas/complex-9/regular/3/4.png",
+    ],
   },
   {
     id: "regular-4",
@@ -273,7 +334,13 @@ const regularSaunas9: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-9/regular/4/1.png",
+    images: [
+      "/images/saunas/complex-9/regular/4/1.png",
+      "/images/saunas/complex-9/regular/4/2.png",
+      "/images/saunas/complex-9/regular/4/3.png",
+      "/images/saunas/complex-9/regular/4/4.png",
+    ],
   },
 ];
 
@@ -299,7 +366,13 @@ const saunas50: Sauna[] = [
       "Тёплый пол",
     ],
     extras: ["Мангал и шашлычный двор", "Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-50/1/1.png",
+    images: [
+      "/images/saunas/complex-50/1/1.png",
+      "/images/saunas/complex-50/1/2.png",
+      "/images/saunas/complex-50/1/3.png",
+      "/images/saunas/complex-50/1/4.png",
+    ],
   },
   {
     id: "50-2",
@@ -322,7 +395,13 @@ const saunas50: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Уютный двор с мангалом", "Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-50/2/1.png",
+    images: [
+      "/images/saunas/complex-50/2/1.png",
+      "/images/saunas/complex-50/2/2.png",
+      "/images/saunas/complex-50/2/3.png",
+      "/images/saunas/complex-50/2/4.png",
+    ],
   },
   {
     id: "50-3",
@@ -344,7 +423,13 @@ const saunas50: Sauna[] = [
       "Тёплый пол",
     ],
     extras: ["Мангал и шашлычный двор", "Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-50/3/1.png",
+    images: [
+      "/images/saunas/complex-50/3/1.png",
+      "/images/saunas/complex-50/3/2.png",
+      "/images/saunas/complex-50/3/3.png",
+      "/images/saunas/complex-50/3/4.png",
+    ],
   },
   {
     id: "50-4",
@@ -366,7 +451,13 @@ const saunas50: Sauna[] = [
       "Микроволновая печь",
     ],
     extras: ["Мангал и шашлычный двор", "Массажное кресло"],
-    image: "/images/sauna-placeholder.jpg",
+    image: "/images/saunas/complex-50/4/1.png",
+    images: [
+      "/images/saunas/complex-50/4/1.png",
+      "/images/saunas/complex-50/4/2.png",
+      "/images/saunas/complex-50/4/3.png",
+      "/images/saunas/complex-50/4/4.png",
+    ],
   },
 ];
 

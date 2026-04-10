@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -12,15 +14,6 @@ const typeBadgeStyles: Record<Sauna["type"], string> = {
   russian: "bg-wood-dark/80 text-white",
   finnish: "bg-wood-dark/80 text-white",
   hamam: "bg-wood-dark/80 text-white",
-};
-
-const typeGradients: Record<Sauna["type"], string> = {
-  russian:
-    "bg-gradient-to-br from-wood/30 via-wood-light/20 to-wood/10",
-  finnish:
-    "bg-gradient-to-br from-forest/30 via-forest-light/20 to-forest/10",
-  hamam:
-    "bg-gradient-to-br from-blue-200/60 via-blue-100/40 to-blue-50/30 dark:from-blue-900/40 dark:via-blue-800/20 dark:to-blue-900/10",
 };
 
 const categories = complex9.categories!;
@@ -57,29 +50,19 @@ function SaunaCard({
         className="group block h-full"
       >
         <div className="flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-shadow duration-200 hover:shadow-md">
-          {/* Image placeholder */}
-          <div
-            className={`relative aspect-[3/2] ${typeGradients[sauna.type]}`}
-          >
-            <div className="absolute inset-0 flex items-center justify-center">
-              <svg
-                className="h-12 w-12 text-foreground/10"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                />
-              </svg>
-            </div>
+          {/* Image */}
+          <div className="relative aspect-[3/2] overflow-hidden bg-muted">
+            <Image
+              src={sauna.image}
+              alt={sauna.name}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
 
             {/* Badge */}
             <span
-              className={`absolute left-3 top-3 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeBadgeStyles[sauna.type]}`}
+              className={`absolute left-3 top-3 z-10 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeBadgeStyles[sauna.type]}`}
             >
               {sauna.typeLabel}
             </span>
@@ -119,10 +102,21 @@ function SaunaCard({
   );
 }
 
-export default function Complex9Page() {
-  const [activeTab, setActiveTab] = useState(saunaTabs[0].id);
+function Complex9Content() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabFromUrl = searchParams.get("tab");
+  const initialTab = saunaTabs.find((t) => t.id === tabFromUrl)?.id ?? saunaTabs[0].id;
+  const [activeTab, setActiveTab] = useState(initialTab);
   const activeCategory = categories.find((c) => c.id === activeTab)!;
   const activeSaunas = activeCategory.saunas;
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabId);
+    router.replace(`/complex-9?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -147,7 +141,7 @@ export default function Complex9Page() {
             {saunaTabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className="relative z-10 rounded-full px-6 py-2.5 text-sm font-medium transition-colors duration-200 sm:px-8 sm:text-base"
               >
                 {activeTab === tab.id && (
@@ -193,5 +187,19 @@ export default function Complex9Page() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function Complex9Page() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="text-muted-foreground">Загрузка…</div>
+        </div>
+      }
+    >
+      <Complex9Content />
+    </Suspense>
   );
 }

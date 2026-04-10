@@ -100,8 +100,10 @@ export function StarButton({
       />
       <div
         className="absolute inset-0 border-black/10 z-[4] overflow-hidden rounded-[inherit] text-white dark:text-black"
-        style={{ borderColor: "rgba(255,255,255,0.15)" }}
-        style={{ borderWidth: "var(--border-width)" }}
+        style={{
+          borderColor: "rgba(255,255,255,0.15)",
+          borderWidth: "var(--border-width)",
+        }}
         aria-hidden="true"
       >
         <StarBackground color={backgroundColor} />

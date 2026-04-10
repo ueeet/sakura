@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -11,7 +12,7 @@ import {
   CarouselIndicator,
 } from "@/components/ui/carousel";
 import { promotions } from "@/lib/saunas";
-import { Flame, Gift, Cake, ChevronDown, Phone, MapPin } from "lucide-react";
+import { Flame, Gift, Cake, ChevronDown, Phone, MapPin, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 const promoIcons: Record<string, React.ReactNode> = {
@@ -21,12 +22,12 @@ const promoIcons: Record<string, React.ReactNode> = {
 };
 
 const carouselSlides = [
-  { title: "Русская баня", gradient: "from-wood-dark to-wood" },
-  { title: "Финская сауна", gradient: "from-forest-dark to-forest" },
-  { title: "Турецкий хамам", gradient: "from-wood to-forest-dark" },
-  { title: "Бассейн", gradient: "from-forest to-wood-dark" },
-  { title: "Комната отдыха", gradient: "from-wood-light to-wood-dark" },
-  { title: "Шашлычная", gradient: "from-forest-light to-forest-dark" },
+  { title: "Русская баня", image: "/images/saunas/complex-9/family/2/1.png" },
+  { title: "Финская сауна", image: "/images/saunas/complex-9/family/1/1.png" },
+  { title: "Турецкий хамам", image: "/images/saunas/complex-9/family/4/1.png" },
+  { title: "Бассейн", image: "/images/saunas/complex-9/regular/1/1.png" },
+  { title: "Комната отдыха", image: "/images/saunas/complex-9/family/3/2.png" },
+  { title: "Шашлычная", image: "/images/saunas/complex-50/1/1.png" },
 ];
 
 const mapSrc = "https://yandex.ru/map-widget/v1/?ll=52.406%2C55.750&z=12&pt=52.389442,55.726188,pm2gnm1~52.422554,55.773935,pm2gnm2";
@@ -43,43 +44,84 @@ export default function HomePage() {
       <Header />
       <main>
         {/* ===== HERO ===== */}
-        <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b from-[#3d2b1f] to-[#1a3a2a]">
-          {/* Grid pattern overlay */}
+        <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black">
+          {/* Video background */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 h-full w-full object-cover"
+          >
+            <source src="/hero.mp4" type="video/mp4" />
+          </video>
+
+          {/* Base dark overlay */}
+          <div className="pointer-events-none absolute inset-0 bg-black/40" />
+
+          {/* Radial vignette — darker behind text */}
           <div
-            className="pointer-events-none absolute inset-0 opacity-[0.06]"
+            className="pointer-events-none absolute inset-0"
             style={{
-              backgroundImage:
-                "linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)",
-              backgroundSize: "60px 60px",
+              background:
+                "radial-gradient(ellipse 85% 70% at 50% 50%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0) 100%)",
+            }}
+          />
+
+          {/* Soft backdrop blur — concentrated behind text */}
+          <div
+            className="pointer-events-none absolute inset-0 backdrop-blur-[1.5px]"
+            style={{
+              maskImage:
+                "radial-gradient(ellipse 65% 50% at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 85%)",
+              WebkitMaskImage:
+                "radial-gradient(ellipse 65% 50% at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 85%)",
             }}
           />
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 30, scale: 1.1 }}
+            animate={{ opacity: 1, y: 0, scale: 1.1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="relative z-10 flex flex-col items-center px-4 text-center"
           >
-            <h1 className="font-heading text-7xl tracking-wider text-white md:text-9xl">
+            <h1
+              className="font-heading text-7xl tracking-wider text-white md:text-9xl"
+              style={{ textShadow: "0 4px 30px rgba(0,0,0,0.8), 0 2px 10px rgba(0,0,0,0.6)" }}
+            >
               САКУРА
             </h1>
 
-            <p className="mt-4 max-w-lg text-lg text-white/80 md:text-xl">
+            <p
+              className="mt-4 max-w-lg text-lg text-white/90 md:text-xl"
+              style={{ textShadow: "0 2px 12px rgba(0,0,0,0.8)" }}
+            >
               Крупнейшая сеть саун в Набережных Челнах
             </p>
 
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+            <div className="mt-10 flex flex-col gap-5 sm:flex-row">
+              {/* Primary — Dark forest */}
               <Link
                 href="/complex-9"
-                className="rounded-full bg-forest px-8 py-4 text-base font-medium text-white transition-colors hover:bg-forest-dark"
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-emerald-800 via-green-900 to-emerald-950 px-10 py-5 text-base font-semibold text-white shadow-[0_8px_30px_rgba(6,78,59,0.55)] ring-1 ring-white/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(6,78,59,0.75)] hover:brightness-110"
               >
-                Сауна 9 комплекс
+                {/* Shine sweep on hover */}
+                <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                <Flame className="h-5 w-5" />
+                <span className="relative">Сауна 9 комплекс</span>
+                <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
+
+              {/* Secondary — Dark wood brown */}
               <Link
                 href="/complex-50"
-                className="rounded-full border border-white/20 bg-white/5 px-8 py-4 text-base font-medium text-white transition-colors hover:bg-white/15"
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-900 via-stone-800 to-amber-950 px-10 py-5 text-base font-semibold text-white shadow-[0_8px_30px_rgba(68,40,20,0.6)] ring-1 ring-white/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(68,40,20,0.8)] hover:brightness-110"
               >
-                Сауна 50 комплекс
+                <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                <Flame className="h-5 w-5" />
+                <span className="relative">Сауна 50 комплекс</span>
+                <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
           </motion.div>
@@ -95,63 +137,73 @@ export default function HomePage() {
         </section>
 
         {/* ===== ABOUT ===== */}
-        <section id="about" className="py-20">
-          <div className="mx-auto max-w-6xl px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6 }}
-            >
-              <h2 className="font-heading text-4xl text-foreground md:text-5xl">
-                О Сакуре
-              </h2>
-              <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-                «Сакура» — крупнейшая сеть саун в Набережных Челнах. Мы
-                предлагаем русские бани, финские сауны и турецкие хамамы для
-                любого формата отдыха: от камерного семейного вечера до большой
-                дружеской компании. Комфортные бассейны, уютные комнаты отдыха и
-                внимательный сервис — все, что нужно для полного расслабления.
-              </p>
-            </motion.div>
+        <section id="about" className="overflow-hidden py-20">
+          <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
+            <div className="grid grid-cols-1 items-center gap-28 md:grid-cols-2 md:gap-36">
+              {/* Left — text */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6 }}
+              >
+                <h2 className="font-heading text-4xl text-foreground md:text-5xl">
+                  О Сакуре
+                </h2>
+                <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+                  «Сакура» — крупнейшая сеть саун в Набережных Челнах. Мы
+                  предлагаем русские бани, финские сауны и турецкие хамамы для
+                  любого формата отдыха: от камерного семейного вечера до
+                  большой дружеской компании. Комфортные бассейны, уютные
+                  комнаты отдыха и внимательный сервис — все, что нужно для
+                  полного расслабления.
+                </p>
+              </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative mt-12"
-            >
-              <Carousel>
-                <CarouselContent className="gap-4">
-                  {carouselSlides.map((slide) => (
-                    <CarouselItem
-                      key={slide.title}
-                      className="basis-full px-1 sm:basis-[45%] lg:basis-[40%]"
-                    >
-                      <div
-                        className={`flex aspect-[4/3] items-end rounded-xl bg-gradient-to-br ${slide.gradient} p-6`}
-                      >
-                        <span className="text-xl font-semibold text-white drop-shadow-md">
-                          {slide.title}
-                        </span>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselNavigation
-                  alwaysShow
-                  classNameButton="bg-forest *:stroke-white dark:bg-forest dark:*:stroke-white"
-                />
-                <CarouselIndicator className="mt-4 relative" />
-              </Carousel>
-            </motion.div>
+              {/* Right — single-slide carousel */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="relative"
+              >
+                <Carousel>
+                  <CarouselContent>
+                    {carouselSlides.map((slide) => (
+                      <CarouselItem key={slide.title} className="basis-full">
+                        <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted shadow-lg">
+                          <Image
+                            src={slide.image}
+                            alt={slide.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            className="object-cover"
+                          />
+                          {/* Gradient overlay for text */}
+                          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                          <span className="absolute bottom-5 left-6 text-2xl font-semibold text-white drop-shadow-lg">
+                            {slide.title}
+                          </span>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselNavigation
+                    alwaysShow
+                    className="-left-16 w-[calc(100%+8rem)] md:-left-20 md:w-[calc(100%+10rem)]"
+                    classNameButton="bg-forest/90 backdrop-blur *:stroke-white dark:bg-forest/90 dark:*:stroke-white shadow-lg"
+                  />
+                  <CarouselIndicator className="mt-4 relative" />
+                </Carousel>
+              </motion.div>
+            </div>
           </div>
         </section>
 
         {/* ===== PROMOTIONS ===== */}
-        <section id="promotions" className="py-28">
-          <div className="mx-auto max-w-6xl px-4">
+        <section id="promotions" className="overflow-hidden py-28">
+          <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -195,8 +247,8 @@ export default function HomePage() {
         </section>
 
         {/* ===== CONTACTS ===== */}
-        <section id="contacts" className="py-20">
-          <div className="mx-auto max-w-6xl px-4">
+        <section id="contacts" className="overflow-hidden py-20">
+          <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}

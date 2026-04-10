@@ -1,27 +1,22 @@
 "use client";
-import { use } from "react";
+import { use, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Plus, Phone, ArrowLeft, ChevronRight } from "lucide-react";
+import { Plus, Phone, ArrowLeft, ChevronRight, Check } from "lucide-react";
 import { BookingPicker } from "@/components/BookingPicker";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { complex9, type Sauna } from "@/lib/saunas";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ReviewFilterGroup, ReviewFilterItem } from "@/components/ui/review-filter-bars";
-
-const placeholderImages = [
-  "from-wood-dark via-wood to-wood-light",
-  "from-forest-dark via-forest to-forest-light",
-  "from-wood via-forest-dark to-wood-dark",
-  "from-forest via-wood to-forest-dark",
-];
+import { Lightbox } from "@/components/ui/lightbox";
 
 export default function Complex9DetailPage(props: {
   params: Promise<{ category: string; id: string }>;
 }) {
   const params = use(props.params);
   const { category, id } = params;
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const categoryData = complex9.categories?.find((c) => c.id === category);
   const sauna = categoryData?.saunas.find((s) => s.id === id);
@@ -106,21 +101,38 @@ export default function Complex9DetailPage(props: {
         {/* Photo Gallery — 2x2 grid */}
         <section className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-2 gap-4">
-            {placeholderImages.map((gradient, i) => (
-              <motion.div
-                key={i}
+            {sauna.images.map((src, i) => (
+              <motion.button
+                type="button"
+                key={src}
+                onClick={() => setLightboxIndex(i)}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
-                className={`aspect-[16/10] rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center`}
+                whileHover={{ scale: 1.02 }}
+                className="group relative aspect-[16/10] cursor-zoom-in overflow-hidden rounded-2xl bg-muted"
               >
-                <svg className="h-12 w-12 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                </svg>
-              </motion.div>
+                <Image
+                  src={src}
+                  alt={`${sauna.name} — фото ${i + 1}`}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 40vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  priority={i === 0}
+                />
+                <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
+              </motion.button>
             ))}
           </div>
         </section>
+
+        <Lightbox
+          images={sauna.images}
+          openIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onChangeIndex={setLightboxIndex}
+          alt={sauna.name}
+        />
 
         {/* Content */}
         <section className="container mx-auto px-4 py-10 md:py-14">
@@ -146,11 +158,12 @@ export default function Complex9DetailPage(props: {
                   {sauna.amenities.map((amenity) => (
                     <div
                       key={amenity}
-                      className="rounded-lg bg-muted/50 px-4 py-3"
+                      className="flex items-center gap-3 rounded-lg bg-muted/50 px-4 py-3"
                     >
-                      <Checkbox checked={true} disabled>
-                        {amenity}
-                      </Checkbox>
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-600/20 ring-1 ring-emerald-500/40">
+                        <Check className="h-4 w-4 text-emerald-400" strokeWidth={3} />
+                      </span>
+                      <span className="text-sm">{amenity}</span>
                     </div>
                   ))}
                 </div>

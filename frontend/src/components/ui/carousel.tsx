@@ -17,6 +17,8 @@ export type CarouselContextType = {
   setIndex: (newIndex: number) => void;
   itemsCount: number;
   setItemsCount: (newItemsCount: number) => void;
+  visibleItemsCount: number;
+  setVisibleItemsCount: (n: number) => void;
   disableDrag: boolean;
 };
 
@@ -47,6 +49,7 @@ function CarouselProvider({
 }: CarouselProviderProps) {
   const [index, setIndex] = useState<number>(initialIndex);
   const [itemsCount, setItemsCount] = useState<number>(0);
+  const [visibleItemsCount, setVisibleItemsCount] = useState<number>(1);
 
   const handleSetIndex = (newIndex: number) => {
     setIndex(newIndex);
@@ -64,6 +67,8 @@ function CarouselProvider({
         setIndex: handleSetIndex,
         itemsCount,
         setItemsCount,
+        visibleItemsCount,
+        setVisibleItemsCount,
         disableDrag,
       }}
     >
@@ -123,8 +128,10 @@ function CarouselNavigation({
   className,
   classNameButton,
   alwaysShow,
-}: CarouselNavigationProps) {
-  const { index, setIndex, itemsCount } = useCarousel();
+  loop = false,
+}: CarouselNavigationProps & { loop?: boolean }) {
+  const { index, setIndex, itemsCount, visibleItemsCount } = useCarousel();
+  const maxIndex = Math.max(0, itemsCount - visibleItemsCount);
 
   return (
     <div
@@ -146,10 +153,12 @@ function CarouselNavigation({
             : 'group-hover/hover:disabled:opacity-40',
           classNameButton
         )}
-        disabled={index === 0}
+        disabled={!loop && index === 0}
         onClick={() => {
           if (index > 0) {
             setIndex(index - 1);
+          } else if (loop) {
+            setIndex(maxIndex);
           }
         }}
       >
@@ -171,10 +180,12 @@ function CarouselNavigation({
           classNameButton
         )}
         aria-label='Next slide'
-        disabled={index + 1 === itemsCount}
+        disabled={!loop && index >= maxIndex}
         onClick={() => {
-          if (index < itemsCount - 1) {
+          if (index < maxIndex) {
             setIndex(index + 1);
+          } else if (loop) {
+            setIndex(0);
           }
         }}
       >
@@ -196,7 +207,8 @@ function CarouselIndicator({
   className,
   classNameButton,
 }: CarouselIndicatorProps) {
-  const { index, itemsCount, setIndex } = useCarousel();
+  const { index, itemsCount, visibleItemsCount, setIndex } = useCarousel();
+  const dotsCount = Math.max(1, itemsCount - visibleItemsCount + 1);
 
   return (
     <div
@@ -206,7 +218,7 @@ function CarouselIndicator({
       )}
     >
       <div className='flex space-x-2'>
-        {Array.from({ length: itemsCount }, (_, i) => (
+        {Array.from({ length: dotsCount }, (_, i) => (
           <button
             key={i}
             type='button'
@@ -237,8 +249,14 @@ function CarouselContent({
   className,
   transition,
 }: CarouselContentProps) {
-  const { index, setIndex, setItemsCount, disableDrag } = useCarousel();
-  const [visibleItemsCount, setVisibleItemsCount] = useState(1);
+  const {
+    index,
+    setIndex,
+    setItemsCount,
+    visibleItemsCount,
+    setVisibleItemsCount,
+    disableDrag,
+  } = useCarousel();
   const dragX = useMotionValue(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const itemsLength = Children.count(children);
@@ -274,10 +292,12 @@ function CarouselContent({
     setItemsCount(itemsLength);
   }, [itemsLength, setItemsCount]);
 
+  const maxIndex = Math.max(0, itemsLength - visibleItemsCount);
+
   const onDragEnd = () => {
     const x = dragX.get();
 
-    if (x <= -10 && index < itemsLength - 1) {
+    if (x <= -10 && index < maxIndex) {
       setIndex(index + 1);
     } else if (x >= 10 && index > 0) {
       setIndex(index - 1);
