@@ -1,3 +1,6 @@
+// Все даты в API трактуются как Московское время — см. lib/timezone.ts
+process.env.TZ = "Europe/Moscow";
+
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -6,6 +9,7 @@ import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 dotenv.config();
 
+import { formatMoscowISO } from "./lib/timezone";
 import logger from "./lib/logger";
 import { addSSEClient } from "./lib/sse";
 import { initTelegramBot } from "./lib/telegram";
