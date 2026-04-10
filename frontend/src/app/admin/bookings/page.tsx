@@ -84,6 +84,7 @@ export default function AdminBookingsPage() {
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Филиал</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Сауна</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Сумма</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500">Оплата</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Статус</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Действия</th>
               </tr>
