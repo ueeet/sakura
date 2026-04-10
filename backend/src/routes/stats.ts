@@ -10,27 +10,27 @@ router.get("/", requireAdmin, asyncHandler(async (_req, res) => {
     totalBookings,
     newBookings,
     confirmedBookings,
-    staffCount,
-    servicesCount,
-    portfolioCount,
+    branchesCount,
+    saunasCount,
+    promotionsCount,
     totalReviews,
     pendingReviews,
   ] = await Promise.all([
     prisma.booking.count(),
     prisma.booking.count({ where: { status: "new" } }),
     prisma.booking.count({ where: { status: "confirmed" } }),
-    prisma.staff.count({ where: { isActive: true } }),
-    prisma.service.count({ where: { isActive: true } }),
-    prisma.portfolioWork.count(),
+    prisma.branch.count({ where: { isActive: true } }),
+    prisma.sauna.count({ where: { isActive: true } }),
+    prisma.promotion.count({ where: { isActive: true } }),
     prisma.review.count(),
     prisma.review.count({ where: { isApproved: false } }),
   ]);
 
   res.json({
     bookings: { total: totalBookings, new: newBookings, confirmed: confirmedBookings },
-    staff: staffCount,
-    services: servicesCount,
-    portfolio: portfolioCount,
+    branches: branchesCount,
+    saunas: saunasCount,
+    promotions: promotionsCount,
     reviews: { total: totalReviews, pending: pendingReviews },
   });
 }));
