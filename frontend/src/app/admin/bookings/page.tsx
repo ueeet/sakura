@@ -133,7 +133,7 @@ export default function AdminBookingsPage() {
               ))}
               {bookings.length === 0 && (
                 <tr>
-                  <td colSpan={11} className="px-4 py-8 text-center text-gray-500">Броней пока нет</td>
+                  <td colSpan={12} className="px-4 py-8 text-center text-gray-500">Броней пока нет</td>
                 </tr>
               )}
             </tbody>
