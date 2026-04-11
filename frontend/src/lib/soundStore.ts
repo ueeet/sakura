@@ -67,8 +67,9 @@ export function useSoundSettings() {
 }
 
 /**
- * Мягкое мелодичное уведомление через Web Audio API:
- * 3 ноты с медленной атакой, длинным затуханием и low-pass фильтром.
+ * Звонкое короткое уведомление (~0.7 сек) через Web Audio API.
+ * Колокольчик из 2 нот, каждая = синусоида + октавная гармоника.
+ * Low-pass фильтр срезает резкость на верхах.
  */
 export function playNotificationSound(vol: number) {
   if (vol <= 0) return;
@@ -81,44 +82,56 @@ export function playNotificationSound(vol: number) {
     const ctx = new AudioCtx();
     const now = ctx.currentTime;
 
+    // Low-pass на ~4кГц убирает звенящие верхи, оставляя яркость
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.value = 2400;
-    filter.Q.value = 0.7;
+    filter.frequency.value = 4000;
+    filter.Q.value = 0.5;
 
     const master = ctx.createGain();
-    master.gain.value = 0.5 * vol;
+    master.gain.value = 0.55 * vol;
 
     filter.connect(master);
     master.connect(ctx.destination);
 
+    // Две ноты: A5 → C#6 (мажорная терция, светлая)
     const notes = [
-      { freq: 740, start: 0.0, peak: 0.32, dur: 1.4 },
-      { freq: 880, start: 0.22, peak: 0.3, dur: 1.4 },
-      { freq: 1109, start: 0.44, peak: 0.28, dur: 1.6 },
+      { freq: 880, start: 0.0, peak: 0.4, dur: 0.5 }, // A5
+      { freq: 1175, start: 0.18, peak: 0.4, dur: 0.52 }, // D6
     ];
 
     for (const n of notes) {
+      const t0 = now + n.start;
+      const tEnd = t0 + n.dur;
+
+      // Основной тон
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = "sine";
       osc.frequency.value = n.freq;
       osc.connect(gain);
       gain.connect(filter);
-
-      const t0 = now + n.start;
-      const tEnd = t0 + n.dur;
-
       gain.gain.setValueAtTime(0, t0);
-      gain.gain.linearRampToValueAtTime(n.peak, t0 + 0.08);
-      gain.gain.linearRampToValueAtTime(n.peak * 0.5, t0 + 0.35);
+      gain.gain.linearRampToValueAtTime(n.peak, t0 + 0.012); // быстрая атака
       gain.gain.exponentialRampToValueAtTime(0.0001, tEnd);
-
       osc.start(t0);
       osc.stop(tEnd);
+
+      // Октавная гармоника — добавляет звонкости как у колокола
+      const harm = ctx.createOscillator();
+      const harmGain = ctx.createGain();
+      harm.type = "sine";
+      harm.frequency.value = n.freq * 2;
+      harm.connect(harmGain);
+      harmGain.connect(filter);
+      harmGain.gain.setValueAtTime(0, t0);
+      harmGain.gain.linearRampToValueAtTime(n.peak * 0.35, t0 + 0.012);
+      harmGain.gain.exponentialRampToValueAtTime(0.0001, tEnd * 0.95);
+      harm.start(t0);
+      harm.stop(tEnd);
     }
 
-    setTimeout(() => ctx.close().catch(() => {}), 2400);
+    setTimeout(() => ctx.close().catch(() => {}), 900);
   } catch {
     // ignore
   }
