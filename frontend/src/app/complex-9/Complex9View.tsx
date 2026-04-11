@@ -205,6 +205,7 @@ function Complex9Inner({ branch }: { branch: BranchWithSaunas }) {
                 sauna={sauna}
                 categorySlug={activeCategory?.slug ?? ""}
                 index={i}
+                onBook={setBookingSauna}
               />
             ))}
           </motion.div>
