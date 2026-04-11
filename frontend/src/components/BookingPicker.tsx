@@ -622,16 +622,30 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
               className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-forest"
             />
           </div>
-          <div className="relative">
-            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="tel"
-              required
-              placeholder="+7 (___) ___-__-__"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-forest"
-            />
+          <div>
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="tel"
+                required
+                inputMode="tel"
+                placeholder="+7 (___) ___-__-__"
+                value={phone}
+                onChange={(e) => setPhone(formatPhoneInput(e.target.value))}
+                className={`w-full rounded-lg border bg-background pl-9 pr-3 py-2.5 text-sm focus:outline-none transition-colors ${
+                  phone.length === 0
+                    ? "border-border focus:border-forest"
+                    : phoneValid
+                      ? "border-emerald-500/40 focus:border-forest"
+                      : "border-red-500/40 focus:border-red-500"
+                }`}
+              />
+            </div>
+            {phone.length > 0 && !phoneValid && (
+              <p className="mt-1 text-[11px] text-red-400">
+                Введите номер из 11 цифр (начиная с +7, 7 или 8)
+              </p>
+            )}
           </div>
           <textarea
             placeholder="Комментарий (необязательно)"
