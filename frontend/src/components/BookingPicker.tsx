@@ -502,7 +502,7 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
         <div>
           <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
             <Clock className="h-3 w-3" />
-            Доступные часы (выберите начало → конец)
+            Один клик — 1 час, второй клик — расширить диапазон
           </div>
           {renderSlots()}
           <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-muted-foreground">
