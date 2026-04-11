@@ -4,25 +4,41 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { onSSE } from "@/lib/sse";
 import type { Booking } from "@/lib/types";
-import { Check, X, Trash2 } from "lucide-react";
+import { Check, X, Trash2, Loader2 } from "lucide-react";
 
 const statusLabels: Record<string, { label: string; class: string }> = {
-  pending_payment: { label: "Ожидает оплаты", class: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" },
-  new: { label: "Новая", class: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" },
-  confirmed: { label: "Подтверждена", class: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" },
-  cancelled: { label: "Отменена", class: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" },
-  completed: { label: "Завершена", class: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400" },
+  pending_payment: {
+    label: "Ожидает оплаты",
+    class: "bg-amber-500/15 text-amber-400 border border-amber-500/30",
+  },
+  new: {
+    label: "Новая",
+    class: "bg-blue-500/15 text-blue-400 border border-blue-500/30",
+  },
+  confirmed: {
+    label: "Подтверждена",
+    class: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
+  },
+  cancelled: {
+    label: "Отменена",
+    class: "bg-red-500/15 text-red-400 border border-red-500/30",
+  },
+  completed: {
+    label: "Завершена",
+    class: "bg-muted text-muted-foreground border border-border",
+  },
 };
 
 const paymentStatusLabels: Record<string, { label: string; class: string }> = {
-  pending: { label: "—", class: "text-gray-400" },
-  deposit_paid: { label: "Депозит", class: "text-blue-600 dark:text-blue-400" },
-  fully_paid: { label: "Полная", class: "text-green-600 dark:text-green-400" },
-  refunded: { label: "Возврат", class: "text-red-600 dark:text-red-400" },
+  pending: { label: "—", class: "text-muted-foreground" },
+  deposit_paid: { label: "Депозит", class: "text-blue-400" },
+  fully_paid: { label: "Полная", class: "text-emerald-400" },
+  refunded: { label: "Возврат", class: "text-red-400" },
 };
 
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString("ru-RU", {
+    timeZone: "Europe/Moscow",
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -41,7 +57,11 @@ export default function AdminBookingsPage() {
   const [loading, setLoading] = useState(true);
 
   const loadBookings = () => {
-    api.get<Booking[]>("/bookings").then(setBookings).catch(() => {}).finally(() => setLoading(false));
+    api
+      .get<Booking[]>("/bookings")
+      .then(setBookings)
+      .catch(() => {})
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -64,51 +84,78 @@ export default function AdminBookingsPage() {
     } catch {}
   };
 
-  if (loading) return <div className="text-gray-500">Загрузка...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Брони</h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-foreground">Брони</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {bookings.length === 0
+            ? "Броней пока нет"
+            : `Всего: ${bookings.length}`}
+        </p>
+      </div>
 
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-800">
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Клиент</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Телефон</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Начало</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Конец</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Часов</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Гостей</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Филиал</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Сауна</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Сумма</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Оплата</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Статус</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">Действия</th>
+              <tr className="border-b border-border bg-muted/30">
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Клиент</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Телефон</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Начало</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Конец</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Часов</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Гостей</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Филиал</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Сауна</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Сумма</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Оплата</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Статус</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Действия</th>
               </tr>
             </thead>
             <tbody>
               {bookings.map((b) => (
-                <tr key={b.id} className="border-b border-gray-100 dark:border-gray-800 last:border-0">
-                  <td className="px-4 py-3 text-gray-900 dark:text-white font-medium">{b.clientName}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.phone}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatDateTime(b.startAt)}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatDateTime(b.endAt)}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatHours(b.startAt, b.endAt)} ч</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.guests}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.branch?.name}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.sauna?.name}</td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{b.totalPrice ? `${b.totalPrice}₽` : "—"}</td>
+                <tr
+                  key={b.id}
+                  className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors"
+                >
+                  <td className="px-4 py-3 text-foreground font-medium">{b.clientName}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{b.phone}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{formatDateTime(b.startAt)}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{formatDateTime(b.endAt)}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{formatHours(b.startAt, b.endAt)} ч</td>
+                  <td className="px-4 py-3 text-muted-foreground">{b.guests}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{b.branch?.name}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{b.sauna?.name}</td>
+                  <td className="px-4 py-3 text-foreground font-semibold">
+                    {b.totalPrice ? `${b.totalPrice}₽` : "—"}
+                  </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs font-medium ${paymentStatusLabels[b.paymentStatus]?.class || "text-gray-400"}`}>
+                    <span
+                      className={`text-xs font-medium ${
+                        paymentStatusLabels[b.paymentStatus]?.class ||
+                        "text-muted-foreground"
+                      }`}
+                    >
                       {paymentStatusLabels[b.paymentStatus]?.label || "—"}
                       {b.paidAmount > 0 && ` (${b.paidAmount}₽)`}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusLabels[b.status]?.class}`}>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                        statusLabels[b.status]?.class
+                      }`}
+                    >
                       {statusLabels[b.status]?.label}
                     </span>
                   </td>
@@ -116,15 +163,27 @@ export default function AdminBookingsPage() {
                     <div className="flex gap-1">
                       {b.status === "new" && (
                         <>
-                          <button onClick={() => updateStatus(b.id, "confirmed")} className="p-1.5 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg" title="Подтвердить">
+                          <button
+                            onClick={() => updateStatus(b.id, "confirmed")}
+                            className="p-1.5 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                            title="Подтвердить"
+                          >
                             <Check className="h-4 w-4" />
                           </button>
-                          <button onClick={() => updateStatus(b.id, "cancelled")} className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg" title="Отклонить">
+                          <button
+                            onClick={() => updateStatus(b.id, "cancelled")}
+                            className="p-1.5 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                            title="Отклонить"
+                          >
                             <X className="h-4 w-4" />
                           </button>
                         </>
                       )}
-                      <button onClick={() => deleteBooking(b.id)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg" title="Удалить">
+                      <button
+                        onClick={() => deleteBooking(b.id)}
+                        className="p-1.5 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        title="Удалить"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
@@ -133,7 +192,9 @@ export default function AdminBookingsPage() {
               ))}
               {bookings.length === 0 && (
                 <tr>
-                  <td colSpan={12} className="px-4 py-8 text-center text-gray-500">Броней пока нет</td>
+                  <td colSpan={12} className="px-4 py-12 text-center text-muted-foreground">
+                    Броней пока нет
+                  </td>
                 </tr>
               )}
             </tbody>
