@@ -145,15 +145,29 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom copyright */}
-        <div className="mt-10 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
+        {/* Bottom: copyright + legal links */}
+        <div className="mt-10 pt-8 border-t border-white/5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm text-muted-foreground">
           <span>&copy; 2025 Сакура. Все права защищены.</span>
-          <Link
-            href="/admin"
-            className="text-xs text-muted-foreground/60 hover:text-primary transition-colors"
-          >
-            Админ-панель
-          </Link>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
+            <Link
+              href="/oferta"
+              className="text-muted-foreground/80 hover:text-primary transition-colors"
+            >
+              Публичная оферта
+            </Link>
+            <Link
+              href="/privacy"
+              className="text-muted-foreground/80 hover:text-primary transition-colors"
+            >
+              Политика конфиденциальности
+            </Link>
+            <Link
+              href="/personal-data"
+              className="text-muted-foreground/80 hover:text-primary transition-colors"
+            >
+              Согласие на обработку ПД
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
