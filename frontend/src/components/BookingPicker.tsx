@@ -91,10 +91,26 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
   const [comment, setComment] = useState("");
   const [paymentType, setPaymentType] = useState<"deposit" | "full">("deposit");
 
+  // Текущее московское время — пересчитываем при ре-рендере
+  const moscowNow = useMemo(() => getMoscowNow(), []);
   const today = new Date();
-  const [viewYear, setViewYear] = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const [viewYear, setViewYear] = useState(moscowNow.year);
+  const [viewMonth, setViewMonth] = useState(moscowNow.month - 1);
   const [calendarOpen, setCalendarOpen] = useState(false);
+
+  // Является ли выбранная дата сегодняшним днём (в Москве)
+  const isSelectedDateToday = useMemo(() => {
+    if (!selectedDate) return false;
+    return (
+      selectedDate.getFullYear() === moscowNow.year &&
+      selectedDate.getMonth() === moscowNow.month - 1 &&
+      selectedDate.getDate() === moscowNow.day
+    );
+  }, [selectedDate, moscowNow]);
+
+  // Час прошёл по МСК (для слотов)
+  const isPastHour = (hour: number) =>
+    isSelectedDateToday && hour <= moscowNow.hour;
 
   const [availability, setAvailability] = useState<SaunaAvailability | null>(null);
   const [loadingAvailability, setLoadingAvailability] = useState(false);
