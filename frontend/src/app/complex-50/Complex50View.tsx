@@ -136,6 +136,8 @@ export function Complex50View({ branch }: { branch: BranchWithSaunas }) {
         </section>
       </main>
       <Footer />
+
+      <BookingModal sauna={bookingSauna} onClose={() => setBookingSauna(null)} />
     </>
   );
 }
