@@ -124,7 +124,7 @@ export function HeroQuickBooking() {
 
   // Click outside to close
   useEffect(() => {
-    if (!pickerOpen && !branchOpen) return;
+    if (!pickerOpen && !branchOpen && !guestsOpen) return;
     function onMouseDown(e: MouseEvent) {
       const target = e.target as Node;
       if (pickerOpen && pickerRef.current && !pickerRef.current.contains(target)) {
@@ -133,10 +133,13 @@ export function HeroQuickBooking() {
       if (branchOpen && branchRef.current && !branchRef.current.contains(target)) {
         setBranchOpen(false);
       }
+      if (guestsOpen && guestsRef.current && !guestsRef.current.contains(target)) {
+        setGuestsOpen(false);
+      }
     }
     document.addEventListener("mousedown", onMouseDown);
     return () => document.removeEventListener("mousedown", onMouseDown);
-  }, [pickerOpen, branchOpen]);
+  }, [pickerOpen, branchOpen, guestsOpen]);
 
   const branchLabel =
     BRANCH_OPTIONS.find((o) => o.value === branch)?.label ?? "Любой филиал";
