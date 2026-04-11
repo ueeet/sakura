@@ -513,18 +513,24 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
         </div>
       )}
 
-      <div className="flex items-center gap-3 rounded-lg border border-border bg-background px-3 py-2">
+      <label className="flex items-center gap-3 rounded-lg border border-border bg-background px-3 py-2">
         <Users className="h-4 w-4 text-forest" />
         <span className="text-sm">Гостей</span>
-        <input
-          type="number"
-          min={1}
-          max={50}
+        <select
           value={guests}
-          onChange={(e) => setGuests(Math.max(1, parseInt(e.target.value) || 1))}
-          className="ml-auto w-16 bg-transparent text-right text-sm font-semibold focus:outline-none"
-        />
-      </div>
+          onChange={(e) => setGuests(parseInt(e.target.value, 10))}
+          className="ml-auto bg-transparent text-right text-sm font-semibold focus:outline-none cursor-pointer pr-1"
+        >
+          {Array.from(
+            { length: Math.max(1, sauna.capacity || 10) },
+            (_, i) => i + 1,
+          ).map((n) => (
+            <option key={n} value={n} className="bg-card text-foreground">
+              {n} {n === 1 ? "гость" : n < 5 ? "гостя" : "гостей"}
+            </option>
+          ))}
+        </select>
+      </label>
 
       {totalPrice > 0 && (
         <div className="rounded-lg bg-forest/10 p-3 text-center">
