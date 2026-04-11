@@ -51,7 +51,7 @@ const HERO_ITEM_VARIANTS = {
   },
 };
 
-export default function HomePage() {
+export function HomeView({ promotions }: { promotions: Promotion[] }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
