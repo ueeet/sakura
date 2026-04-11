@@ -1,21 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { onSSEEvent, type SSEEvent } from "@/lib/sse";
-import {
-  X,
-  Bell,
-  BellOff,
-  Calendar,
-  Star,
-  Trash2,
-  RefreshCw,
-  Volume2,
-  VolumeX,
-  Volume1,
-  Play,
-} from "lucide-react";
+import { soundStore, playNotificationSound } from "@/lib/soundStore";
+import { X, Calendar, Star, Trash2, RefreshCw } from "lucide-react";
 
 interface Toast {
   id: number;
@@ -23,123 +12,8 @@ interface Toast {
   type: "booking" | "update" | "delete" | "review";
 }
 
-const SOUND_STORAGE_KEY = "admin_sound_enabled";
-const VOLUME_STORAGE_KEY = "admin_sound_volume";
-
-/**
- * Мягкое мелодичное уведомление через Web Audio API:
- * 3 ноты с медленной атакой, длинным затуханием и low-pass фильтром.
- * @param volume — 0..1 (0 = тишина, 1 = максимум)
- */
-function playNotificationSound(volume: number) {
-  if (volume <= 0) return;
-  try {
-    const AudioCtx =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const now = ctx.currentTime;
-
-    // Общий low-pass фильтр для мягкости
-    const filter = ctx.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.frequency.value = 2400;
-    filter.Q.value = 0.7;
-
-    // Лёгкая компрессия общей громкости
-    const master = ctx.createGain();
-    master.gain.value = 0.5 * volume;
-
-    filter.connect(master);
-    master.connect(ctx.destination);
-
-    // Три ноты восходящей мелодии: F#5 → A5 → C#6 (мажорное трезвучие)
-    const notes = [
-      { freq: 740, start: 0.0, peak: 0.32, dur: 1.4 }, // F#5
-      { freq: 880, start: 0.22, peak: 0.3, dur: 1.4 }, // A5
-      { freq: 1109, start: 0.44, peak: 0.28, dur: 1.6 }, // C#6
-    ];
-
-    for (const n of notes) {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.value = n.freq;
-      osc.connect(gain);
-      gain.connect(filter);
-
-      const t0 = now + n.start;
-      const tEnd = t0 + n.dur;
-
-      gain.gain.setValueAtTime(0, t0);
-      gain.gain.linearRampToValueAtTime(n.peak, t0 + 0.08); // мягкая атака
-      gain.gain.linearRampToValueAtTime(n.peak * 0.5, t0 + 0.35); // плавный спад
-      gain.gain.exponentialRampToValueAtTime(0.0001, tEnd); // долгий хвост
-
-      osc.start(t0);
-      osc.stop(tEnd);
-    }
-
-    // Закрываем контекст после полного проигрывания
-    setTimeout(() => ctx.close().catch(() => {}), 2400);
-  } catch {
-    // ignore
-  }
-}
-
 export function SSEToast() {
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [volume, setVolume] = useState(0.7);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const initRef = useRef(false);
-  const settingsRef = useRef<HTMLDivElement>(null);
-
-  // Загружаем настройки из localStorage
-  useEffect(() => {
-    if (initRef.current) return;
-    initRef.current = true;
-    try {
-      const savedEnabled = localStorage.getItem(SOUND_STORAGE_KEY);
-      if (savedEnabled !== null) setSoundEnabled(savedEnabled === "1");
-      const savedVol = localStorage.getItem(VOLUME_STORAGE_KEY);
-      if (savedVol !== null) {
-        const v = parseFloat(savedVol);
-        if (!Number.isNaN(v)) setVolume(Math.max(0, Math.min(1, v)));
-      }
-    } catch {}
-  }, []);
-
-  // Сохранение настроек
-  useEffect(() => {
-    try {
-      localStorage.setItem(SOUND_STORAGE_KEY, soundEnabled ? "1" : "0");
-    } catch {}
-  }, [soundEnabled]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(VOLUME_STORAGE_KEY, String(volume));
-    } catch {}
-  }, [volume]);
-
-  // Закрытие настроек по клику вне
-  useEffect(() => {
-    if (!settingsOpen) return;
-    function onMouseDown(e: MouseEvent) {
-      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
-        setSettingsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", onMouseDown);
-    return () => document.removeEventListener("mousedown", onMouseDown);
-  }, [settingsOpen]);
-
-  const previewSound = () => {
-    playNotificationSound(soundEnabled ? volume : 0);
-  };
 
   useEffect(() => {
     return onSSEEvent((evt: SSEEvent) => {
@@ -180,8 +54,9 @@ export function SSEToast() {
           return;
       }
 
-      if (shouldBeep && soundEnabled) {
-        playNotificationSound(volume);
+      // Читаем актуальные настройки из store на момент события
+      if (shouldBeep && soundStore.getEnabled()) {
+        playNotificationSound(soundStore.getVolume());
       }
 
       const id = Date.now() + Math.random();
@@ -190,176 +65,57 @@ export function SSEToast() {
         setToasts((prev) => prev.filter((t) => t.id !== id));
       }, 5000);
     });
-  }, [soundEnabled, volume]);
-
-  // Иконка громкости в зависимости от уровня
-  const VolIcon =
-    !soundEnabled || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
+  }, []);
 
   return (
-    <>
-      {/* Виджет настроек звука в углу */}
-      <div ref={settingsRef} className="fixed bottom-4 right-4 z-40">
-        <AnimatePresence>
-          {settingsOpen && (
+    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
+      <AnimatePresence initial={false}>
+        {toasts.map((toast) => {
+          const Icon =
+            toast.type === "booking"
+              ? Calendar
+              : toast.type === "review"
+                ? Star
+                : toast.type === "delete"
+                  ? Trash2
+                  : RefreshCw;
+          const tone =
+            toast.type === "booking"
+              ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+              : toast.type === "review"
+                ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"
+                : toast.type === "delete"
+                  ? "border-red-500/40 bg-red-500/10 text-red-400"
+                  : "border-blue-500/40 bg-blue-500/10 text-blue-400";
+
+          return (
             <motion.div
-              initial={{ opacity: 0, y: 8, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.96 }}
-              transition={{ duration: 0.2 }}
-              className="absolute bottom-12 right-0 w-64 rounded-2xl border border-border bg-card p-4 shadow-2xl"
+              key={toast.id}
+              initial={{ opacity: 0, x: 32, scale: 0.95 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 32, scale: 0.95 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
               style={{ willChange: "transform, opacity" }}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl border-2 bg-card backdrop-blur-md shadow-2xl"
             >
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-semibold">Уведомления</h4>
-                <button
-                  type="button"
-                  onClick={() => setSettingsOpen(false)}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              {/* Toggle звука */}
-              <label className="flex items-center justify-between gap-3 mb-4 cursor-pointer">
-                <span className="flex items-center gap-2 text-sm">
-                  {soundEnabled ? (
-                    <Bell className="h-4 w-4 text-forest" />
-                  ) : (
-                    <BellOff className="h-4 w-4 text-muted-foreground" />
-                  )}
-                  Звук
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setSoundEnabled(!soundEnabled)}
-                  className={`relative h-5 w-9 rounded-full transition-colors ${
-                    soundEnabled ? "bg-forest" : "bg-muted"
-                  }`}
-                  aria-pressed={soundEnabled}
-                >
-                  <span
-                    className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
-                      soundEnabled ? "translate-x-4" : "translate-x-0.5"
-                    }`}
-                  />
-                </button>
-              </label>
-
-              {/* Громкость */}
-              <div className={soundEnabled ? "" : "opacity-40 pointer-events-none"}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-muted-foreground">Громкость</span>
-                  <span className="text-xs font-medium tabular-nums">
-                    {Math.round(volume * 100)}%
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <VolumeX className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                  <input
-                    type="range"
-                    min={0}
-                    max={1}
-                    step={0.05}
-                    value={volume}
-                    onChange={(e) => setVolume(parseFloat(e.target.value))}
-                    className="flex-1 h-1.5 rounded-full bg-muted appearance-none cursor-pointer
-                      [&::-webkit-slider-thumb]:appearance-none
-                      [&::-webkit-slider-thumb]:h-3.5
-                      [&::-webkit-slider-thumb]:w-3.5
-                      [&::-webkit-slider-thumb]:rounded-full
-                      [&::-webkit-slider-thumb]:bg-forest
-                      [&::-webkit-slider-thumb]:cursor-pointer
-                      [&::-webkit-slider-thumb]:border-2
-                      [&::-webkit-slider-thumb]:border-white
-                      [&::-moz-range-thumb]:h-3.5
-                      [&::-moz-range-thumb]:w-3.5
-                      [&::-moz-range-thumb]:rounded-full
-                      [&::-moz-range-thumb]:bg-forest
-                      [&::-moz-range-thumb]:cursor-pointer
-                      [&::-moz-range-thumb]:border-2
-                      [&::-moz-range-thumb]:border-white
-                      [&::-moz-range-thumb]:border-solid"
-                    style={{
-                      background: `linear-gradient(to right, var(--forest, #15803d) 0%, var(--forest, #15803d) ${volume * 100}%, hsl(var(--muted)) ${volume * 100}%, hsl(var(--muted)) 100%)`,
-                    }}
-                  />
-                  <Volume2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                </div>
-
-                {/* Кнопка проверки */}
-                <button
-                  type="button"
-                  onClick={previewSound}
-                  className="mt-3 w-full flex items-center justify-center gap-2 rounded-lg border border-border py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-forest/40 transition-colors"
-                >
-                  <Play className="h-3 w-3" />
-                  Проверить звук
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <button
-          type="button"
-          onClick={() => setSettingsOpen(!settingsOpen)}
-          className="flex items-center justify-center h-10 w-10 rounded-full border border-border bg-card text-muted-foreground hover:text-foreground hover:border-forest/50 transition-colors shadow-lg"
-          title="Настройки уведомлений"
-        >
-          <VolIcon className="h-4 w-4" />
-        </button>
-      </div>
-
-      {/* Тосты */}
-      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
-        <AnimatePresence initial={false}>
-          {toasts.map((toast) => {
-            const Icon =
-              toast.type === "booking"
-                ? Calendar
-                : toast.type === "review"
-                  ? Star
-                  : toast.type === "delete"
-                    ? Trash2
-                    : RefreshCw;
-            const tone =
-              toast.type === "booking"
-                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-                : toast.type === "review"
-                  ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"
-                  : toast.type === "delete"
-                    ? "border-red-500/40 bg-red-500/10 text-red-400"
-                    : "border-blue-500/40 bg-blue-500/10 text-blue-400";
-
-            return (
-              <motion.div
-                key={toast.id}
-                initial={{ opacity: 0, x: 32, scale: 0.95 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 32, scale: 0.95 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-                style={{ willChange: "transform, opacity" }}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl border-2 bg-card backdrop-blur-md shadow-2xl"
+              <div
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${tone}`}
               >
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${tone}`}>
-                  <Icon className="h-4 w-4" />
-                </div>
-                <span className="text-sm text-foreground flex-1">{toast.message}</span>
-                <button
-                  onClick={() =>
-                    setToasts((prev) => prev.filter((t) => t.id !== toast.id))
-                  }
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </div>
-    </>
+                <Icon className="h-4 w-4" />
+              </div>
+              <span className="text-sm text-foreground flex-1">{toast.message}</span>
+              <button
+                onClick={() =>
+                  setToasts((prev) => prev.filter((t) => t.id !== toast.id))
+                }
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
+    </div>
   );
 }
