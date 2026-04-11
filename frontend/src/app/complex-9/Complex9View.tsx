@@ -213,6 +213,8 @@ function Complex9Inner({ branch }: { branch: BranchWithSaunas }) {
       </main>
 
       <Footer />
+
+      <BookingModal sauna={bookingSauna} onClose={() => setBookingSauna(null)} />
     </div>
   );
 }
