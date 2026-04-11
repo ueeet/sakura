@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Clock,
   CalendarDays,
   Users,
@@ -12,6 +13,7 @@ import {
   Phone,
   Loader2,
   AlertCircle,
+  Check,
 } from "lucide-react";
 import type { Sauna, SaunaAvailability } from "@/lib/types";
 
