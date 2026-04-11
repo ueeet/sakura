@@ -86,6 +86,16 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
   const [guestsRect, setGuestsRect] = useState<{ left: number; top: number; width: number } | null>(null);
   const guestsButtonRef = useRef<HTMLButtonElement>(null);
   const guestsPanelRef = useRef<HTMLDivElement>(null);
+
+  const [calendarRect, setCalendarRect] = useState<{ left: number; top: number; width: number } | null>(null);
+  const calendarButtonRef = useRef<HTMLButtonElement>(null);
+  const calendarPanelRef = useRef<HTMLDivElement>(null);
+
+  const [slotsRect, setSlotsRect] = useState<{ left: number; top: number; width: number } | null>(null);
+  const [slotsOpen, setSlotsOpen] = useState(false);
+  const slotsButtonRef = useRef<HTMLButtonElement>(null);
+  const slotsPanelRef = useRef<HTMLDivElement>(null);
+
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -118,6 +128,66 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
       window.removeEventListener("resize", updatePosition);
     };
   }, [guestsOpen]);
+
+  // Позиция и закрытие календаря
+  useEffect(() => {
+    if (!calendarOpen) return;
+    function updatePosition() {
+      const btn = calendarButtonRef.current;
+      if (!btn) return;
+      const r = btn.getBoundingClientRect();
+      setCalendarRect({ left: r.left, top: r.bottom + 8, width: r.width });
+    }
+    updatePosition();
+    function onMouseDown(e: MouseEvent) {
+      const target = e.target as Node;
+      if (
+        calendarButtonRef.current?.contains(target) ||
+        calendarPanelRef.current?.contains(target)
+      ) {
+        return;
+      }
+      setCalendarOpen(false);
+    }
+    document.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+    return () => {
+      document.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [calendarOpen]);
+
+  // Позиция и закрытие выбора часов
+  useEffect(() => {
+    if (!slotsOpen) return;
+    function updatePosition() {
+      const btn = slotsButtonRef.current;
+      if (!btn) return;
+      const r = btn.getBoundingClientRect();
+      setSlotsRect({ left: r.left, top: r.bottom + 8, width: r.width });
+    }
+    updatePosition();
+    function onMouseDown(e: MouseEvent) {
+      const target = e.target as Node;
+      if (
+        slotsButtonRef.current?.contains(target) ||
+        slotsPanelRef.current?.contains(target)
+      ) {
+        return;
+      }
+      setSlotsOpen(false);
+    }
+    document.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+    return () => {
+      document.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [slotsOpen]);
 
   const maxGuests = Math.max(1, sauna.capacity || 10);
   const guestsLabel = (n: number) =>
