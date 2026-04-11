@@ -52,7 +52,7 @@ export function BookingModal({ sauna, onClose }: BookingModalProps) {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 40, opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border-2 border-forest bg-gradient-to-b from-forest/15 to-card shadow-2xl"
+            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border-2 border-forest bg-card shadow-2xl"
             style={{ willChange: "transform, opacity" }}
             onClick={(e) => e.stopPropagation()}
           >
