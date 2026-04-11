@@ -23,7 +23,6 @@ import {
   Building2,
   Flame,
   Tag,
-  Star,
   Loader2,
   TrendingUp,
   DollarSign,
