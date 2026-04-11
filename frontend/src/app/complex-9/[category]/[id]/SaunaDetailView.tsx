@@ -203,7 +203,7 @@ export function SaunaDetailView({
               transition={{ duration: 0.5, delay: 0.2 }}
               style={{ willChange: "transform, opacity" }}
             >
-              <div className="space-y-5 sticky top-24">
+              <div id="booking" className="space-y-5 sticky top-24 scroll-mt-24">
                 <div className="rounded-2xl border-2 border-forest bg-gradient-to-b from-forest/15 to-card p-6 space-y-5">
                   <h3 className="text-2xl font-semibold text-center">Забронировать</h3>
 
