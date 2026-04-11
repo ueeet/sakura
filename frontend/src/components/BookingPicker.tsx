@@ -735,7 +735,6 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
                       <span>🟢 Свободно</span>
                       <span>🔴 Занято</span>
                       <span>🟡 Уборка</span>
-                      <span>⚫ Прошло</span>
                     </div>
                   </motion.div>
                 )}
