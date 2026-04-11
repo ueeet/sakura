@@ -83,18 +83,40 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
   const [error, setError] = useState<string | null>(null);
 
   const [guestsOpen, setGuestsOpen] = useState(false);
-  const guestsRef = useRef<HTMLDivElement>(null);
+  const [guestsRect, setGuestsRect] = useState<{ left: number; top: number; width: number } | null>(null);
+  const guestsButtonRef = useRef<HTMLButtonElement>(null);
+  const guestsPanelRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
-  // Закрытие дропдауна гостей по клику вне
+  // Позиция и закрытие дропдауна гостей
   useEffect(() => {
     if (!guestsOpen) return;
+    function updatePosition() {
+      const btn = guestsButtonRef.current;
+      if (!btn) return;
+      const r = btn.getBoundingClientRect();
+      setGuestsRect({ left: r.left, top: r.bottom + 8, width: r.width });
+    }
+    updatePosition();
     function onMouseDown(e: MouseEvent) {
-      if (guestsRef.current && !guestsRef.current.contains(e.target as Node)) {
-        setGuestsOpen(false);
+      const target = e.target as Node;
+      if (
+        guestsButtonRef.current?.contains(target) ||
+        guestsPanelRef.current?.contains(target)
+      ) {
+        return;
       }
+      setGuestsOpen(false);
     }
     document.addEventListener("mousedown", onMouseDown);
-    return () => document.removeEventListener("mousedown", onMouseDown);
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+    return () => {
+      document.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
   }, [guestsOpen]);
 
   const maxGuests = Math.max(1, sauna.capacity || 10);
