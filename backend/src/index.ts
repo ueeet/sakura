@@ -57,8 +57,17 @@ app.use("/api/auth/login", rateLimit({
   windowMs: 15 * 60 * 1000, max: 5,
   message: { error: "Слишком много попыток. Подождите 15 минут" },
 }));
-app.use("/api/bookings", rateLimit({ windowMs: 30 * 60 * 1000, max: 10 }));
-app.use("/api", rateLimit({ windowMs: 60 * 1000, max: 100 }));
+// Лимит только на создание брони клиентами (POST), не на чтение из админки
+const bookingPostLimiter = rateLimit({
+  windowMs: 30 * 60 * 1000,
+  max: 10,
+  message: { error: "Слишком много попыток создания брони. Подождите" },
+});
+app.use("/api/bookings", (req, res, next) => {
+  if (req.method === "POST") return bookingPostLimiter(req, res, next);
+  next();
+});
+app.use("/api", rateLimit({ windowMs: 60 * 1000, max: 200 }));
 
 // Логирование
 app.use((req, _res, next) => {
