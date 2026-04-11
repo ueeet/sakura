@@ -1,25 +1,184 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import {
+  AreaChart,
+  Area,
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import { api } from "@/lib/api";
 import { onSSE } from "@/lib/sse";
-import type { Stats } from "@/lib/types";
-import { Calendar, Building2, Flame, Tag, Star, Loader2 } from "lucide-react";
+import type { Stats, Booking, Sauna, Branch } from "@/lib/types";
+import {
+  Calendar,
+  Building2,
+  Flame,
+  Tag,
+  Star,
+  Loader2,
+  TrendingUp,
+  DollarSign,
+  Users,
+} from "lucide-react";
 
-export default function AdminDashboard() {
+const FOREST = "#16a34a";
+const FOREST_LIGHT = "#22c55e";
+const COLORS = ["#16a34a", "#f59e0b", "#3b82f6", "#ec4899", "#8b5cf6", "#ef4444"];
+
+const STATUS_LABELS: Record<string, string> = {
+  pending_payment: "Ожидает оплаты",
+  new: "Новые",
+  confirmed: "Подтверждённые",
+  cancelled: "Отменённые",
+  completed: "Завершённые",
+};
+
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function formatDayShort(date: Date) {
+  return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}`;
+}
+
+export default function AdminStatsPage() {
   const [stats, setStats] = useState<Stats | null>(null);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [saunas, setSaunas] = useState<Sauna[]>([]);
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const loadStats = () => {
-    api.get<Stats>("/stats").then(setStats).catch(() => {});
+  const loadAll = () => {
+    Promise.all([
+      api.get<Stats>("/stats"),
+      api.get<Booking[]>("/bookings"),
+      api.get<Sauna[]>("/saunas"),
+      api.get<Branch[]>("/branches"),
+    ])
+      .then(([s, b, sa, br]) => {
+        setStats(s);
+        setBookings(b);
+        setSaunas(sa);
+        setBranches(br);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    loadStats();
-    return onSSE(loadStats);
+    loadAll();
+    return onSSE(loadAll);
   }, []);
 
-  if (!stats) {
+  // ========== Агрегации ==========
+
+  // 1. Брони по дням за последние 14 дней
+  const bookingsByDay = useMemo(() => {
+    const days: { date: string; count: number; revenue: number }[] = [];
+    const now = new Date();
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      d.setHours(0, 0, 0, 0);
+      const next = new Date(d);
+      next.setDate(next.getDate() + 1);
+      const dayBookings = bookings.filter((b) => {
+        const t = new Date(b.startAt).getTime();
+        return t >= d.getTime() && t < next.getTime();
+      });
+      days.push({
+        date: formatDayShort(d),
+        count: dayBookings.length,
+        revenue: dayBookings.reduce(
+          (sum, b) => sum + (b.totalPrice || 0),
+          0,
+        ),
+      });
+    }
+    return days;
+  }, [bookings]);
+
+  // 2. Брони по статусам
+  const bookingsByStatus = useMemo(() => {
+    const map: Record<string, number> = {};
+    bookings.forEach((b) => {
+      map[b.status] = (map[b.status] || 0) + 1;
+    });
+    return Object.entries(map).map(([key, value]) => ({
+      name: STATUS_LABELS[key] || key,
+      value,
+      key,
+    }));
+  }, [bookings]);
+
+  // 3. Брони по филиалам
+  const bookingsByBranch = useMemo(() => {
+    const map: Record<number, { name: string; count: number; revenue: number }> = {};
+    branches.forEach((br) => {
+      map[br.id] = { name: br.name, count: 0, revenue: 0 };
+    });
+    bookings.forEach((b) => {
+      if (map[b.branchId]) {
+        map[b.branchId].count++;
+        map[b.branchId].revenue += b.totalPrice || 0;
+      }
+    });
+    return Object.values(map);
+  }, [bookings, branches]);
+
+  // 4. Топ-5 саун по броням
+  const topSaunas = useMemo(() => {
+    const map: Record<number, { name: string; count: number }> = {};
+    saunas.forEach((s) => {
+      map[s.id] = { name: s.name, count: 0 };
+    });
+    bookings.forEach((b) => {
+      if (map[b.saunaId]) map[b.saunaId].count++;
+    });
+    return Object.values(map)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+  }, [bookings, saunas]);
+
+  // 5. Брони по часам дня
+  const bookingsByHour = useMemo(() => {
+    const hours = Array.from({ length: 24 }, (_, h) => ({ hour: pad(h), count: 0 }));
+    bookings.forEach((b) => {
+      const h = new Date(b.startAt).getHours();
+      hours[h].count++;
+    });
+    return hours;
+  }, [bookings]);
+
+  // 6. Общий доход
+  const totalRevenue = useMemo(
+    () => bookings.reduce((sum, b) => sum + (b.paidAmount || 0), 0),
+    [bookings],
+  );
+
+  // 7. Средний чек
+  const avgCheck = useMemo(() => {
+    const paid = bookings.filter((b) => (b.totalPrice || 0) > 0);
+    if (paid.length === 0) return 0;
+    return Math.round(
+      paid.reduce((sum, b) => sum + (b.totalPrice || 0), 0) / paid.length,
+    );
+  }, [bookings]);
+
+  if (loading || !stats) {
     return (
       <div className="flex items-center justify-center py-20 text-muted-foreground">
         <Loader2 className="h-5 w-5 animate-spin" />
@@ -43,14 +202,26 @@ export default function AdminDashboard() {
     {
       label: "Всего броней",
       value: stats.bookings.total,
-      icon: Calendar,
+      icon: TrendingUp,
       tone: "text-muted-foreground bg-muted",
+    },
+    {
+      label: "Выручка",
+      value: `${totalRevenue.toLocaleString("ru-RU")}₽`,
+      icon: DollarSign,
+      tone: "text-emerald-400 bg-emerald-500/10",
+    },
+    {
+      label: "Средний чек",
+      value: `${avgCheck.toLocaleString("ru-RU")}₽`,
+      icon: Users,
+      tone: "text-purple-400 bg-purple-500/10",
     },
     {
       label: "Филиалы",
       value: stats.branches,
       icon: Building2,
-      tone: "text-purple-400 bg-purple-500/10",
+      tone: "text-blue-400 bg-blue-500/10",
     },
     {
       label: "Сауны",
@@ -64,30 +235,29 @@ export default function AdminDashboard() {
       icon: Tag,
       tone: "text-pink-400 bg-pink-500/10",
     },
-    {
-      label: "Отзывы",
-      value: stats.reviews.total,
-      icon: Star,
-      tone: "text-yellow-400 bg-yellow-500/10",
-    },
-    {
-      label: "Ожидают модерации",
-      value: stats.reviews.pending,
-      icon: Star,
-      tone: "text-red-400 bg-red-500/10",
-    },
   ];
 
+  // Custom tooltip
+  const tooltipContentStyle = {
+    backgroundColor: "hsl(20 12% 12%)",
+    border: "1px solid hsl(30 8% 25%)",
+    borderRadius: "8px",
+    padding: "8px 12px",
+  };
+  const tooltipLabelStyle = { color: "hsl(40 8% 70%)", fontSize: 12 };
+  const tooltipItemStyle = { color: "hsl(40 12% 92%)", fontSize: 13 };
+
   return (
-    <div>
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground">Обзор</h2>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-foreground">Статистика</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Сводка по бронированиям, саунам и отзывам
+          Показатели бизнеса в реальном времени
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI карточки */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {cards.map((card, i) => {
           const Icon = card.icon;
           return (
@@ -95,23 +265,288 @@ export default function AdminDashboard() {
               key={card.label}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.04 }}
-              whileHover={{ y: -2, transition: { duration: 0.2 } }}
+              transition={{ duration: 0.3, delay: i * 0.04 }}
               style={{ willChange: "transform, opacity" }}
-              className="rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-lg"
+              className="rounded-2xl border border-border bg-card p-4"
             >
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`p-2 rounded-lg ${card.tone}`}>
-                  <Icon className="h-5 w-5" />
+              <div className="flex items-center gap-2 mb-2">
+                <div className={`p-1.5 rounded-lg ${card.tone}`}>
+                  <Icon className="h-4 w-4" />
                 </div>
-                <span className="text-sm text-muted-foreground">
-                  {card.label}
-                </span>
+                <span className="text-xs text-muted-foreground">{card.label}</span>
               </div>
-              <p className="text-3xl font-bold text-foreground">{card.value}</p>
+              <p className="text-2xl font-bold text-foreground">{card.value}</p>
             </motion.div>
           );
         })}
+      </div>
+
+      {/* Брони по дням — area chart */}
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="mb-4">
+          <h3 className="text-base font-semibold">Брони за последние 14 дней</h3>
+          <p className="text-xs text-muted-foreground">Количество новых записей по датам</p>
+        </div>
+        <ResponsiveContainer width="100%" height={240}>
+          <AreaChart data={bookingsByDay}>
+            <defs>
+              <linearGradient id="grad-bookings" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={FOREST_LIGHT} stopOpacity={0.4} />
+                <stop offset="100%" stopColor={FOREST_LIGHT} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(30 8% 22%)" vertical={false} />
+            <XAxis
+              dataKey="date"
+              stroke="hsl(40 8% 60%)"
+              tick={{ fontSize: 11 }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis
+              stroke="hsl(40 8% 60%)"
+              tick={{ fontSize: 11 }}
+              tickLine={false}
+              axisLine={false}
+              allowDecimals={false}
+            />
+            <Tooltip
+              contentStyle={tooltipContentStyle}
+              labelStyle={tooltipLabelStyle}
+              itemStyle={tooltipItemStyle}
+              cursor={{ stroke: FOREST, strokeWidth: 1, strokeOpacity: 0.3 }}
+            />
+            <Area
+              type="monotone"
+              dataKey="count"
+              stroke={FOREST_LIGHT}
+              strokeWidth={2}
+              fill="url(#grad-bookings)"
+              name="Брони"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Выручка по дням + Брони по статусам */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <div className="mb-4">
+            <h3 className="text-base font-semibold">Выручка по дням</h3>
+            <p className="text-xs text-muted-foreground">
+              Сумма броней за 14 дней
+            </p>
+          </div>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={bookingsByDay}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(30 8% 22%)" vertical={false} />
+              <XAxis
+                dataKey="date"
+                stroke="hsl(40 8% 60%)"
+                tick={{ fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="hsl(40 8% 60%)"
+                tick={{ fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(v) => `${v}₽`}
+              />
+              <Tooltip
+                contentStyle={tooltipContentStyle}
+                labelStyle={tooltipLabelStyle}
+                itemStyle={tooltipItemStyle}
+                formatter={(v: number) => [`${v.toLocaleString("ru-RU")}₽`, "Выручка"]}
+              />
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                stroke={FOREST}
+                strokeWidth={2.5}
+                dot={{ fill: FOREST, r: 3 }}
+                activeDot={{ r: 5 }}
+                name="Выручка"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <div className="mb-4">
+            <h3 className="text-base font-semibold">Брони по статусам</h3>
+            <p className="text-xs text-muted-foreground">
+              Распределение всех записей
+            </p>
+          </div>
+          {bookingsByStatus.length === 0 ? (
+            <div className="flex items-center justify-center h-[220px] text-sm text-muted-foreground">
+              Нет данных
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie
+                  data={bookingsByStatus}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={85}
+                  paddingAngle={2}
+                  dataKey="value"
+                  stroke="hsl(20 12% 12%)"
+                  strokeWidth={2}
+                >
+                  {bookingsByStatus.map((entry, idx) => (
+                    <Cell key={entry.key} fill={COLORS[idx % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={tooltipContentStyle}
+                  labelStyle={tooltipLabelStyle}
+                  itemStyle={tooltipItemStyle}
+                />
+                <Legend
+                  verticalAlign="bottom"
+                  iconType="circle"
+                  wrapperStyle={{ fontSize: 11, color: "hsl(40 8% 70%)" }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </div>
+
+      {/* Брони по филиалам + Топ саун */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <div className="mb-4">
+            <h3 className="text-base font-semibold">Брони по филиалам</h3>
+            <p className="text-xs text-muted-foreground">Загрузка комплексов</p>
+          </div>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={bookingsByBranch}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(30 8% 22%)" vertical={false} />
+              <XAxis
+                dataKey="name"
+                stroke="hsl(40 8% 60%)"
+                tick={{ fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="hsl(40 8% 60%)"
+                tick={{ fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+                allowDecimals={false}
+              />
+              <Tooltip
+                contentStyle={tooltipContentStyle}
+                labelStyle={tooltipLabelStyle}
+                itemStyle={tooltipItemStyle}
+                cursor={{ fill: "hsl(30 8% 18%)" }}
+              />
+              <Bar dataKey="count" fill={FOREST} radius={[6, 6, 0, 0]} name="Брони" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <div className="mb-4">
+            <h3 className="text-base font-semibold">Топ-5 популярных саун</h3>
+            <p className="text-xs text-muted-foreground">По количеству броней</p>
+          </div>
+          {topSaunas.length === 0 || topSaunas[0].count === 0 ? (
+            <div className="flex items-center justify-center h-[220px] text-sm text-muted-foreground">
+              Нет данных
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={topSaunas} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(30 8% 22%)" horizontal={false} />
+                <XAxis
+                  type="number"
+                  stroke="hsl(40 8% 60%)"
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                  allowDecimals={false}
+                />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  stroke="hsl(40 8% 60%)"
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                  width={120}
+                />
+                <Tooltip
+                  contentStyle={tooltipContentStyle}
+                  labelStyle={tooltipLabelStyle}
+                  itemStyle={tooltipItemStyle}
+                  cursor={{ fill: "hsl(30 8% 18%)" }}
+                />
+                <Bar dataKey="count" fill={FOREST_LIGHT} radius={[0, 6, 6, 0]} name="Брони" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </div>
+
+      {/* Брони по часам дня */}
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="mb-4">
+          <h3 className="text-base font-semibold">Распределение по часам дня</h3>
+          <p className="text-xs text-muted-foreground">Когда чаще бронируют</p>
+        </div>
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart data={bookingsByHour}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(30 8% 22%)" vertical={false} />
+            <XAxis
+              dataKey="hour"
+              stroke="hsl(40 8% 60%)"
+              tick={{ fontSize: 10 }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis
+              stroke="hsl(40 8% 60%)"
+              tick={{ fontSize: 11 }}
+              tickLine={false}
+              axisLine={false}
+              allowDecimals={false}
+            />
+            <Tooltip
+              contentStyle={tooltipContentStyle}
+              labelStyle={tooltipLabelStyle}
+              itemStyle={tooltipItemStyle}
+              cursor={{ fill: "hsl(30 8% 18%)" }}
+              labelFormatter={(v) => `${v}:00`}
+            />
+            <Bar dataKey="count" fill={FOREST} radius={[3, 3, 0, 0]} name="Брони" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Reviews summary */}
+      <div className="rounded-2xl border border-border bg-card p-5 flex items-center gap-6">
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-lg bg-yellow-500/10 text-yellow-400">
+            <Star className="h-6 w-6" />
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">Всего отзывов</div>
+            <div className="text-2xl font-bold">{stats.reviews.total}</div>
+          </div>
+        </div>
+        <div className="h-8 w-px bg-border" />
+        <div>
+          <div className="text-xs text-muted-foreground">Ожидают модерации</div>
+          <div className="text-2xl font-bold text-amber-400">{stats.reviews.pending}</div>
+        </div>
       </div>
     </div>
   );
