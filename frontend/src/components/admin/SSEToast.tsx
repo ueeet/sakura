@@ -177,7 +177,7 @@ export function SSEToast() {
         setToasts((prev) => prev.filter((t) => t.id !== id));
       }, 5000);
     });
-  }, [soundEnabled]);
+  }, [soundEnabled, volume]);
 
   return (
     <>
