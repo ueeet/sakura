@@ -132,59 +132,76 @@ export default function AdminSaunasPage() {
         </button>
       </div>
 
-      {/* Фильтры */}
-      <div className="mb-5 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card p-4">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Filter className="h-4 w-4" />
-          Фильтр:
-        </div>
-        <select
-          value={filterBranchId}
-          onChange={(e) =>
-            setFilterBranchId(e.target.value === "all" ? "all" : Number(e.target.value))
-          }
-          className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:border-forest"
-        >
-          <option value="all">Все филиалы</option>
-          {branches.map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.name}
-            </option>
-          ))}
-        </select>
+      {/* Кнопки филиалов */}
+      <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {branches.map((b) => {
+          const active = filterBranchId === b.id;
+          const count = saunas.filter((s) => s.branchId === b.id).length;
+          return (
+            <button
+              key={b.id}
+              type="button"
+              onClick={() => setFilterBranchId(b.id)}
+              className={`group relative overflow-hidden rounded-2xl border-2 px-5 py-4 text-left transition-all ${
+                active
+                  ? "border-forest bg-forest/10"
+                  : "border-border bg-card hover:border-forest/40"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+                    active ? "bg-forest text-white" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <Flame className="h-5 w-5" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-foreground">{b.name}</div>
+                  <div className="text-xs text-muted-foreground">{count} саун</div>
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
 
-        {availableCategories.length > 0 && (
-          <select
-            value={filterCategoryId}
-            onChange={(e) =>
-              setFilterCategoryId(
-                e.target.value === "all" ? "all" : Number(e.target.value),
-              )
-            }
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:border-forest"
-          >
-            <option value="all">Все категории</option>
-            {availableCategories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        )}
-
-        {(filterBranchId !== "all" || filterCategoryId !== "all") && (
+      {/* Подкатегории (если есть) */}
+      {availableCategories.length > 0 && (
+        <div className="mb-5 flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={() => {
-              setFilterBranchId("all");
-              setFilterCategoryId("all");
-            }}
-            className="text-xs text-forest hover:underline"
+            onClick={() => setFilterCategoryId("all")}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              filterCategoryId === "all"
+                ? "bg-forest text-white"
+                : "bg-muted text-muted-foreground hover:bg-forest/15 hover:text-forest"
+            }`}
           >
-            Сбросить
+            Все
           </button>
-        )}
-      </div>
+          {availableCategories.map((c) => {
+            const active = filterCategoryId === c.id;
+            const count = saunas.filter(
+              (s) => s.branchId === filterBranchId && s.categoryId === c.id,
+            ).length;
+            return (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setFilterCategoryId(c.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  active
+                    ? "bg-forest text-white"
+                    : "bg-muted text-muted-foreground hover:bg-forest/15 hover:text-forest"
+                }`}
+              >
+                {c.name} <span className="opacity-60">({count})</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Сетка карточек */}
       {filteredSaunas.length === 0 ? (
