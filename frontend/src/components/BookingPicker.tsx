@@ -488,34 +488,73 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-border p-2.5 hover:border-forest/50">
+          <label
+            className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
+              paymentType === "deposit"
+                ? "border-forest bg-forest/5"
+                : "border-border hover:border-forest/50"
+            }`}
+          >
             <input
               type="radio"
               checked={paymentType === "deposit"}
               onChange={() => setPaymentType("deposit")}
-              className="mt-0.5"
+              className="sr-only"
             />
+            <span
+              className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                paymentType === "deposit"
+                  ? "border-white bg-white"
+                  : "border-muted-foreground/40 bg-transparent"
+              }`}
+            >
+              {paymentType === "deposit" && (
+                <span className="h-1.5 w-1.5 rounded-full bg-forest" />
+              )}
+            </span>
             <div className="flex-1">
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Предоплата {sauna.depositPercent}%</span>
+                <span className="text-sm font-medium">
+                  Предоплата {sauna.depositPercent}%
+                </span>
                 <span className="text-sm font-semibold">{depositAmount}₽</span>
               </div>
               <p className="text-xs text-muted-foreground">Остальное на месте</p>
             </div>
           </label>
-          <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-border p-2.5 hover:border-forest/50">
+
+          <label
+            className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
+              paymentType === "full"
+                ? "border-forest bg-forest/5"
+                : "border-border hover:border-forest/50"
+            }`}
+          >
             <input
               type="radio"
               checked={paymentType === "full"}
               onChange={() => setPaymentType("full")}
-              className="mt-0.5"
+              className="sr-only"
             />
+            <span
+              className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                paymentType === "full"
+                  ? "border-white bg-white"
+                  : "border-muted-foreground/40 bg-transparent"
+              }`}
+            >
+              {paymentType === "full" && (
+                <span className="h-1.5 w-1.5 rounded-full bg-forest" />
+              )}
+            </span>
             <div className="flex-1">
               <div className="flex justify-between">
                 <span className="text-sm font-medium">Полная оплата</span>
                 <span className="text-sm font-semibold">{totalPrice}₽</span>
               </div>
-              <p className="text-xs text-muted-foreground">Сразу всю сумму онлайн</p>
+              <p className="text-xs text-muted-foreground">
+                Сразу всю сумму онлайн
+              </p>
             </div>
           </label>
         </div>
