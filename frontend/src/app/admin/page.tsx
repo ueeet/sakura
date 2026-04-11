@@ -247,59 +247,57 @@ export default function AdminStatsPage() {
         })}
       </div>
 
-      {/* Брони по статусам */}
+      {/* Топ-5 популярных саун — full width */}
       <div className="rounded-2xl border border-border bg-card p-5">
         <div className="mb-4">
-          <h3 className="text-base font-semibold">Брони по статусам</h3>
-          <p className="text-xs text-muted-foreground">
-            Распределение всех записей
-          </p>
+          <h3 className="text-base font-semibold">Топ-5 популярных саун</h3>
+          <p className="text-xs text-muted-foreground">По количеству броней</p>
         </div>
-        {bookingsByStatus.length === 0 ? (
-          <div className="flex items-center justify-center h-[220px] text-sm text-muted-foreground">
+        {topSaunas.length === 0 || topSaunas[0].count === 0 ? (
+          <div className="flex items-center justify-center h-[240px] text-sm text-muted-foreground">
             Нет данных
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={240}>
-            <PieChart>
-              <Pie
-                data={bookingsByStatus}
-                cx="50%"
-                cy="50%"
-                innerRadius={55}
-                outerRadius={95}
-                paddingAngle={2}
-                dataKey="value"
-                stroke="hsl(20 12% 12%)"
-                strokeWidth={2}
-              >
-                {bookingsByStatus.map((entry, idx) => (
-                  <Cell key={entry.key} fill={COLORS[idx % COLORS.length]} />
-                ))}
-              </Pie>
+            <BarChart data={topSaunas} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(30 8% 22%)" horizontal={false} />
+              <XAxis
+                type="number"
+                stroke="hsl(40 8% 60%)"
+                tick={{ fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+                allowDecimals={false}
+              />
+              <YAxis
+                type="category"
+                dataKey="name"
+                stroke="hsl(40 8% 60%)"
+                tick={{ fontSize: 11 }}
+                tickLine={false}
+                axisLine={false}
+                width={140}
+              />
               <Tooltip
                 contentStyle={tooltipContentStyle}
                 labelStyle={tooltipLabelStyle}
                 itemStyle={tooltipItemStyle}
+                cursor={{ fill: "hsl(30 8% 18%)" }}
               />
-              <Legend
-                verticalAlign="bottom"
-                iconType="circle"
-                wrapperStyle={{ fontSize: 12, color: "hsl(40 8% 70%)" }}
-              />
-            </PieChart>
+              <Bar dataKey="count" fill={FOREST_LIGHT} radius={[0, 6, 6, 0]} name="Брони" />
+            </BarChart>
           </ResponsiveContainer>
         )}
       </div>
 
-      {/* Брони по филиалам + Топ саун */}
+      {/* Брони по филиалам + Брони по статусам */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-4">
             <h3 className="text-base font-semibold">Брони по филиалам</h3>
             <p className="text-xs text-muted-foreground">Загрузка комплексов</p>
           </div>
-          <ResponsiveContainer width="100%" height={220}>
+          <ResponsiveContainer width="100%" height={240}>
             <BarChart data={bookingsByBranch}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(30 8% 22%)" vertical={false} />
               <XAxis
@@ -329,42 +327,44 @@ export default function AdminStatsPage() {
 
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="mb-4">
-            <h3 className="text-base font-semibold">Топ-5 популярных саун</h3>
-            <p className="text-xs text-muted-foreground">По количеству броней</p>
+            <h3 className="text-base font-semibold">Брони по статусам</h3>
+            <p className="text-xs text-muted-foreground">
+              Распределение всех записей
+            </p>
           </div>
-          {topSaunas.length === 0 || topSaunas[0].count === 0 ? (
-            <div className="flex items-center justify-center h-[220px] text-sm text-muted-foreground">
+          {bookingsByStatus.length === 0 ? (
+            <div className="flex items-center justify-center h-[240px] text-sm text-muted-foreground">
               Нет данных
             </div>
           ) : (
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={topSaunas} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(30 8% 22%)" horizontal={false} />
-                <XAxis
-                  type="number"
-                  stroke="hsl(40 8% 60%)"
-                  tick={{ fontSize: 11 }}
-                  tickLine={false}
-                  axisLine={false}
-                  allowDecimals={false}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  stroke="hsl(40 8% 60%)"
-                  tick={{ fontSize: 11 }}
-                  tickLine={false}
-                  axisLine={false}
-                  width={120}
-                />
+            <ResponsiveContainer width="100%" height={240}>
+              <PieChart>
+                <Pie
+                  data={bookingsByStatus}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={85}
+                  paddingAngle={2}
+                  dataKey="value"
+                  stroke="hsl(20 12% 12%)"
+                  strokeWidth={2}
+                >
+                  {bookingsByStatus.map((entry, idx) => (
+                    <Cell key={entry.key} fill={COLORS[idx % COLORS.length]} />
+                  ))}
+                </Pie>
                 <Tooltip
                   contentStyle={tooltipContentStyle}
                   labelStyle={tooltipLabelStyle}
                   itemStyle={tooltipItemStyle}
-                  cursor={{ fill: "hsl(30 8% 18%)" }}
                 />
-                <Bar dataKey="count" fill={FOREST_LIGHT} radius={[0, 6, 6, 0]} name="Брони" />
-              </BarChart>
+                <Legend
+                  verticalAlign="bottom"
+                  iconType="circle"
+                  wrapperStyle={{ fontSize: 12, color: "hsl(40 8% 70%)" }}
+                />
+              </PieChart>
             </ResponsiveContainer>
           )}
         </div>
