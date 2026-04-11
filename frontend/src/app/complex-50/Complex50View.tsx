@@ -88,21 +88,31 @@ function SaunaCard({
   );
 }
 
-export function Complex50View({ branch }: { branch: BranchWithSaunas }) {
-  // У complex-50 категорий нет, сауны лежат в branch.saunas
-  const saunas = branch.saunas ?? [];
+function Complex50Inner({ branch }: { branch: BranchWithSaunas }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const allSaunas = branch.saunas ?? [];
+  const guestsParam = searchParams.get("guests");
+  const guestsFilter = guestsParam ? Math.max(1, parseInt(guestsParam, 10)) : null;
+
+  // Применяем фильтр по гостям
+  const saunas = guestsFilter
+    ? allSaunas.filter((s) => s.capacity >= guestsFilter)
+    : allSaunas;
+
   const [bookingSauna, setBookingSauna] = useState<Sauna | null>(null);
   const heroImages: [string, string, string] | [string] =
-    saunas.length >= 3
+    allSaunas.length >= 3
       ? [
-          saunas[0].mainImage ?? "/placeholder.png",
-          saunas[1].mainImage ?? "/placeholder.png",
-          saunas[2].mainImage ?? "/placeholder.png",
+          allSaunas[0].mainImage ?? "/placeholder.png",
+          allSaunas[1].mainImage ?? "/placeholder.png",
+          allSaunas[2].mainImage ?? "/placeholder.png",
         ]
-      : [saunas[0]?.mainImage ?? "/placeholder.png"];
+      : [allSaunas[0]?.mainImage ?? "/placeholder.png"];
 
-  const poolCount = saunas.filter((s) => s.poolSize).length;
-  const typeCount = new Set(saunas.map((s) => s.type)).size;
+  const poolCount = allSaunas.filter((s) => s.poolSize).length;
+  const typeCount = new Set(allSaunas.map((s) => s.type)).size;
 
   return (
     <>
