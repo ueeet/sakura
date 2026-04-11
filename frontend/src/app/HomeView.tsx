@@ -276,7 +276,7 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
                   className="rounded-2xl border bg-card p-8 shadow-md transition-shadow duration-200 hover:shadow-lg"
                 >
                   <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-forest/10">
-                    {promoIcons[promo.icon] ?? (
+                    {(promo.icon && promoIcons[promo.icon]) ?? (
                       <Flame className="h-7 w-7 text-forest" />
                     )}
                   </div>
@@ -286,9 +286,11 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
                   <p className="mt-3 text-base text-foreground/80">
                     {promo.description}
                   </p>
-                  <p className="mt-4 text-sm text-muted-foreground">
-                    {promo.note}
-                  </p>
+                  {promo.note && (
+                    <p className="mt-4 text-sm text-muted-foreground">
+                      {promo.note}
+                    </p>
+                  )}
                 </motion.div>
               ))}
             </div>
