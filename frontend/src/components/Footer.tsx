@@ -133,8 +133,14 @@ export function Footer() {
         </div>
 
         {/* Bottom copyright */}
-        <div className="mt-10 pt-8 border-t border-white/5 text-center text-sm text-muted-foreground">
-          &copy; 2025 Сакура. Все права защищены.
+        <div className="mt-10 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
+          <span>&copy; 2025 Сакура. Все права защищены.</span>
+          <Link
+            href="/admin"
+            className="text-xs text-muted-foreground/60 hover:text-primary transition-colors"
+          >
+            Админ-панель
+          </Link>
         </div>
       </div>
     </footer>
