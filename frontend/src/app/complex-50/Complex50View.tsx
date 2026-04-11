@@ -90,6 +90,7 @@ function SaunaCard({
 export function Complex50View({ branch }: { branch: BranchWithSaunas }) {
   // У complex-50 категорий нет, сауны лежат в branch.saunas
   const saunas = branch.saunas ?? [];
+  const [bookingSauna, setBookingSauna] = useState<Sauna | null>(null);
   const heroImages: [string, string, string] | [string] =
     saunas.length >= 3
       ? [
