@@ -96,13 +96,9 @@ export function HeroQuickBooking() {
     const endH = Math.min(23, startH + 2);
     return `${pad(endH)}:00`;
   });
-  const [guestsInput, setGuestsInput] = useState("2");
-
-  const guests = (() => {
-    const n = parseInt(guestsInput, 10);
-    if (Number.isNaN(n)) return 1;
-    return Math.max(1, Math.min(30, n));
-  })();
+  const [guests, setGuests] = useState(2);
+  const [guestsOpen, setGuestsOpen] = useState(false);
+  const guestsRef = useRef<HTMLDivElement>(null);
 
   // Date + time picker state
   const [pickerOpen, setPickerOpen] = useState(false);
