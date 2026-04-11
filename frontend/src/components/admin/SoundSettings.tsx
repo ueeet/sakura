@@ -27,17 +27,13 @@ export function SoundSettings() {
           type="button"
           onClick={() => setEnabled(!enabled)}
           aria-pressed={enabled}
-          className={`relative h-6 w-11 shrink-0 rounded-full border transition-colors ${
+          className={`flex h-6 w-11 shrink-0 items-center rounded-full px-0.5 transition-colors ${
             enabled
-              ? "bg-forest border-forest"
-              : "bg-muted border-border"
+              ? "bg-forest justify-end"
+              : "bg-muted justify-start"
           }`}
         >
-          <span
-            className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform ${
-              enabled ? "translate-x-[22px]" : "translate-x-0.5"
-            }`}
-          />
+          <span className="h-5 w-5 rounded-full bg-white shadow-md" />
         </button>
       </div>
 
