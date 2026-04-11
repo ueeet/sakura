@@ -81,33 +81,7 @@ export default function AdminStatsPage() {
 
   // ========== Агрегации ==========
 
-  // 1. Брони по дням за последние 14 дней
-  const bookingsByDay = useMemo(() => {
-    const days: { date: string; count: number; revenue: number }[] = [];
-    const now = new Date();
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      d.setHours(0, 0, 0, 0);
-      const next = new Date(d);
-      next.setDate(next.getDate() + 1);
-      const dayBookings = bookings.filter((b) => {
-        const t = new Date(b.startAt).getTime();
-        return t >= d.getTime() && t < next.getTime();
-      });
-      days.push({
-        date: formatDayShort(d),
-        count: dayBookings.length,
-        revenue: dayBookings.reduce(
-          (sum, b) => sum + (b.totalPrice || 0),
-          0,
-        ),
-      });
-    }
-    return days;
-  }, [bookings]);
-
-  // 2. Брони по статусам
+  // Брони по статусам
   const bookingsByStatus = useMemo(() => {
     const map: Record<string, number> = {};
     bookings.forEach((b) => {
