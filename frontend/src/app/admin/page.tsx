@@ -328,94 +328,49 @@ export default function AdminStatsPage() {
         </ResponsiveContainer>
       </div>
 
-      {/* Выручка по дням + Брони по статусам */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="mb-4">
-            <h3 className="text-base font-semibold">Выручка по дням</h3>
-            <p className="text-xs text-muted-foreground">
-              Сумма броней за 14 дней
-            </p>
+      {/* Брони по статусам */}
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="mb-4">
+          <h3 className="text-base font-semibold">Брони по статусам</h3>
+          <p className="text-xs text-muted-foreground">
+            Распределение всех записей
+          </p>
+        </div>
+        {bookingsByStatus.length === 0 ? (
+          <div className="flex items-center justify-center h-[220px] text-sm text-muted-foreground">
+            Нет данных
           </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={bookingsByDay}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(30 8% 22%)" vertical={false} />
-              <XAxis
-                dataKey="date"
-                stroke="hsl(40 8% 60%)"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-              />
-              <YAxis
-                stroke="hsl(40 8% 60%)"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(v) => `${v}₽`}
-              />
+        ) : (
+          <ResponsiveContainer width="100%" height={240}>
+            <PieChart>
+              <Pie
+                data={bookingsByStatus}
+                cx="50%"
+                cy="50%"
+                innerRadius={55}
+                outerRadius={95}
+                paddingAngle={2}
+                dataKey="value"
+                stroke="hsl(20 12% 12%)"
+                strokeWidth={2}
+              >
+                {bookingsByStatus.map((entry, idx) => (
+                  <Cell key={entry.key} fill={COLORS[idx % COLORS.length]} />
+                ))}
+              </Pie>
               <Tooltip
                 contentStyle={tooltipContentStyle}
                 labelStyle={tooltipLabelStyle}
                 itemStyle={tooltipItemStyle}
-                formatter={(v) => [`${Number(v).toLocaleString("ru-RU")}₽`, "Выручка"]}
               />
-              <Line
-                type="monotone"
-                dataKey="revenue"
-                stroke={FOREST}
-                strokeWidth={2.5}
-                dot={{ fill: FOREST, r: 3 }}
-                activeDot={{ r: 5 }}
-                name="Выручка"
+              <Legend
+                verticalAlign="bottom"
+                iconType="circle"
+                wrapperStyle={{ fontSize: 12, color: "hsl(40 8% 70%)" }}
               />
-            </LineChart>
+            </PieChart>
           </ResponsiveContainer>
-        </div>
-
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="mb-4">
-            <h3 className="text-base font-semibold">Брони по статусам</h3>
-            <p className="text-xs text-muted-foreground">
-              Распределение всех записей
-            </p>
-          </div>
-          {bookingsByStatus.length === 0 ? (
-            <div className="flex items-center justify-center h-[220px] text-sm text-muted-foreground">
-              Нет данных
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie
-                  data={bookingsByStatus}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={85}
-                  paddingAngle={2}
-                  dataKey="value"
-                  stroke="hsl(20 12% 12%)"
-                  strokeWidth={2}
-                >
-                  {bookingsByStatus.map((entry, idx) => (
-                    <Cell key={entry.key} fill={COLORS[idx % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={tooltipContentStyle}
-                  labelStyle={tooltipLabelStyle}
-                  itemStyle={tooltipItemStyle}
-                />
-                <Legend
-                  verticalAlign="bottom"
-                  iconType="circle"
-                  wrapperStyle={{ fontSize: 11, color: "hsl(40 8% 70%)" }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Брони по филиалам + Топ саун */}
