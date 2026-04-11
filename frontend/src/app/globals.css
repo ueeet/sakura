@@ -183,41 +183,17 @@
   }
 }
 
-/* Hide native cursor on devices with a real mouse — keep it on touch/mobile */
+/* Hide native cursor on devices with a real mouse — keep it on touch/mobile.
+   Когда мышь над iframe / video[controls], PetalCursor добавляет на body
+   класс .cursor-system-fallback — он перебивает cursor:none и возвращает
+   системный курсор (внутри iframe мы всё равно не контролируем стиль). */
 @media (hover: hover) and (pointer: fine) {
-  *,
-  *::before,
-  *::after {
+  body:not(.cursor-system-fallback),
+  body:not(.cursor-system-fallback) *,
+  body:not(.cursor-system-fallback) *::before,
+  body:not(.cursor-system-fallback) *::after {
     cursor: none !important;
   }
-}
-
-/* Petal trail — pure CSS animation, no React re-renders */
-@keyframes petal-fall {
-  0% {
-    opacity: 0.9;
-    transform: translate(var(--start-x), var(--start-y)) scale(var(--scale)) rotate(var(--start-rot));
-  }
-  100% {
-    opacity: 0;
-    transform: translate(var(--end-x), var(--end-y)) scale(var(--scale)) rotate(var(--end-rot));
-  }
-}
-
-.petal-trail {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 32px;
-  height: 32px;
-  pointer-events: none;
-  user-select: none;
-  will-change: transform, opacity;
-  opacity: 0;
-}
-
-.petal-trail.active {
-  animation: petal-fall 1.6s ease-out forwards;
 }
 
 /* Custom scrollbar — wood brown to match theme */
