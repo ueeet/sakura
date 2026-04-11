@@ -123,7 +123,11 @@ function Complex9Inner({ branch }: { branch: BranchWithSaunas }) {
   const [bookingSauna, setBookingSauna] = useState<Sauna | null>(null);
 
   const activeCategory = categories.find((c) => c.slug === activeTabSlug);
-  const activeSaunas = activeCategory?.saunas ?? [];
+  const rawActiveSaunas = activeCategory?.saunas ?? [];
+  // Применяем фильтр по гостям
+  const activeSaunas = guestsFilter
+    ? rawActiveSaunas.filter((s) => s.capacity >= guestsFilter)
+    : rawActiveSaunas;
 
   const handleTabChange = (slug: string) => {
     setActiveTabSlug(slug);
