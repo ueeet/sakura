@@ -25,7 +25,7 @@ import {
   Tag,
   Loader2,
   TrendingUp,
-  DollarSign,
+  RussianRuble,
   Users,
 } from "lucide-react";
 
