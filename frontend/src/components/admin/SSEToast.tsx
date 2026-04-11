@@ -179,17 +179,125 @@ export function SSEToast() {
     });
   }, [soundEnabled, volume]);
 
+  // Иконка громкости в зависимости от уровня
+  const VolIcon =
+    !soundEnabled || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
+
   return (
     <>
-      {/* Кнопка переключения звука — всегда видна в углу для админки */}
-      <button
-        type="button"
-        onClick={toggleSound}
-        className="fixed bottom-4 right-4 z-40 flex items-center justify-center h-10 w-10 rounded-full border border-border bg-card text-muted-foreground hover:text-foreground hover:border-forest/50 transition-colors shadow-lg"
-        title={soundEnabled ? "Звук включён" : "Звук выключен"}
-      >
-        {soundEnabled ? <Bell className="h-4 w-4" /> : <BellOff className="h-4 w-4" />}
-      </button>
+      {/* Виджет настроек звука в углу */}
+      <div ref={settingsRef} className="fixed bottom-4 right-4 z-40">
+        <AnimatePresence>
+          {settingsOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.96 }}
+              transition={{ duration: 0.2 }}
+              className="absolute bottom-12 right-0 w-64 rounded-2xl border border-border bg-card p-4 shadow-2xl"
+              style={{ willChange: "transform, opacity" }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-semibold">Уведомления</h4>
+                <button
+                  type="button"
+                  onClick={() => setSettingsOpen(false)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Toggle звука */}
+              <label className="flex items-center justify-between gap-3 mb-4 cursor-pointer">
+                <span className="flex items-center gap-2 text-sm">
+                  {soundEnabled ? (
+                    <Bell className="h-4 w-4 text-forest" />
+                  ) : (
+                    <BellOff className="h-4 w-4 text-muted-foreground" />
+                  )}
+                  Звук
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSoundEnabled(!soundEnabled)}
+                  className={`relative h-5 w-9 rounded-full transition-colors ${
+                    soundEnabled ? "bg-forest" : "bg-muted"
+                  }`}
+                  aria-pressed={soundEnabled}
+                >
+                  <span
+                    className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+                      soundEnabled ? "translate-x-4" : "translate-x-0.5"
+                    }`}
+                  />
+                </button>
+              </label>
+
+              {/* Громкость */}
+              <div className={soundEnabled ? "" : "opacity-40 pointer-events-none"}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-muted-foreground">Громкость</span>
+                  <span className="text-xs font-medium tabular-nums">
+                    {Math.round(volume * 100)}%
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <VolumeX className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={volume}
+                    onChange={(e) => setVolume(parseFloat(e.target.value))}
+                    className="flex-1 h-1.5 rounded-full bg-muted appearance-none cursor-pointer
+                      [&::-webkit-slider-thumb]:appearance-none
+                      [&::-webkit-slider-thumb]:h-3.5
+                      [&::-webkit-slider-thumb]:w-3.5
+                      [&::-webkit-slider-thumb]:rounded-full
+                      [&::-webkit-slider-thumb]:bg-forest
+                      [&::-webkit-slider-thumb]:cursor-pointer
+                      [&::-webkit-slider-thumb]:border-2
+                      [&::-webkit-slider-thumb]:border-white
+                      [&::-moz-range-thumb]:h-3.5
+                      [&::-moz-range-thumb]:w-3.5
+                      [&::-moz-range-thumb]:rounded-full
+                      [&::-moz-range-thumb]:bg-forest
+                      [&::-moz-range-thumb]:cursor-pointer
+                      [&::-moz-range-thumb]:border-2
+                      [&::-moz-range-thumb]:border-white
+                      [&::-moz-range-thumb]:border-solid"
+                    style={{
+                      background: `linear-gradient(to right, var(--forest, #15803d) 0%, var(--forest, #15803d) ${volume * 100}%, hsl(var(--muted)) ${volume * 100}%, hsl(var(--muted)) 100%)`,
+                    }}
+                  />
+                  <Volume2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                </div>
+
+                {/* Кнопка проверки */}
+                <button
+                  type="button"
+                  onClick={previewSound}
+                  className="mt-3 w-full flex items-center justify-center gap-2 rounded-lg border border-border py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-forest/40 transition-colors"
+                >
+                  <Play className="h-3 w-3" />
+                  Проверить звук
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <button
+          type="button"
+          onClick={() => setSettingsOpen(!settingsOpen)}
+          className="flex items-center justify-center h-10 w-10 rounded-full border border-border bg-card text-muted-foreground hover:text-foreground hover:border-forest/50 transition-colors shadow-lg"
+          title="Настройки уведомлений"
+        >
+          <VolIcon className="h-4 w-4" />
+        </button>
+      </div>
 
       {/* Тосты */}
       <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
