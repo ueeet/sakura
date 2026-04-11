@@ -64,7 +64,8 @@ export function SoundSettings() {
               value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
               aria-label="Громкость уведомлений"
-              className="relative w-full h-4 appearance-none bg-transparent cursor-pointer
+              style={{ cursor: "none" }}
+              className="relative w-full h-4 appearance-none bg-transparent
                 [&::-webkit-slider-thumb]:appearance-none
                 [&::-webkit-slider-thumb]:h-4
                 [&::-webkit-slider-thumb]:w-4
@@ -73,8 +74,7 @@ export function SoundSettings() {
                 [&::-webkit-slider-thumb]:border-2
                 [&::-webkit-slider-thumb]:border-forest
                 [&::-webkit-slider-thumb]:shadow-md
-                [&::-webkit-slider-thumb]:cursor-grab
-                [&::-webkit-slider-thumb]:active:cursor-grabbing
+                [&::-webkit-slider-thumb]:cursor-none
                 [&::-moz-range-thumb]:h-4
                 [&::-moz-range-thumb]:w-4
                 [&::-moz-range-thumb]:rounded-full
@@ -82,7 +82,7 @@ export function SoundSettings() {
                 [&::-moz-range-thumb]:border-2
                 [&::-moz-range-thumb]:border-forest
                 [&::-moz-range-thumb]:shadow-md
-                [&::-moz-range-thumb]:cursor-grab
+                [&::-moz-range-thumb]:cursor-none
                 [&::-moz-range-track]:bg-transparent"
             />
           </div>
