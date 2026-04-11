@@ -358,7 +358,7 @@ export default function AdminStatsPage() {
                 contentStyle={tooltipContentStyle}
                 labelStyle={tooltipLabelStyle}
                 itemStyle={tooltipItemStyle}
-                formatter={(v: number) => [`${v.toLocaleString("ru-RU")}₽`, "Выручка"]}
+                formatter={(v) => [`${Number(v).toLocaleString("ru-RU")}₽`, "Выручка"]}
               />
               <Line
                 type="monotone"
