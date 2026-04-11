@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { isAuthenticated, clearTokens } from "@/lib/api";
 import { SSEToast } from "@/components/admin/SSEToast";
+import { SoundSettings } from "@/components/admin/SoundSettings";
 import {
   LayoutDashboard, Calendar, Flame, Star, Settings, LogOut, Menu, X,
 } from "lucide-react";
