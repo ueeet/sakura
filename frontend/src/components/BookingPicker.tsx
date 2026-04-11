@@ -420,7 +420,7 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
           if (inRange) {
             cls = "bg-forest text-white";
           } else if (past) {
-            cls = "bg-muted/30 text-muted-foreground/40 cursor-not-allowed line-through";
+            cls = "bg-muted/30 text-muted-foreground/40 cursor-not-allowed";
           } else if (slot.reason === "booked") {
             cls = "bg-red-500/20 text-red-400 cursor-not-allowed";
           } else if (slot.reason === "cleaning") {
