@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { Settings } from "@/lib/types";
+import { CheckCircle2, Loader2 } from "lucide-react";
 
 export default function AdminSettingsPage() {
   const [, setSettings] = useState<Settings | null>(null);
@@ -20,7 +21,8 @@ export default function AdminSettingsPage() {
   });
 
   useEffect(() => {
-    api.get<Settings>("/settings")
+    api
+      .get<Settings>("/settings")
       .then((s) => {
         setSettings(s);
         setForm({
@@ -49,49 +51,127 @@ export default function AdminSettingsPage() {
     setSaving(false);
   };
 
-  if (loading) return <div className="text-gray-500">Загрузка...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin" />
+      </div>
+    );
+  }
+
+  const inputCls =
+    "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-forest transition-colors";
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Настройки</h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-foreground">Настройки</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Контактные данные и интеграции
+        </p>
+      </div>
 
       {success && (
-        <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-xl text-sm text-center">
+        <div className="mb-4 max-w-xl flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-400">
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
           Настройки сохранены
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-xl rounded-2xl border border-border bg-card p-6 space-y-4"
+      >
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Название компании</label>
-          <input type="text" value={form.companyName} onChange={(e) => setForm({ ...form, companyName: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Основной телефон</label>
-          <input type="tel" value={form.mainPhone} onChange={(e) => setForm({ ...form, mainPhone: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-          <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ВКонтакте</label>
-          <input type="url" value={form.vk} onChange={(e) => setForm({ ...form, vk: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
+          <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+            Название компании
+          </label>
+          <input
+            type="text"
+            value={form.companyName}
+            onChange={(e) => setForm({ ...form, companyName: e.target.value })}
+            className={inputCls}
+          />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instagram</label>
-          <input type="url" value={form.instagram} onChange={(e) => setForm({ ...form, instagram: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
+          <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+            Основной телефон
+          </label>
+          <input
+            type="tel"
+            value={form.mainPhone}
+            onChange={(e) => setForm({ ...form, mainPhone: e.target.value })}
+            className={inputCls}
+          />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Telegram Chat ID</label>
-          <input type="text" value={form.telegramChatId} onChange={(e) => setForm({ ...form, telegramChatId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm" />
+          <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+            Email
+          </label>
+          <input
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            className={inputCls}
+          />
         </div>
-        <div className="flex items-center gap-2">
-          <input type="checkbox" id="smsEnabled" checked={form.smsEnabled} onChange={(e) => setForm({ ...form, smsEnabled: e.target.checked })} className="rounded border-gray-300" />
-          <label htmlFor="smsEnabled" className="text-sm text-gray-700 dark:text-gray-300">Включить SMS-уведомления</label>
+        <div>
+          <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+            ВКонтакте
+          </label>
+          <input
+            type="url"
+            value={form.vk}
+            onChange={(e) => setForm({ ...form, vk: e.target.value })}
+            className={inputCls}
+          />
         </div>
-        <button type="submit" disabled={saving} className="px-6 py-2 bg-pink-600 hover:bg-pink-700 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors">
-          {saving ? "Сохранение..." : "Сохранить"}
+        <div>
+          <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+            Instagram
+          </label>
+          <input
+            type="url"
+            value={form.instagram}
+            onChange={(e) => setForm({ ...form, instagram: e.target.value })}
+            className={inputCls}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+            Telegram Chat ID
+          </label>
+          <input
+            type="text"
+            value={form.telegramChatId}
+            onChange={(e) => setForm({ ...form, telegramChatId: e.target.value })}
+            className={inputCls}
+          />
+        </div>
+        <label className="flex items-center gap-3 cursor-pointer pt-2">
+          <input
+            type="checkbox"
+            checked={form.smsEnabled}
+            onChange={(e) => setForm({ ...form, smsEnabled: e.target.checked })}
+            className="h-4 w-4 rounded border-border bg-background text-forest focus:ring-forest focus:ring-offset-0"
+          />
+          <span className="text-sm text-foreground">Включить SMS-уведомления</span>
+        </label>
+
+        <button
+          type="submit"
+          disabled={saving}
+          className="group relative w-full sm:w-auto overflow-hidden rounded-lg bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-900 px-6 py-2.5 text-sm font-semibold text-white shadow-lg ring-1 ring-emerald-500/30 transition-shadow hover:shadow-xl disabled:opacity-50 inline-flex items-center justify-center gap-2"
+        >
+          <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+          {saving ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Сохранение...
+            </>
+          ) : (
+            "Сохранить"
+          )}
         </button>
       </form>
     </div>
