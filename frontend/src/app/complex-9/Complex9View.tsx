@@ -110,6 +110,10 @@ function Complex9Inner({ branch }: { branch: BranchWithSaunas }) {
   const categories = branch.categories ?? [];
   const allSaunas = categories.flatMap((c) => c.saunas);
 
+  // Фильтр по количеству гостей (?guests=N) из hero-формы
+  const guestsParam = searchParams.get("guests");
+  const guestsFilter = guestsParam ? Math.max(1, parseInt(guestsParam, 10)) : null;
+
   const tabFromUrl = searchParams.get("tab");
   const initialTabSlug =
     categories.find((c) => c.slug === tabFromUrl)?.slug ??
