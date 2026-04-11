@@ -3,7 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { onSSEEvent, type SSEEvent } from "@/lib/sse";
-import { X, Bell, BellOff, Calendar, Star, Trash2, RefreshCw } from "lucide-react";
+import {
+  X,
+  Bell,
+  BellOff,
+  Calendar,
+  Star,
+  Trash2,
+  RefreshCw,
+  Volume2,
+  VolumeX,
+  Volume1,
+  Play,
+} from "lucide-react";
 
 interface Toast {
   id: number;
@@ -12,12 +24,14 @@ interface Toast {
 }
 
 const SOUND_STORAGE_KEY = "admin_sound_enabled";
+const VOLUME_STORAGE_KEY = "admin_sound_volume";
 
 /**
  * Воспроизводит "ding-dong" уведомление через Web Audio API.
- * Не требует загрузки внешних файлов.
+ * @param volume — 0..1 (0 = тишина, 1 = максимум)
  */
-function playNotificationSound() {
+function playNotificationSound(volume: number) {
+  if (volume <= 0) return;
   try {
     const AudioCtx =
       window.AudioContext ||
@@ -26,7 +40,11 @@ function playNotificationSound() {
     if (!AudioCtx) return;
     const ctx = new AudioCtx();
 
-    // Первая нота (выше)
+    // Базовая громкость нот, на которую умножаем пользовательский volume
+    const peak1 = 0.35 * volume;
+    const peak2 = 0.32 * volume;
+
+    // Первая нота
     const osc1 = ctx.createOscillator();
     const gain1 = ctx.createGain();
     osc1.type = "sine";
@@ -34,12 +52,12 @@ function playNotificationSound() {
     osc1.connect(gain1);
     gain1.connect(ctx.destination);
     gain1.gain.setValueAtTime(0, ctx.currentTime);
-    gain1.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.02);
-    gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    gain1.gain.linearRampToValueAtTime(peak1, ctx.currentTime + 0.02);
+    gain1.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
     osc1.start(ctx.currentTime);
     osc1.stop(ctx.currentTime + 0.4);
 
-    // Вторая нота (ниже, слегка позже — звучит мягко)
+    // Вторая нота
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     osc2.type = "sine";
@@ -47,12 +65,11 @@ function playNotificationSound() {
     osc2.connect(gain2);
     gain2.connect(ctx.destination);
     gain2.gain.setValueAtTime(0, ctx.currentTime + 0.18);
-    gain2.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.2);
-    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.65);
+    gain2.gain.linearRampToValueAtTime(peak2, ctx.currentTime + 0.2);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.65);
     osc2.start(ctx.currentTime + 0.18);
     osc2.stop(ctx.currentTime + 0.65);
 
-    // Закрываем контекст после проигрывания, чтобы не плодить
     setTimeout(() => ctx.close().catch(() => {}), 800);
   } catch {
     // ignore
