@@ -286,9 +286,12 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
     } else setViewMonth(viewMonth + 1);
   };
   const isPast = (day: number) => {
-    const d = new Date(viewYear, viewMonth, day);
-    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    return d < todayStart;
+    // Сравниваем по московским календарным датам
+    if (viewYear < moscowNow.year) return true;
+    if (viewYear > moscowNow.year) return false;
+    if (viewMonth + 1 < moscowNow.month) return true;
+    if (viewMonth + 1 > moscowNow.month) return false;
+    return day < moscowNow.day;
   };
   const isSelected = (day: number) =>
     selectedDate &&
