@@ -27,7 +27,8 @@ const SOUND_STORAGE_KEY = "admin_sound_enabled";
 const VOLUME_STORAGE_KEY = "admin_sound_volume";
 
 /**
- * Воспроизводит "ding-dong" уведомление через Web Audio API.
+ * Мягкое мелодичное уведомление через Web Audio API:
+ * 3 ноты с медленной атакой, длинным затуханием и low-pass фильтром.
  * @param volume — 0..1 (0 = тишина, 1 = максимум)
  */
 function playNotificationSound(volume: number) {
@@ -39,38 +40,50 @@ function playNotificationSound(volume: number) {
         .webkitAudioContext;
     if (!AudioCtx) return;
     const ctx = new AudioCtx();
+    const now = ctx.currentTime;
 
-    // Базовая громкость нот, на которую умножаем пользовательский volume
-    const peak1 = 0.35 * volume;
-    const peak2 = 0.32 * volume;
+    // Общий low-pass фильтр для мягкости
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.value = 2400;
+    filter.Q.value = 0.7;
 
-    // Первая нота
-    const osc1 = ctx.createOscillator();
-    const gain1 = ctx.createGain();
-    osc1.type = "sine";
-    osc1.frequency.value = 988; // B5
-    osc1.connect(gain1);
-    gain1.connect(ctx.destination);
-    gain1.gain.setValueAtTime(0, ctx.currentTime);
-    gain1.gain.linearRampToValueAtTime(peak1, ctx.currentTime + 0.02);
-    gain1.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
-    osc1.start(ctx.currentTime);
-    osc1.stop(ctx.currentTime + 0.4);
+    // Лёгкая компрессия общей громкости
+    const master = ctx.createGain();
+    master.gain.value = 0.5 * volume;
 
-    // Вторая нота
-    const osc2 = ctx.createOscillator();
-    const gain2 = ctx.createGain();
-    osc2.type = "sine";
-    osc2.frequency.value = 740; // F#5
-    osc2.connect(gain2);
-    gain2.connect(ctx.destination);
-    gain2.gain.setValueAtTime(0, ctx.currentTime + 0.18);
-    gain2.gain.linearRampToValueAtTime(peak2, ctx.currentTime + 0.2);
-    gain2.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.65);
-    osc2.start(ctx.currentTime + 0.18);
-    osc2.stop(ctx.currentTime + 0.65);
+    filter.connect(master);
+    master.connect(ctx.destination);
 
-    setTimeout(() => ctx.close().catch(() => {}), 800);
+    // Три ноты восходящей мелодии: F#5 → A5 → C#6 (мажорное трезвучие)
+    const notes = [
+      { freq: 740, start: 0.0, peak: 0.32, dur: 1.4 }, // F#5
+      { freq: 880, start: 0.22, peak: 0.3, dur: 1.4 }, // A5
+      { freq: 1109, start: 0.44, peak: 0.28, dur: 1.6 }, // C#6
+    ];
+
+    for (const n of notes) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = n.freq;
+      osc.connect(gain);
+      gain.connect(filter);
+
+      const t0 = now + n.start;
+      const tEnd = t0 + n.dur;
+
+      gain.gain.setValueAtTime(0, t0);
+      gain.gain.linearRampToValueAtTime(n.peak, t0 + 0.08); // мягкая атака
+      gain.gain.linearRampToValueAtTime(n.peak * 0.5, t0 + 0.35); // плавный спад
+      gain.gain.exponentialRampToValueAtTime(0.0001, tEnd); // долгий хвост
+
+      osc.start(t0);
+      osc.stop(tEnd);
+    }
+
+    // Закрываем контекст после полного проигрывания
+    setTimeout(() => ctx.close().catch(() => {}), 2400);
   } catch {
     // ignore
   }
