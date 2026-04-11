@@ -14,7 +14,7 @@ import {
   CarouselIndicator,
 } from "@/components/ui/carousel";
 import { Lightbox } from "@/components/ui/lightbox";
-import { promotions } from "@/lib/saunas";
+import type { Promotion } from "@/lib/types";
 import { Flame, Gift, Cake, ChevronDown, Phone, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 
