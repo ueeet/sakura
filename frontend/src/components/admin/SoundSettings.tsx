@@ -47,7 +47,7 @@ export function SoundSettings() {
             {pct}%
           </span>
         </div>
-        <div className="flex items-center gap-2" data-hide-cursor>
+        <div className="flex items-center gap-2">
           <VolumeX className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
           <div className="relative flex-1">
             {/* Кастомный трек */}
