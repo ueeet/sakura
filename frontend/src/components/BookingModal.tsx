@@ -12,20 +12,14 @@ interface BookingModalProps {
 }
 
 export function BookingModal({ sauna, onClose }: BookingModalProps) {
-  // Закрытие по Escape
+  // Закрытие по Escape (скролл страницы НЕ блокируем)
   useEffect(() => {
     if (!sauna) return;
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
     document.addEventListener("keydown", onKey);
-    // Блокируем скролл body
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [sauna, onClose]);
 
   return (
