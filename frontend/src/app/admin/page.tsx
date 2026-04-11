@@ -3,8 +3,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   PieChart,
