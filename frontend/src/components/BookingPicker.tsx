@@ -152,14 +152,33 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
   };
 
   const handleSlotClick = (hour: number) => {
-    if (startHour == null || (startHour != null && endHour != null)) {
+    // Первый клик — забронировать 1 час
+    if (startHour == null) {
       setStartHour(hour);
+      setEndHour(hour + 1);
+      return;
+    }
+    // Повторный клик на стартовый час с одночасовой бронью — снимаем выделение
+    if (hour === startHour && endHour === startHour + 1) {
+      setStartHour(null);
       setEndHour(null);
       return;
     }
+    // Клик раньше или равно старту (но не одночасовой случай) — новый старт, 1 час
     if (hour <= startHour) {
       setStartHour(hour);
-      setEndHour(null);
+      setEndHour(hour + 1);
+      return;
+    }
+    // Клик позже старта — расширяем диапазон, но проверяем, что все
+    // промежуточные слоты свободны. Иначе начинаем заново с этого часа.
+    if (!availability) return;
+    const intermediateAvailable = availability.slots
+      .filter((s) => s.hour >= startHour && s.hour <= hour)
+      .every((s) => s.available);
+    if (!intermediateAvailable) {
+      setStartHour(hour);
+      setEndHour(hour + 1);
       return;
     }
     setEndHour(hour + 1);
