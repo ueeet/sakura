@@ -101,34 +101,47 @@ export function Footer() {
           {/* Column 4 - Контакты */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Контакты</h4>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="tel:+79274651000"
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <Phone className="w-4 h-4 shrink-0" />
-                  +7 (927) 465-1000
-                </a>
-              </li>
-              <li>
-                <a
-                  href="tel:+78552784000"
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <Phone className="w-4 h-4 shrink-0" />
-                  +7 (8552) 784 000
-                </a>
-              </li>
-              <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
-                пр. Мира, д. 9/04А
-              </li>
-              <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
-                ул. Нижняя Боровецкая, 20
-              </li>
-            </ul>
+            <div className="space-y-5">
+              {/* 9 комплекс */}
+              <div>
+                <p className="text-xs uppercase tracking-wide text-foreground/70 mb-2">
+                  Сауна 9 комплекс
+                </p>
+                <div className="space-y-1.5">
+                  <a
+                    href="tel:+79274651000"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Phone className="w-4 h-4 shrink-0" />
+                    +7 (927) 465-1000
+                  </a>
+                  <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
+                    пр. Мира, д. 9/04А
+                  </div>
+                </div>
+              </div>
+
+              {/* 50 комплекс */}
+              <div>
+                <p className="text-xs uppercase tracking-wide text-foreground/70 mb-2">
+                  Сауна 50 комплекс
+                </p>
+                <div className="space-y-1.5">
+                  <a
+                    href="tel:+78552784000"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Phone className="w-4 h-4 shrink-0" />
+                    +7 (8552) 784 000
+                  </a>
+                  <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
+                    ул. Нижняя Боровецкая, 20
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
