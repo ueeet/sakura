@@ -81,6 +81,25 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [guestsOpen, setGuestsOpen] = useState(false);
+  const guestsRef = useRef<HTMLDivElement>(null);
+
+  // Закрытие дропдауна гостей по клику вне
+  useEffect(() => {
+    if (!guestsOpen) return;
+    function onMouseDown(e: MouseEvent) {
+      if (guestsRef.current && !guestsRef.current.contains(e.target as Node)) {
+        setGuestsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onMouseDown);
+    return () => document.removeEventListener("mousedown", onMouseDown);
+  }, [guestsOpen]);
+
+  const maxGuests = Math.max(1, sauna.capacity || 10);
+  const guestsLabel = (n: number) =>
+    `${n} ${n === 1 ? "гость" : n < 5 ? "гостя" : "гостей"}`;
+
   useEffect(() => {
     if (!selectedDate) return;
     setLoadingAvailability(true);
