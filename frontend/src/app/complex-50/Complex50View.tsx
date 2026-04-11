@@ -135,11 +135,34 @@ function Complex50Inner({ branch }: { branch: BranchWithSaunas }) {
         />
 
         <section id="saunas" className="container mx-auto px-4 py-10 sm:py-14">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {saunas.map((sauna, index) => (
-              <SaunaCard key={sauna.id} sauna={sauna} index={index} onBook={setBookingSauna} />
-            ))}
-          </div>
+          {guestsFilter && (
+            <div className="mb-6 flex flex-wrap items-center justify-center gap-3 rounded-xl border border-forest/30 bg-forest/10 px-4 py-3 text-sm">
+              <span className="text-foreground">
+                Показаны сауны вместимостью от{" "}
+                <strong>{guestsFilter}</strong>{" "}
+                {guestsFilter === 1 ? "гостя" : guestsFilter < 5 ? "гостей" : "гостей"}
+              </span>
+              <button
+                type="button"
+                onClick={() => router.push("/complex-50", { scroll: false })}
+                className="text-xs text-forest hover:underline"
+              >
+                Сбросить фильтр
+              </button>
+            </div>
+          )}
+
+          {saunas.length === 0 ? (
+            <div className="rounded-2xl border border-border bg-card p-10 text-center text-muted-foreground">
+              Нет саун, подходящих под выбранное количество гостей
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {saunas.map((sauna, index) => (
+                <SaunaCard key={sauna.id} sauna={sauna} index={index} onBook={setBookingSauna} />
+              ))}
+            </div>
+          )}
 
           <p className="text-center text-muted-foreground mt-10 text-sm">
             Мангал и шашлычный двор доступны за дополнительную плату
@@ -150,5 +173,19 @@ function Complex50Inner({ branch }: { branch: BranchWithSaunas }) {
 
       <BookingModal sauna={bookingSauna} onClose={() => setBookingSauna(null)} />
     </>
+  );
+}
+
+export function Complex50View({ branch }: { branch: BranchWithSaunas }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="text-muted-foreground">Загрузка…</div>
+        </div>
+      }
+    >
+      <Complex50Inner branch={branch} />
+    </Suspense>
   );
 }
