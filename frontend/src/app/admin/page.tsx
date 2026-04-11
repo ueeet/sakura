@@ -62,20 +62,20 @@ export default function AdminStatsPage() {
   const [loading, setLoading] = useState(true);
 
   const loadAll = () => {
-    Promise.all([
+    // Каждый запрос обрабатываем независимо — если один упадёт,
+    // остальные данные всё равно отобразятся
+    Promise.allSettled([
       api.get<Stats>("/stats"),
       api.get<Booking[]>("/bookings"),
       api.get<Sauna[]>("/saunas"),
       api.get<Branch[]>("/branches"),
-    ])
-      .then(([s, b, sa, br]) => {
-        setStats(s);
-        setBookings(b);
-        setSaunas(sa);
-        setBranches(br);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    ]).then(([s, b, sa, br]) => {
+      if (s.status === "fulfilled") setStats(s.value);
+      if (b.status === "fulfilled") setBookings(b.value);
+      if (sa.status === "fulfilled") setSaunas(sa.value);
+      if (br.status === "fulfilled") setBranches(br.value);
+      setLoading(false);
+    });
   };
 
   useEffect(() => {
