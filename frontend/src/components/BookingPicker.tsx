@@ -261,12 +261,11 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
               : slot.reason === "cleaning"
                 ? "bg-amber-500/20 text-amber-400 cursor-not-allowed"
                 : "bg-gray-500/20 text-gray-500 cursor-not-allowed";
-          const activeClass =
-            inRange || isStart
-              ? "bg-forest text-white"
-              : disabled
-                ? reasonClass
-                : "bg-muted hover:bg-forest/20 text-foreground";
+          const activeClass = inRange
+            ? "bg-forest text-white"
+            : disabled
+              ? reasonClass
+              : "bg-muted hover:bg-forest/20 text-foreground";
           return (
             <button
               type="button"
