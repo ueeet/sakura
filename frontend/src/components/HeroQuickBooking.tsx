@@ -513,23 +513,67 @@ export function HeroQuickBooking() {
           </AnimatePresence>
         </div>
 
-        {/* Guests */}
-        <Field icon={<Users className="h-3 w-3" />} label="Гостей">
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            value={guestsInput}
-            onChange={(e) => {
-              const v = e.target.value;
-              // Разрешаем пустое поле и любые цифры — нормализация на blur.
-              // Клампинг 1..30 живёт в derived `guests` и применяется в onBlur.
-              if (v === "" || /^\d+$/.test(v)) setGuestsInput(v);
-            }}
-            onBlur={() => setGuestsInput(String(guests))}
-            className="w-full bg-transparent text-sm font-semibold text-white outline-none"
-          />
-        </Field>
+        {/* Guests — кастомный дропдаун */}
+        <div ref={guestsRef} className="relative">
+          <button
+            type="button"
+            onClick={() => setGuestsOpen((p) => !p)}
+            className="flex w-full items-center justify-between gap-2 rounded-xl bg-black/30 px-3 py-2 text-left ring-1 ring-white/15 transition hover:ring-white/30 focus:outline-none focus:ring-white/40"
+          >
+            <span className="flex min-w-0 flex-col gap-1">
+              <span className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-white/60">
+                <Users className="h-3 w-3" />
+                Гостей
+              </span>
+              <span className="truncate text-sm font-semibold text-white">
+                {guests}{" "}
+                {guests === 1 ? "гость" : guests < 5 ? "гостя" : "гостей"}
+              </span>
+            </span>
+            <ChevronDown
+              className={`h-4 w-4 shrink-0 text-white/60 transition-transform ${
+                guestsOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
+          <AnimatePresence>
+            {guestsOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                transition={{ duration: 0.2 }}
+                className="absolute left-0 right-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded-xl border border-border bg-card p-2 shadow-xl"
+                style={{ willChange: "transform, opacity" }}
+              >
+                {Array.from({ length: MAX_GUESTS }, (_, i) => i + 1).map((n) => {
+                  const active = n === guests;
+                  return (
+                    <button
+                      type="button"
+                      key={n}
+                      onClick={() => {
+                        setGuests(n);
+                        setGuestsOpen(false);
+                      }}
+                      className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                        active
+                          ? "bg-forest text-white"
+                          : "text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <span>
+                        {n} {n === 1 ? "гость" : n < 5 ? "гостя" : "гостей"}
+                      </span>
+                      {active && <Check className="h-4 w-4 shrink-0" />}
+                    </button>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* Submit */}
         <button
