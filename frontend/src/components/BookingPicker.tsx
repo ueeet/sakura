@@ -656,6 +656,53 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
           />
         </div>
 
+        {/* Юридические согласия */}
+        <div className="space-y-2 pt-1">
+          <label className="flex items-start gap-2.5 cursor-pointer text-xs leading-snug">
+            <input
+              type="checkbox"
+              checked={agreeOferta}
+              onChange={(e) => setAgreeOferta(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-border bg-background text-forest focus:ring-forest focus:ring-offset-0 cursor-pointer"
+            />
+            <span className="text-muted-foreground">
+              Я принимаю условия{" "}
+              <a
+                href="/oferta"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-forest underline hover:no-underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                публичной оферты
+              </a>{" "}
+              и правила бронирования
+            </span>
+          </label>
+
+          <label className="flex items-start gap-2.5 cursor-pointer text-xs leading-snug">
+            <input
+              type="checkbox"
+              checked={agreePersonal}
+              onChange={(e) => setAgreePersonal(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-border bg-background text-forest focus:ring-forest focus:ring-offset-0 cursor-pointer"
+            />
+            <span className="text-muted-foreground">
+              Я даю согласие на{" "}
+              <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-forest underline hover:no-underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                обработку персональных данных
+              </a>{" "}
+              в соответствии с 152-ФЗ
+            </span>
+          </label>
+        </div>
+
         {error && (
           <div className="flex items-start gap-2 rounded-lg bg-red-500/10 border border-red-500/30 p-2.5 text-sm text-red-400">
             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
@@ -674,7 +721,13 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
           </button>
           <button
             type="submit"
-            disabled={submitting || !clientName || !phone}
+            disabled={
+              submitting ||
+              !clientName ||
+              !phoneValid ||
+              !agreeOferta ||
+              !agreePersonal
+            }
             className="flex-[2] rounded-lg bg-forest text-white py-2.5 text-sm font-semibold hover:bg-forest/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {submitting ? (
