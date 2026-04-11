@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ComplexHero } from "@/components/ComplexHero";
+import { BookingModal } from "@/components/BookingModal";
 import type { BranchWithSaunas, Sauna } from "@/lib/types";
 
 const badge = "bg-wood-dark/80 text-white";
