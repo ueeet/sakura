@@ -534,24 +534,57 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
         </div>
       )}
 
-      <label className="flex items-center gap-3 rounded-lg border border-border bg-background px-3 py-2">
-        <Users className="h-4 w-4 text-forest" />
-        <span className="text-sm">Гостей</span>
-        <select
-          value={guests}
-          onChange={(e) => setGuests(parseInt(e.target.value, 10))}
-          className="ml-auto bg-transparent text-right text-sm font-semibold focus:outline-none cursor-pointer pr-1"
+      <div ref={guestsRef} className="relative">
+        <button
+          type="button"
+          onClick={() => setGuestsOpen((p) => !p)}
+          className="flex w-full items-center gap-3 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors hover:border-forest/50 focus:outline-none focus:border-forest"
         >
-          {Array.from(
-            { length: Math.max(1, sauna.capacity || 10) },
-            (_, i) => i + 1,
-          ).map((n) => (
-            <option key={n} value={n} className="bg-card text-foreground">
-              {n} {n === 1 ? "гость" : n < 5 ? "гостя" : "гостей"}
-            </option>
-          ))}
-        </select>
-      </label>
+          <Users className="h-4 w-4 shrink-0 text-forest" />
+          <span className="text-muted-foreground">Гостей</span>
+          <span className="ml-auto font-semibold">{guestsLabel(guests)}</span>
+          <ChevronDown
+            className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
+              guestsOpen ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        <AnimatePresence>
+          {guestsOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.96 }}
+              transition={{ duration: 0.2 }}
+              className="absolute left-0 right-0 top-full z-40 mt-2 max-h-60 overflow-y-auto rounded-xl border border-border bg-card p-1.5 shadow-xl"
+              style={{ willChange: "transform, opacity" }}
+            >
+              {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => {
+                const active = n === guests;
+                return (
+                  <button
+                    type="button"
+                    key={n}
+                    onClick={() => {
+                      setGuests(n);
+                      setGuestsOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                      active
+                        ? "bg-forest text-white"
+                        : "text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <span>{guestsLabel(n)}</span>
+                    {active && <Check className="h-4 w-4 shrink-0" />}
+                  </button>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {totalPrice > 0 && (
         <div className="rounded-lg bg-forest/10 p-3 text-center">
