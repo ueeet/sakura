@@ -79,26 +79,53 @@ function playNotificationSound(volume: number) {
 export function SSEToast() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [volume, setVolume] = useState(0.7);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const initRef = useRef(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
 
-  // Загружаем настройку звука из localStorage
+  // Загружаем настройки из localStorage
   useEffect(() => {
     if (initRef.current) return;
     initRef.current = true;
     try {
-      const saved = localStorage.getItem(SOUND_STORAGE_KEY);
-      if (saved !== null) setSoundEnabled(saved === "1");
+      const savedEnabled = localStorage.getItem(SOUND_STORAGE_KEY);
+      if (savedEnabled !== null) setSoundEnabled(savedEnabled === "1");
+      const savedVol = localStorage.getItem(VOLUME_STORAGE_KEY);
+      if (savedVol !== null) {
+        const v = parseFloat(savedVol);
+        if (!Number.isNaN(v)) setVolume(Math.max(0, Math.min(1, v)));
+      }
     } catch {}
   }, []);
 
-  const toggleSound = () => {
-    setSoundEnabled((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem(SOUND_STORAGE_KEY, next ? "1" : "0");
-      } catch {}
-      return next;
-    });
+  // Сохранение настроек
+  useEffect(() => {
+    try {
+      localStorage.setItem(SOUND_STORAGE_KEY, soundEnabled ? "1" : "0");
+    } catch {}
+  }, [soundEnabled]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(VOLUME_STORAGE_KEY, String(volume));
+    } catch {}
+  }, [volume]);
+
+  // Закрытие настроек по клику вне
+  useEffect(() => {
+    if (!settingsOpen) return;
+    function onMouseDown(e: MouseEvent) {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setSettingsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onMouseDown);
+    return () => document.removeEventListener("mousedown", onMouseDown);
+  }, [settingsOpen]);
+
+  const previewSound = () => {
+    playNotificationSound(soundEnabled ? volume : 0);
   };
 
   useEffect(() => {
