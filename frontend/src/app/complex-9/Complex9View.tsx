@@ -224,15 +224,21 @@ function Complex9Inner({ branch }: { branch: BranchWithSaunas }) {
             transition={{ duration: 0.25 }}
             className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
           >
-            {activeSaunas.map((sauna, i) => (
-              <SaunaCard
-                key={sauna.id}
-                sauna={sauna}
-                categorySlug={activeCategory?.slug ?? ""}
-                index={i}
-                onBook={setBookingSauna}
-              />
-            ))}
+            {activeSaunas.length === 0 ? (
+              <div className="col-span-full rounded-2xl border border-border bg-card p-10 text-center text-muted-foreground">
+                Нет саун, подходящих под выбранное количество гостей
+              </div>
+            ) : (
+              activeSaunas.map((sauna, i) => (
+                <SaunaCard
+                  key={sauna.id}
+                  sauna={sauna}
+                  categorySlug={activeCategory?.slug ?? ""}
+                  index={i}
+                  onBook={setBookingSauna}
+                />
+              ))
+            )}
           </motion.div>
         </AnimatePresence>
       </main>
