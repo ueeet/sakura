@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { motion } from "framer-motion";
 import { api } from "@/lib/api";
+import { Lock, User, Loader2, AlertCircle } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -27,43 +30,89 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
-      <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-2">Вход в админ-панель</h1>
-        <p className="text-center text-gray-500 dark:text-gray-400 mb-8">Сакура</p>
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground px-4 relative overflow-hidden">
+      {/* Декоративный фон */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 60% at 50% 35%, rgba(50,80,40,0.18) 0%, rgba(0,0,0,0) 70%)",
+        }}
+      />
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm text-center">
-            {error}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative w-full max-w-sm"
+        style={{ willChange: "transform, opacity" }}
+      >
+        <div className="rounded-2xl border border-border bg-card p-8 shadow-2xl">
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/logo_sakura_2.png"
+              alt="Сакура"
+              width={1200}
+              height={400}
+              className="h-14 w-auto"
+            />
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Логин"
-            required
-            value={login}
-            onChange={(e) => setLogin(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none"
-          />
-          <input
-            type="password"
-            placeholder="Пароль"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-pink-600 hover:bg-pink-700 disabled:opacity-50 text-white rounded-xl font-medium transition-colors"
-          >
-            {loading ? "Вход..." : "Войти"}
-          </button>
-        </form>
-      </div>
+          <h1 className="text-xl font-semibold text-center mb-1">
+            Админ-панель
+          </h1>
+          <p className="text-center text-sm text-muted-foreground mb-6">
+            Войдите в систему управления
+          </p>
+
+          {error && (
+            <div className="mb-4 flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Логин"
+                required
+                value={login}
+                onChange={(e) => setLogin(e.target.value)}
+                className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-forest transition-colors"
+              />
+            </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="password"
+                placeholder="Пароль"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-lg border border-border bg-background pl-9 pr-3 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-forest transition-colors"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full overflow-hidden rounded-lg bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-900 px-4 py-3 text-sm font-semibold text-white shadow-lg ring-1 ring-emerald-500/30 transition-shadow hover:shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Вход...
+                </>
+              ) : (
+                "Войти"
+              )}
+            </button>
+          </form>
+        </div>
+      </motion.div>
     </div>
   );
 }
