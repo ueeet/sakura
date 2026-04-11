@@ -534,10 +534,17 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
     );
   }
 
+  const timeRangeLabel =
+    startHour != null && endHour != null
+      ? `${pad(startHour)}:00 — ${pad(endHour)}:00 (${hoursSelected} ч)`
+      : "Выберите время";
+
   return (
     <div className="space-y-3">
-      <div className="relative">
+      {/* Дата */}
+      <div>
         <button
+          ref={calendarButtonRef}
           type="button"
           onClick={() => setCalendarOpen(!calendarOpen)}
           className="flex w-full items-center gap-3 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-left hover:border-forest/50 transition-colors"
@@ -548,82 +555,139 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
               ? `${selectedDate.getDate()} ${MONTHS_GENITIVE[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`
               : "Выберите дату"}
           </span>
+          <ChevronDown
+            className={`ml-auto h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
+              calendarOpen ? "rotate-180" : ""
+            }`}
+          />
         </button>
-        <AnimatePresence>
-          {calendarOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.96 }}
-              transition={{ duration: 0.2 }}
-              className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border border-border bg-card p-4 shadow-xl"
-              style={{ willChange: "transform, opacity" }}
-            >
-              <div className="mb-4 flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={prevMonth}
-                  className="rounded-lg p-1.5 hover:bg-muted"
+
+        {mounted &&
+          createPortal(
+            <AnimatePresence>
+              {calendarOpen && calendarRect && (
+                <motion.div
+                  ref={calendarPanelRef}
+                  initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                  transition={{ duration: 0.2 }}
+                  className="fixed z-[200] rounded-xl border border-border bg-card p-4 shadow-2xl"
+                  style={{
+                    left: calendarRect.left,
+                    top: calendarRect.top,
+                    width: Math.max(280, calendarRect.width),
+                    willChange: "transform, opacity",
+                  }}
                 >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <span className="text-sm font-semibold">
-                  {MONTHS[viewMonth]} {viewYear}
-                </span>
-                <button
-                  type="button"
-                  onClick={nextMonth}
-                  className="rounded-lg p-1.5 hover:bg-muted"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-              <div className="mb-2 grid grid-cols-7 gap-1">
-                {WEEKDAYS.map((d) => (
-                  <div key={d} className="text-center text-xs text-muted-foreground py-1">
-                    {d}
+                  <div className="mb-4 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={prevMonth}
+                      className="rounded-lg p-1.5 hover:bg-muted"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <span className="text-sm font-semibold">
+                      {MONTHS[viewMonth]} {viewYear}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={nextMonth}
+                      className="rounded-lg p-1.5 hover:bg-muted"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
                   </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-7 gap-1">
-                {Array.from({ length: firstDay }).map((_, i) => (
-                  <div key={`empty-${i}`} />
-                ))}
-                {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => (
-                  <button
-                    type="button"
-                    key={day}
-                    disabled={isPast(day)}
-                    onClick={() => handleDateClick(day)}
-                    className={`h-9 rounded-lg text-sm transition-colors ${
-                      isSelected(day)
-                        ? "bg-forest text-white"
-                        : isPast(day)
-                          ? "text-muted-foreground/30 cursor-not-allowed"
-                          : "hover:bg-muted"
-                    }`}
-                  >
-                    {day}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
+                  <div className="mb-2 grid grid-cols-7 gap-1">
+                    {WEEKDAYS.map((d) => (
+                      <div key={d} className="text-center text-xs text-muted-foreground py-1">
+                        {d}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-7 gap-1">
+                    {Array.from({ length: firstDay }).map((_, i) => (
+                      <div key={`empty-${i}`} />
+                    ))}
+                    {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => (
+                      <button
+                        type="button"
+                        key={day}
+                        disabled={isPast(day)}
+                        onClick={() => handleDateClick(day)}
+                        className={`h-9 rounded-lg text-sm transition-colors ${
+                          isSelected(day)
+                            ? "bg-forest text-white"
+                            : isPast(day)
+                              ? "text-muted-foreground/30 cursor-not-allowed"
+                              : "hover:bg-muted"
+                        }`}
+                      >
+                        {day}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>,
+            document.body,
           )}
-        </AnimatePresence>
       </div>
 
+      {/* Время — только если выбрана дата */}
       {selectedDate && (
         <div>
-          <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
-            <Clock className="h-3 w-3" />
-            Один клик — 1 час, второй клик — расширить диапазон
-          </div>
-          {renderSlots()}
-          <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-muted-foreground">
-            <span>🟢 Свободно</span>
-            <span>🔴 Занято</span>
-            <span>🟡 Уборка</span>
-          </div>
+          <button
+            ref={slotsButtonRef}
+            type="button"
+            onClick={() => setSlotsOpen(!slotsOpen)}
+            className="flex w-full items-center gap-3 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-left hover:border-forest/50 transition-colors"
+          >
+            <Clock className="h-4 w-4 shrink-0 text-forest" />
+            <span className={startHour != null ? "" : "text-muted-foreground"}>
+              {timeRangeLabel}
+            </span>
+            <ChevronDown
+              className={`ml-auto h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
+                slotsOpen ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
+          {mounted &&
+            createPortal(
+              <AnimatePresence>
+                {slotsOpen && slotsRect && (
+                  <motion.div
+                    ref={slotsPanelRef}
+                    initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                    transition={{ duration: 0.2 }}
+                    className="fixed z-[200] rounded-xl border border-border bg-card p-4 shadow-2xl"
+                    style={{
+                      left: slotsRect.left,
+                      top: slotsRect.top,
+                      width: Math.max(280, slotsRect.width),
+                      willChange: "transform, opacity",
+                    }}
+                  >
+                    <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      Один клик — 1 час, второй — расширить диапазон
+                    </div>
+                    {renderSlots()}
+                    <div className="mt-3 flex flex-wrap gap-2 text-[10px] text-muted-foreground">
+                      <span>🟢 Свободно</span>
+                      <span>🔴 Занято</span>
+                      <span>🟡 Уборка</span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>,
+              document.body,
+            )}
         </div>
       )}
 
