@@ -168,7 +168,7 @@ export function SSEToast() {
       }
 
       if (shouldBeep && soundEnabled) {
-        playNotificationSound();
+        playNotificationSound(volume);
       }
 
       const id = Date.now() + Math.random();
