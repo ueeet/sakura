@@ -169,6 +169,23 @@ function Complex9Inner({ branch }: { branch: BranchWithSaunas }) {
       />
 
       <main id="saunas" className="container mx-auto flex-1 px-4 py-10 sm:py-14">
+        {guestsFilter && (
+          <div className="mb-6 flex flex-wrap items-center justify-center gap-3 rounded-xl border border-forest/30 bg-forest/10 px-4 py-3 text-sm">
+            <span className="text-foreground">
+              Показаны сауны вместимостью от{" "}
+              <strong>{guestsFilter}</strong>{" "}
+              {guestsFilter === 1 ? "гостя" : guestsFilter < 5 ? "гостей" : "гостей"}
+            </span>
+            <button
+              type="button"
+              onClick={() => router.push("/complex-9", { scroll: false })}
+              className="text-xs text-forest hover:underline"
+            >
+              Сбросить фильтр
+            </button>
+          </div>
+        )}
+
         {categories.length > 1 && (
           <div className="mb-10 flex justify-center">
             <div className="relative inline-flex rounded-full bg-secondary p-1 shadow-sm">
