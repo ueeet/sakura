@@ -116,6 +116,7 @@ function Complex9Inner({ branch }: { branch: BranchWithSaunas }) {
     categories[0]?.slug ??
     "";
   const [activeTabSlug, setActiveTabSlug] = useState(initialTabSlug);
+  const [bookingSauna, setBookingSauna] = useState<Sauna | null>(null);
 
   const activeCategory = categories.find((c) => c.slug === activeTabSlug);
   const activeSaunas = activeCategory?.saunas ?? [];
