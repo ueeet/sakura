@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { href: "/admin", icon: LayoutDashboard, label: "Дашборд" },
+  { href: "/admin", icon: LayoutDashboard, label: "Статистика" },
   { href: "/admin/bookings", icon: Calendar, label: "Брони" },
   { href: "/admin/saunas", icon: Flame, label: "Сауны" },
   { href: "/admin/reviews", icon: Star, label: "Отзывы" },
