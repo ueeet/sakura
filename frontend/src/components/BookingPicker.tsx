@@ -52,6 +52,26 @@ function getTimeSlot(hour: number): "day" | "evening" | "night" {
   return "night";
 }
 
+/** Текущее время в Москве: год / месяц (1-12) / день / час */
+function getMoscowNow() {
+  const fmt = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Moscow",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hour12: false,
+  });
+  const parts = fmt.formatToParts(new Date());
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "0";
+  return {
+    year: parseInt(get("year"), 10),
+    month: parseInt(get("month"), 10),
+    day: parseInt(get("day"), 10),
+    hour: parseInt(get("hour"), 10),
+  };
+}
+
 interface BookingPickerProps {
   sauna: Sauna;
   branchPhone?: string;
