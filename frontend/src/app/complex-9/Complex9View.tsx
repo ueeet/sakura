@@ -89,12 +89,13 @@ function SaunaCard({
             >
               Подробнее
             </Link>
-            <Link
-              href={bookHref}
+            <button
+              type="button"
+              onClick={() => onBook(sauna)}
               className="flex-1 inline-flex items-center justify-center rounded-full bg-forest px-3 py-2 text-sm font-semibold text-white hover:bg-forest/90 transition-colors"
             >
               Забронировать
-            </Link>
+            </button>
           </div>
         </div>
       </div>
