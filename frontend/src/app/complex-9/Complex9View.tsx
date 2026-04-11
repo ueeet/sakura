@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ComplexHero } from "@/components/ComplexHero";
+import { BookingModal } from "@/components/BookingModal";
 import type { BranchWithSaunas, Sauna } from "@/lib/types";
 
 interface Complex9ViewProps {
