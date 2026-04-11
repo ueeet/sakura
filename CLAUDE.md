@@ -5,18 +5,24 @@
 - **frontend/** — Next.js + TypeScript + Tailwind CSS + shadcn/ui + GSAP
 - **API_DOCS.md** — контракт между фронтом и бэком
 
-## Сущности
-- Staff (сотрудники)
-- Services (услуги)
-- Bookings (записи/заявки)
-- PortfolioWork (портфолио)
-- Review (отзывы — парсинг 2GIS/Yandex)
+## Сущности (см. `backend/prisma/schema.prisma`)
+- **Branch** — филиал (9 комплекс / 50 комплекс): адрес, координаты, телефон, рабочие часы, обложка
+- **SaunaCategory** — категория саун внутри филиала ("Семейная" / "Обычная" в 9-м комплексе). Привязана к Branch
+- **Sauna** — конкретная сауна: тип (russian/finnish/hamam), вместимость, бассейн, удобства, картинки. Принадлежит Branch и опционально Category. Содержит настройки бронирования (cleaningMinutes, minHours, openHour, closeHour, depositPercent)
+- **PriceSlot** — цена за час для сауны по слотам (weekday/weekend × day/evening/night)
+- **Promotion** — акции с промокодами и скидками
+- **Booking** — бронирование: клиент, телефон, startAt/endAt, гости, статус (`pending_payment` → `new` → `confirmed` → `cancelled` / `completed`), totalPrice, paymentStatus
+- **Payment** — платёж по бронированию: provider (`mock` | `yookassa`), amount, status (`pending` → `succeeded` / `canceled`), type (`deposit` | `full`), confirmationUrl
+- **Review** — отзыв (источник `site` | `2gis` | `yandex`), привязан к Branch, флаги isApproved/isVisible
+- **Settings** — singleton глобальных настроек компании (название, телефон, контакты, флаг SMS)
+- **Admin** — учётка админ-панели
 
 ## Интеграции
-- Telegram-бот уведомления о новых заявках
+- Telegram-бот уведомления о новых бронированиях и платежах
 - SSE realtime обновления в админке
 - SMS уведомления клиентам
 - Парсинг отзывов (2GIS/Yandex)
+- Платежи: mock-провайдер (по умолчанию) и YooKassa (опционально). Конфиг через `PAYMENT_PROVIDER`
 
 ## Разделение зон
 
