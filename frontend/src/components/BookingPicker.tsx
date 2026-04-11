@@ -254,7 +254,6 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
             endHour != null &&
             slot.hour >= startHour &&
             slot.hour < endHour;
-          const isStart = startHour === slot.hour && endHour == null;
           const disabled = !slot.available;
           const reasonClass =
             slot.reason === "booked"
