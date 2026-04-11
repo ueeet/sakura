@@ -162,28 +162,18 @@ export function ComplexHero({
             </a>
           </motion.div>
 
-          {/* CTAs */}
-          <motion.div
-            variants={itemVariants}
-            className="mt-10 flex flex-wrap gap-4"
-          >
-            <a
-              href={`tel:${phoneClean}`}
-              className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-900 px-8 py-4 text-base font-semibold text-white shadow-[0_8px_30px_rgba(6,78,59,0.4)] ring-1 ring-emerald-500/30 transition-shadow duration-200 hover:shadow-[0_12px_40px_rgba(6,78,59,0.55)]"
-            >
-              <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-              <Phone className="h-4 w-4" />
-              Забронировать
-            </a>
-            {scrollToId && (
+          {/* CTA */}
+          {scrollToId && (
+            <motion.div variants={itemVariants} className="mt-10">
               <a
                 href={`#${scrollToId}`}
-                className="inline-flex items-center justify-center rounded-full border border-border bg-card px-8 py-4 text-base font-semibold text-foreground transition-colors hover:border-forest/50 hover:text-forest"
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-900 px-12 py-5 text-lg font-semibold text-white shadow-[0_8px_30px_rgba(6,78,59,0.4)] ring-1 ring-emerald-500/30 transition-shadow duration-200 hover:shadow-[0_12px_40px_rgba(6,78,59,0.55)]"
               >
+                <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                 Посмотреть сауны
               </a>
-            )}
-          </motion.div>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* ---------- Right: photo ---------- */}
