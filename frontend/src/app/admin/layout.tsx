@@ -76,7 +76,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <nav className="p-4 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const active = pathname === item.href;
+            const active =
+              item.href === "/admin"
+                ? pathname === "/admin"
+                : pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
