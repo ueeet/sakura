@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { api } from "@/lib/api";
 import { onSSE } from "@/lib/sse";
 import type { Stats } from "@/lib/types";
-import { Calendar, Building2, Flame, Tag, Star } from "lucide-react";
+import { Calendar, Building2, Flame, Tag, Star, Loader2 } from "lucide-react";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -18,35 +19,97 @@ export default function AdminDashboard() {
     return onSSE(loadStats);
   }, []);
 
-  if (!stats) return <div className="text-gray-500">Загрузка...</div>;
+  if (!stats) {
+    return (
+      <div className="flex items-center justify-center py-20 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin" />
+      </div>
+    );
+  }
 
   const cards = [
-    { label: "Новые брони", value: stats.bookings.new, icon: Calendar, color: "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20" },
-    { label: "Подтверждённые", value: stats.bookings.confirmed, icon: Calendar, color: "text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/20" },
-    { label: "Всего броней", value: stats.bookings.total, icon: Calendar, color: "text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-800" },
-    { label: "Филиалы", value: stats.branches, icon: Building2, color: "text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-900/20" },
-    { label: "Сауны", value: stats.saunas, icon: Flame, color: "text-orange-600 bg-orange-50 dark:text-orange-400 dark:bg-orange-900/20" },
-    { label: "Акции", value: stats.promotions, icon: Tag, color: "text-pink-600 bg-pink-50 dark:text-pink-400 dark:bg-pink-900/20" },
-    { label: "Отзывы", value: stats.reviews.total, icon: Star, color: "text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-900/20" },
-    { label: "Ожидают модерации", value: stats.reviews.pending, icon: Star, color: "text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20" },
+    {
+      label: "Новые брони",
+      value: stats.bookings.new,
+      icon: Calendar,
+      tone: "text-blue-400 bg-blue-500/10",
+    },
+    {
+      label: "Подтверждённые",
+      value: stats.bookings.confirmed,
+      icon: Calendar,
+      tone: "text-emerald-400 bg-emerald-500/10",
+    },
+    {
+      label: "Всего броней",
+      value: stats.bookings.total,
+      icon: Calendar,
+      tone: "text-muted-foreground bg-muted",
+    },
+    {
+      label: "Филиалы",
+      value: stats.branches,
+      icon: Building2,
+      tone: "text-purple-400 bg-purple-500/10",
+    },
+    {
+      label: "Сауны",
+      value: stats.saunas,
+      icon: Flame,
+      tone: "text-orange-400 bg-orange-500/10",
+    },
+    {
+      label: "Акции",
+      value: stats.promotions,
+      icon: Tag,
+      tone: "text-pink-400 bg-pink-500/10",
+    },
+    {
+      label: "Отзывы",
+      value: stats.reviews.total,
+      icon: Star,
+      tone: "text-yellow-400 bg-yellow-500/10",
+    },
+    {
+      label: "Ожидают модерации",
+      value: stats.reviews.pending,
+      icon: Star,
+      tone: "text-red-400 bg-red-500/10",
+    },
   ];
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Обзор</h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-foreground">Обзор</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Сводка по бронированиям, саунам и отзывам
+        </p>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {cards.map((card) => {
+        {cards.map((card, i) => {
           const Icon = card.icon;
           return (
-            <div key={card.label} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
-              <div className="flex items-center gap-3 mb-2">
-                <div className={`p-2 rounded-lg ${card.color}`}>
+            <motion.div
+              key={card.label}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.04 }}
+              whileHover={{ y: -2, transition: { duration: 0.2 } }}
+              style={{ willChange: "transform, opacity" }}
+              className="rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-lg"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`p-2 rounded-lg ${card.tone}`}>
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className="text-sm text-gray-600 dark:text-gray-400">{card.label}</span>
+                <span className="text-sm text-muted-foreground">
+                  {card.label}
+                </span>
               </div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{card.value}</p>
-            </div>
+              <p className="text-3xl font-bold text-foreground">{card.value}</p>
+            </motion.div>
           );
         })}
       </div>
