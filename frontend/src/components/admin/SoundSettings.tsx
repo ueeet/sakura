@@ -49,11 +49,11 @@ export function SoundSettings() {
         </div>
         <div className="flex items-center gap-2">
           <VolumeX className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-          <div className="relative flex-1">
-            {/* Кастомный трек */}
-            <div className="absolute inset-y-0 left-0 right-0 my-auto h-1.5 rounded-full bg-muted" />
+          <div className="relative flex-1 h-4 flex items-center">
+            {/* Кастомный трек — декоративный, не ловит события */}
+            <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-muted" />
             <div
-              className="absolute inset-y-0 left-0 my-auto h-1.5 rounded-full bg-forest"
+              className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-forest"
               style={{ width: `${pct}%` }}
             />
             <input
@@ -64,8 +64,7 @@ export function SoundSettings() {
               value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
               aria-label="Громкость уведомлений"
-              style={{ cursor: "none" }}
-              className="relative w-full h-4 appearance-none bg-transparent
+              className="relative z-10 w-full h-4 appearance-none bg-transparent
                 [&::-webkit-slider-thumb]:appearance-none
                 [&::-webkit-slider-thumb]:h-4
                 [&::-webkit-slider-thumb]:w-4
