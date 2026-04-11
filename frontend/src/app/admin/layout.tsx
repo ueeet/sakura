@@ -99,7 +99,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border space-y-3">
+          <SoundSettings />
           <button
             onClick={handleLogout}
             className="flex w-full items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
