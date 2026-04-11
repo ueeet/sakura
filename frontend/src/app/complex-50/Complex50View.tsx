@@ -17,11 +17,18 @@ function extractNumericId(slug: string): string {
   return last ?? slug;
 }
 
-function SaunaCard({ sauna, index }: { sauna: Sauna; index: number }) {
+function SaunaCard({
+  sauna,
+  index,
+  onBook,
+}: {
+  sauna: Sauna;
+  index: number;
+  onBook: (s: Sauna) => void;
+}) {
   const numericId = extractNumericId(sauna.slug);
   const cover = sauna.mainImage ?? sauna.images?.[0] ?? "/placeholder.png";
   const detailHref = `/complex-50/${numericId}`;
-  const bookHref = `${detailHref}#booking`;
 
   return (
     <motion.div
