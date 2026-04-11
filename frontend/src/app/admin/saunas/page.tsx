@@ -20,7 +20,7 @@ export default function AdminSaunasPage() {
   const [saunas, setSaunas] = useState<Sauna[]>([]);
   const [categoriesByBranch, setCategoriesByBranch] = useState<Record<number, SaunaCategory[]>>({});
   const [loading, setLoading] = useState(true);
-  const [filterBranchId, setFilterBranchId] = useState<number | "all">("all");
+  const [filterBranchId, setFilterBranchId] = useState<number | null>(null);
   const [filterCategoryId, setFilterCategoryId] = useState<number | "all">("all");
 
   const [editorOpen, setEditorOpen] = useState(false);
