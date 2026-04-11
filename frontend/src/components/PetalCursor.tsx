@@ -26,6 +26,17 @@ export function PetalCursor() {
       mouseXRef.current = e.clientX;
       mouseYRef.current = e.clientY;
 
+      // Скрываем курсор и хвост над элементами с data-hide-cursor
+      const target = e.target as HTMLElement | null;
+      const shouldHide = target?.closest?.("[data-hide-cursor]");
+      if (shouldHide) {
+        if (visibleRef.current && cursorRef.current) {
+          cursorRef.current.style.opacity = "0";
+          visibleRef.current = false;
+        }
+        return;
+      }
+
       if (!visibleRef.current && cursorRef.current) {
         cursorRef.current.style.opacity = "1";
         visibleRef.current = true;
