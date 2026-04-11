@@ -265,11 +265,13 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
   const rangeValid = useMemo(() => {
     if (!availability || startHour == null || endHour == null) return false;
     for (let h = startHour; h < endHour; h++) {
+      if (isPastHour(h)) return false;
       const slot = availability.slots.find((s) => s.hour === h);
       if (!slot || !slot.available) return false;
     }
     return true;
-  }, [availability, startHour, endHour]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availability, startHour, endHour, isSelectedDateToday, moscowNow.hour]);
 
   const canProceed = !!(selectedDate && rangeValid && minHoursValid && totalPrice > 0);
 
