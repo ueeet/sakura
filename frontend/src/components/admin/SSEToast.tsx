@@ -22,30 +22,21 @@ export function SSEToast() {
       let shouldBeep = false;
 
       switch (evt.type) {
-        case "new_booking": {
-          const name = (evt.data as Record<string, unknown>)?.clientName || "клиента";
-          message = `Новая бронь от ${name}`;
-          type = "booking";
-          shouldBeep = true;
-          break;
-        }
+        // Создание брони (статус pending_payment) — НЕ показываем,
+        // ждём подтверждения оплаты, чтобы не дёргать админа на неоплаченных
+        case "new_booking":
+          return;
         case "booking_updated":
-          message = "Бронь обновлена";
-          type = "update";
-          break;
+          // Тихие технические события — не показываем
+          return;
         case "booking_deleted":
-          message = "Бронь удалена";
-          type = "delete";
-          break;
-        case "new_review":
-          message = "Новый отзыв на модерации";
-          type = "review";
-          shouldBeep = true;
-          break;
+          // Авто-отмены просроченных тоже скрываем
+          return;
         case "payment_received": {
           const data = evt.data as Record<string, unknown>;
           const booking = data?.booking as Record<string, unknown> | undefined;
-          message = `Оплата получена: ${booking?.clientName || "бронь"}`;
+          const name = booking?.clientName || "клиента";
+          message = `Новая оплаченная бронь от ${name}`;
           type = "booking";
           shouldBeep = true;
           break;
