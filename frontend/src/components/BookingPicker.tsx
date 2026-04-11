@@ -52,6 +52,44 @@ function getTimeSlot(hour: number): "day" | "evening" | "night" {
   return "night";
 }
 
+/**
+ * Нормализует российский номер телефона.
+ * Принимает: +7XXXXXXXXXX, 7XXXXXXXXXX, 8XXXXXXXXXX, с пробелами/скобками/дефисами.
+ * Возвращает либо +7XXXXXXXXXX (нормализованный), либо null если невалидный.
+ */
+function normalizeRussianPhone(input: string): string | null {
+  const digits = input.replace(/\D/g, "");
+  // 11 цифр, начинается с 7 или 8 → конвертируем 8 в 7 и добавляем +
+  if (digits.length === 11 && (digits[0] === "7" || digits[0] === "8")) {
+    return "+7" + digits.slice(1);
+  }
+  // 10 цифр (без кода страны) → добавляем +7
+  if (digits.length === 10) {
+    return "+7" + digits;
+  }
+  return null;
+}
+
+/** Форматирует ввод телефона как +7 (XXX) XXX-XX-XX в процессе набора */
+function formatPhoneInput(input: string): string {
+  const digits = input.replace(/\D/g, "");
+  // Убираем ведущие 7/8 — будем форматировать только 10 значащих цифр
+  let body = digits;
+  if (body.length > 0 && (body[0] === "7" || body[0] === "8")) {
+    body = body.slice(1);
+  }
+  body = body.slice(0, 10);
+  if (body.length === 0) return "";
+
+  let result = "+7";
+  if (body.length > 0) result += " (" + body.slice(0, 3);
+  if (body.length >= 3) result += ")";
+  if (body.length >= 4) result += " " + body.slice(3, 6);
+  if (body.length >= 7) result += "-" + body.slice(6, 8);
+  if (body.length >= 9) result += "-" + body.slice(8, 10);
+  return result;
+}
+
 /** Текущее время в Москве: год / месяц (1-12) / день / час */
 function getMoscowNow() {
   const fmt = new Intl.DateTimeFormat("en-CA", {
