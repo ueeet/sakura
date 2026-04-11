@@ -126,7 +126,7 @@ export function Complex50View({ branch }: { branch: BranchWithSaunas }) {
         <section id="saunas" className="container mx-auto px-4 py-10 sm:py-14">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {saunas.map((sauna, index) => (
-              <SaunaCard key={sauna.id} sauna={sauna} index={index} />
+              <SaunaCard key={sauna.id} sauna={sauna} index={index} onBook={setBookingSauna} />
             ))}
           </div>
 
