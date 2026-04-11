@@ -407,38 +407,47 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
     return (
       <div className="grid grid-cols-6 gap-1.5">
         {availability.slots.map((slot) => {
+          const past = isPastHour(slot.hour);
           const inRange =
+            !past &&
             startHour != null &&
             endHour != null &&
             slot.hour >= startHour &&
             slot.hour < endHour;
-          const disabled = !slot.available;
-          const reasonClass =
-            slot.reason === "booked"
-              ? "bg-red-500/20 text-red-400 cursor-not-allowed"
-              : slot.reason === "cleaning"
-                ? "bg-amber-500/20 text-amber-400 cursor-not-allowed"
-                : "bg-gray-500/20 text-gray-500 cursor-not-allowed";
-          const activeClass = inRange
-            ? "bg-forest text-white"
-            : disabled
-              ? reasonClass
-              : "bg-muted hover:bg-forest/20 text-foreground";
+          const disabled = past || !slot.available;
+
+          let cls: string;
+          if (inRange) {
+            cls = "bg-forest text-white";
+          } else if (past) {
+            cls = "bg-muted/30 text-muted-foreground/40 cursor-not-allowed line-through";
+          } else if (slot.reason === "booked") {
+            cls = "bg-red-500/20 text-red-400 cursor-not-allowed";
+          } else if (slot.reason === "cleaning") {
+            cls = "bg-amber-500/20 text-amber-400 cursor-not-allowed";
+          } else if (slot.reason === "closed") {
+            cls = "bg-gray-500/20 text-gray-500 cursor-not-allowed";
+          } else {
+            cls = "bg-muted hover:bg-forest/20 text-foreground";
+          }
+
           return (
             <button
               type="button"
               key={slot.hour}
               disabled={disabled}
               onClick={() => handleSlotClick(slot.hour)}
-              className={`rounded py-1.5 text-xs font-medium transition-colors ${activeClass}`}
+              className={`rounded py-1.5 text-xs font-medium transition-colors ${cls}`}
               title={
-                slot.reason === "booked"
-                  ? "Занято"
-                  : slot.reason === "cleaning"
-                    ? "Уборка"
-                    : slot.reason === "closed"
-                      ? "Закрыто"
-                      : ""
+                past
+                  ? "Время прошло"
+                  : slot.reason === "booked"
+                    ? "Занято"
+                    : slot.reason === "cleaning"
+                      ? "Уборка"
+                      : slot.reason === "closed"
+                        ? "Закрыто"
+                        : ""
               }
             >
               {pad(slot.hour)}
