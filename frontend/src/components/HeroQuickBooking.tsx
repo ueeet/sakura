@@ -21,6 +21,8 @@ import {
   Check,
 } from "lucide-react";
 
+const MAX_GUESTS = 16;
+
 type Branch = "any" | "complex-9" | "complex-50";
 
 const BRANCH_OPTIONS: { value: Branch; label: string }[] = [
