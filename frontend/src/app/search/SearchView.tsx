@@ -1,0 +1,205 @@
+"use client";
+
+import { Suspense, useState, useMemo } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { BookingModal } from "@/components/BookingModal";
+import type { Sauna } from "@/lib/types";
+import { Search, Filter } from "lucide-react";
+
+const typeBadge = "bg-wood-dark/80 text-white";
+
+function extractNumericId(slug: string): string {
+  const last = slug.split("-").pop();
+  return last ?? slug;
+}
+
+function detailHrefFor(sauna: Sauna): string {
+  const branchSlug = sauna.branch?.slug;
+  const categorySlug = sauna.category?.slug;
+  const numericId = extractNumericId(sauna.slug);
+  if (branchSlug === "complex-9" && categorySlug) {
+    return `/complex-9/${categorySlug}/${numericId}`;
+  }
+  if (branchSlug === "complex-50") {
+    return `/complex-50/${numericId}`;
+  }
+  return `/${branchSlug}/${numericId}`;
+}
+
+function SaunaCard({
+  sauna,
+  index,
+  onBook,
+}: {
+  sauna: Sauna;
+  index: number;
+  onBook: (s: Sauna) => void;
+}) {
+  const cover = sauna.mainImage ?? sauna.images?.[0] ?? "/placeholder.png";
+  const detailHref = detailHrefFor(sauna);
+
+  return (
+    <motion.div
+      key={sauna.id}
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.04 }}
+      className="group"
+      style={{ willChange: "transform, opacity" }}
+    >
+      <div className="flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-[box-shadow,transform] duration-200 hover:-translate-y-1 hover:shadow-md">
+        <Link href={detailHref} className="relative block aspect-[3/2] overflow-hidden bg-muted">
+          <Image
+            src={cover}
+            alt={sauna.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <span
+            className={`absolute left-3 top-3 z-10 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeBadge}`}
+          >
+            {sauna.typeLabel ?? sauna.type}
+          </span>
+          {sauna.branch && (
+            <span className="absolute right-3 top-3 z-10 inline-flex items-center rounded-full bg-black/60 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
+              {sauna.branch.name}
+            </span>
+          )}
+        </Link>
+
+        <div className="flex flex-1 flex-col p-5">
+          <Link href={detailHref} className="hover:text-forest transition-colors">
+            <h3 className="text-lg font-semibold">{sauna.name}</h3>
+          </Link>
+          {sauna.sizeLabel && (
+            <p className="mt-1 text-sm text-muted-foreground">{sauna.sizeLabel}</p>
+          )}
+          {sauna.description && (
+            <p className="mt-2 line-clamp-2 text-sm text-muted-foreground/80">
+              {sauna.description}
+            </p>
+          )}
+          {sauna.priceFrom != null && (
+            <p className="mt-2 text-sm font-medium text-forest">
+              от {sauna.priceFrom}₽/час
+            </p>
+          )}
+          <div className="mt-auto pt-4 flex gap-2">
+            <Link
+              href={detailHref}
+              className="flex-1 inline-flex items-center justify-center rounded-full border border-forest/40 px-3 py-2 text-sm font-medium text-forest hover:bg-forest/10 transition-colors"
+            >
+              Подробнее
+            </Link>
+            <button
+              type="button"
+              onClick={() => onBook(sauna)}
+              className="flex-1 inline-flex items-center justify-center rounded-full bg-forest px-3 py-2 text-sm font-semibold text-white hover:bg-forest/90 transition-colors"
+            >
+              Забронировать
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function SearchInner({ allSaunas }: { allSaunas: Sauna[] }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [bookingSauna, setBookingSauna] = useState<Sauna | null>(null);
+
+  const guestsParam = searchParams.get("guests");
+  const guestsFilter = guestsParam ? Math.max(1, parseInt(guestsParam, 10)) : null;
+
+  const filtered = useMemo(() => {
+    if (!guestsFilter) return allSaunas;
+    return allSaunas.filter((s) => s.capacity >= guestsFilter);
+  }, [allSaunas, guestsFilter]);
+
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
+      <Header />
+
+      <main className="container mx-auto flex-1 px-4 py-10 sm:py-14">
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-forest/15 text-forest">
+              <Search className="h-5 w-5" />
+            </div>
+            <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
+              Все сауны
+            </h1>
+          </div>
+          <p className="text-muted-foreground">
+            {filtered.length === allSaunas.length
+              ? `Найдено ${allSaunas.length} саун в обоих филиалах`
+              : `Найдено ${filtered.length} из ${allSaunas.length} саун`}
+          </p>
+        </div>
+
+        {guestsFilter && (
+          <div className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border border-forest/30 bg-forest/10 px-4 py-3 text-sm">
+            <Filter className="h-4 w-4 text-forest" />
+            <span className="text-foreground">
+              Фильтр: вместимость от <strong>{guestsFilter}</strong>{" "}
+              {guestsFilter === 1 ? "гостя" : guestsFilter < 5 ? "гостей" : "гостей"}
+            </span>
+            <button
+              type="button"
+              onClick={() => router.push("/search", { scroll: false })}
+              className="text-xs text-forest hover:underline ml-auto"
+            >
+              Сбросить
+            </button>
+          </div>
+        )}
+
+        {filtered.length === 0 ? (
+          <div className="rounded-2xl border border-border bg-card p-12 text-center text-muted-foreground">
+            Нет саун, подходящих под выбранное количество гостей
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((sauna, i) => (
+              <SaunaCard
+                key={sauna.id}
+                sauna={sauna}
+                index={i}
+                onBook={setBookingSauna}
+              />
+            ))}
+          </div>
+        )}
+      </main>
+
+      <Footer />
+
+      <BookingModal
+        sauna={bookingSauna}
+        onClose={() => setBookingSauna(null)}
+      />
+    </div>
+  );
+}
+
+export function SearchView({ allSaunas }: { allSaunas: Sauna[] }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="text-muted-foreground">Загрузка…</div>
+        </div>
+      }
+    >
+      <SearchInner allSaunas={allSaunas} />
+    </Suspense>
+  );
+}
