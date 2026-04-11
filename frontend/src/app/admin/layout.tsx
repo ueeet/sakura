@@ -7,12 +7,13 @@ import Image from "next/image";
 import { isAuthenticated, clearTokens } from "@/lib/api";
 import { SSEToast } from "@/components/admin/SSEToast";
 import {
-  LayoutDashboard, Calendar, Star, Settings, LogOut, Menu, X,
+  LayoutDashboard, Calendar, Flame, Star, Settings, LogOut, Menu, X,
 } from "lucide-react";
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Дашборд" },
   { href: "/admin/bookings", icon: Calendar, label: "Брони" },
+  { href: "/admin/saunas", icon: Flame, label: "Сауны" },
   { href: "/admin/reviews", icon: Star, label: "Отзывы" },
   { href: "/admin/settings", icon: Settings, label: "Настройки" },
 ];
