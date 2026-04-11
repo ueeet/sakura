@@ -246,7 +246,7 @@ export default function PaymentPage({
                         type="text"
                         placeholder="0000 0000 0000 0000"
                         defaultValue="4242 4242 4242 4242"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base font-mono focus:outline-none focus:border-[#5B5FEC]"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base font-mono text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:border-[#5B5FEC]"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -256,7 +256,7 @@ export default function PaymentPage({
                           type="text"
                           placeholder="ММ / ГГ"
                           defaultValue="12 / 28"
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base font-mono focus:outline-none focus:border-[#5B5FEC]"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base font-mono text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:border-[#5B5FEC]"
                         />
                       </div>
                       <div>
@@ -265,7 +265,7 @@ export default function PaymentPage({
                           type="text"
                           placeholder="000"
                           defaultValue="123"
-                          className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base font-mono focus:outline-none focus:border-[#5B5FEC]"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base font-mono text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:border-[#5B5FEC]"
                         />
                       </div>
                     </div>
