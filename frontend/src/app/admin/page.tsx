@@ -279,53 +279,6 @@ export default function AdminStatsPage() {
         })}
       </div>
 
-      {/* Брони по дням — area chart */}
-      <div className="rounded-2xl border border-border bg-card p-5">
-        <div className="mb-4">
-          <h3 className="text-base font-semibold">Брони за последние 14 дней</h3>
-          <p className="text-xs text-muted-foreground">Количество новых записей по датам</p>
-        </div>
-        <ResponsiveContainer width="100%" height={240}>
-          <AreaChart data={bookingsByDay}>
-            <defs>
-              <linearGradient id="grad-bookings" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={FOREST_LIGHT} stopOpacity={0.4} />
-                <stop offset="100%" stopColor={FOREST_LIGHT} stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(30 8% 22%)" vertical={false} />
-            <XAxis
-              dataKey="date"
-              stroke="hsl(40 8% 60%)"
-              tick={{ fontSize: 11 }}
-              tickLine={false}
-              axisLine={false}
-            />
-            <YAxis
-              stroke="hsl(40 8% 60%)"
-              tick={{ fontSize: 11 }}
-              tickLine={false}
-              axisLine={false}
-              allowDecimals={false}
-            />
-            <Tooltip
-              contentStyle={tooltipContentStyle}
-              labelStyle={tooltipLabelStyle}
-              itemStyle={tooltipItemStyle}
-              cursor={{ stroke: FOREST, strokeWidth: 1, strokeOpacity: 0.3 }}
-            />
-            <Area
-              type="monotone"
-              dataKey="count"
-              stroke={FOREST_LIGHT}
-              strokeWidth={2}
-              fill="url(#grad-bookings)"
-              name="Брони"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-
       {/* Брони по статусам */}
       <div className="rounded-2xl border border-border bg-card p-5">
         <div className="mb-4">
