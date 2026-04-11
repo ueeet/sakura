@@ -246,9 +246,8 @@ export function HeroQuickBooking() {
       guests: String(guests),
     });
     if (branch === "any") {
-      // TODO: когда появится /search или общий листинг — направлять туда
-      params.set("branch", "any");
-      router.push(`/complex-9?${params.toString()}`);
+      // Любой филиал → общий поиск со всеми саунами обоих филиалов
+      router.push(`/search?${params.toString()}`);
     } else {
       router.push(`/${branch}?${params.toString()}`);
     }
