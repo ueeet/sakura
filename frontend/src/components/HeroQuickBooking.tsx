@@ -588,23 +588,3 @@ export function HeroQuickBooking() {
     </motion.form>
   );
 }
-
-function Field({
-  icon,
-  label,
-  children,
-}: {
-  icon: ReactNode;
-  label: string;
-  children: ReactNode;
-}) {
-  return (
-    <label className="flex flex-col gap-1 rounded-xl bg-black/30 px-3 py-2 text-left ring-1 ring-white/15 transition focus-within:ring-white/40">
-      <span className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-white/60">
-        {icon}
-        {label}
-      </span>
-      {children}
-    </label>
-  );
-}
