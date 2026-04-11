@@ -128,6 +128,11 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
   const [phone, setPhone] = useState("");
   const [comment, setComment] = useState("");
   const [paymentType, setPaymentType] = useState<"deposit" | "full">("deposit");
+  const [agreeOferta, setAgreeOferta] = useState(false);
+  const [agreePersonal, setAgreePersonal] = useState(false);
+
+  const normalizedPhone = normalizeRussianPhone(phone);
+  const phoneValid = normalizedPhone !== null;
 
   // Текущее московское время — пересчитываем при ре-рендере
   const moscowNow = useMemo(() => getMoscowNow(), []);
