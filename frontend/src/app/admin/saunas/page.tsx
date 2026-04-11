@@ -57,9 +57,16 @@ export default function AdminSaunasPage() {
     loadAll();
   }, []);
 
+  // По умолчанию выбираем первый филиал, как только подгрузились
+  useEffect(() => {
+    if (filterBranchId === null && branches.length > 0) {
+      setFilterBranchId(branches[0].id);
+    }
+  }, [branches, filterBranchId]);
+
   // Категории для текущего фильтра филиала
   const availableCategories = useMemo(() => {
-    if (filterBranchId === "all") return [];
+    if (filterBranchId === null) return [];
     return categoriesByBranch[filterBranchId] ?? [];
   }, [filterBranchId, categoriesByBranch]);
 
@@ -71,7 +78,7 @@ export default function AdminSaunasPage() {
   // Отфильтрованные сауны
   const filteredSaunas = useMemo(() => {
     return saunas.filter((s) => {
-      if (filterBranchId !== "all" && s.branchId !== filterBranchId) return false;
+      if (filterBranchId !== null && s.branchId !== filterBranchId) return false;
       if (filterCategoryId !== "all" && s.categoryId !== filterCategoryId) return false;
       return true;
     });
