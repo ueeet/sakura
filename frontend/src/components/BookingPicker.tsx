@@ -307,6 +307,9 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
   };
 
   const handleSlotClick = (hour: number) => {
+    // Прошедший час — игнорируем
+    if (isPastHour(hour)) return;
+
     // Первый клик — забронировать 1 час
     if (startHour == null) {
       setStartHour(hour);
@@ -326,11 +329,11 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
       return;
     }
     // Клик позже старта — расширяем диапазон, но проверяем, что все
-    // промежуточные слоты свободны. Иначе начинаем заново с этого часа.
+    // промежуточные слоты свободны и не в прошлом.
     if (!availability) return;
     const intermediateAvailable = availability.slots
       .filter((s) => s.hour >= startHour && s.hour <= hour)
-      .every((s) => s.available);
+      .every((s) => s.available && !isPastHour(s.hour));
     if (!intermediateAvailable) {
       setStartHour(hour);
       setEndHour(hour + 1);
