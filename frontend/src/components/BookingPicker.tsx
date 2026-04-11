@@ -388,6 +388,14 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedDate || startHour == null || endHour == null) return;
+    if (!normalizedPhone) {
+      setError("Введите корректный номер: +7, 7 или 8 + 10 цифр");
+      return;
+    }
+    if (!agreeOferta || !agreePersonal) {
+      setError("Подтвердите согласия для продолжения");
+      return;
+    }
 
     setSubmitting(true);
     setError(null);
@@ -402,7 +410,7 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           clientName,
-          phone,
+          phone: normalizedPhone,
           startAt,
           endAt,
           guests,
