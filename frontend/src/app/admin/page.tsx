@@ -404,23 +404,6 @@ export default function AdminStatsPage() {
         </ResponsiveContainer>
       </div>
 
-      {/* Reviews summary */}
-      <div className="rounded-2xl border border-border bg-card p-5 flex items-center gap-6">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-yellow-500/10 text-yellow-400">
-            <Star className="h-6 w-6" />
-          </div>
-          <div>
-            <div className="text-xs text-muted-foreground">Всего отзывов</div>
-            <div className="text-2xl font-bold">{stats.reviews.total}</div>
-          </div>
-        </div>
-        <div className="h-8 w-px bg-border" />
-        <div>
-          <div className="text-xs text-muted-foreground">Ожидают модерации</div>
-          <div className="text-2xl font-bold text-amber-400">{stats.reviews.pending}</div>
-        </div>
-      </div>
     </div>
   );
 }
