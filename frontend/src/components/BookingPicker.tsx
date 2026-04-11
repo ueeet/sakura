@@ -557,8 +557,9 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
         </div>
       )}
 
-      <div ref={guestsRef} className="relative">
+      <div>
         <button
+          ref={guestsButtonRef}
           type="button"
           onClick={() => setGuestsOpen((p) => !p)}
           className="flex w-full items-center gap-3 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors hover:border-forest/50 focus:outline-none focus:border-forest"
@@ -573,40 +574,50 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
           />
         </button>
 
-        <AnimatePresence>
-          {guestsOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.96 }}
-              transition={{ duration: 0.2 }}
-              className="absolute left-0 right-0 top-full z-40 mt-2 max-h-60 overflow-y-auto rounded-xl border border-border bg-card p-1.5 shadow-xl"
-              style={{ willChange: "transform, opacity" }}
-            >
-              {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => {
-                const active = n === guests;
-                return (
-                  <button
-                    type="button"
-                    key={n}
-                    onClick={() => {
-                      setGuests(n);
-                      setGuestsOpen(false);
-                    }}
-                    className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
-                      active
-                        ? "bg-forest text-white"
-                        : "text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <span>{guestsLabel(n)}</span>
-                    {active && <Check className="h-4 w-4 shrink-0" />}
-                  </button>
-                );
-              })}
-            </motion.div>
+        {mounted &&
+          createPortal(
+            <AnimatePresence>
+              {guestsOpen && guestsRect && (
+                <motion.div
+                  ref={guestsPanelRef}
+                  initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                  transition={{ duration: 0.2 }}
+                  className="fixed z-[200] max-h-60 overflow-y-auto rounded-xl border border-border bg-card p-1.5 shadow-2xl"
+                  style={{
+                    left: guestsRect.left,
+                    top: guestsRect.top,
+                    width: guestsRect.width,
+                    willChange: "transform, opacity",
+                  }}
+                >
+                  {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => {
+                    const active = n === guests;
+                    return (
+                      <button
+                        type="button"
+                        key={n}
+                        onClick={() => {
+                          setGuests(n);
+                          setGuestsOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                          active
+                            ? "bg-forest text-white"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <span>{guestsLabel(n)}</span>
+                        {active && <Check className="h-4 w-4 shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>,
+            document.body,
           )}
-        </AnimatePresence>
       </div>
 
       {totalPrice > 0 && (
