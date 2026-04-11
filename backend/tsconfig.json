@@ -22,8 +22,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "prisma.config.ts",
-    "src/generated/**"
+    "prisma.config.ts"
   ],
   "ts-node": {
     "transpileOnly": true,
