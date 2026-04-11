@@ -101,11 +101,11 @@ export const updatePromotionSchema = createPromotionSchema.partial().extend({
 
 // ========== Booking ==========
 export const createBookingSchema = z.object({
-  clientName: z.string().min(1, "Имя обязательно"),
-  phone: z.string().min(5, "Телефон обязателен"),
-  startAt: z.string().min(1, "Время начала обязательно"),
-  endAt: z.string().min(1, "Время окончания обязательно"),
-  guests: z.number().int().min(1).max(50).optional(),
+  clientName: z.string().min(2, "Введите ваше имя"),
+  phone: z.string().min(10, "Введите телефон полностью"),
+  startAt: z.string().min(1, "Укажите время начала"),
+  endAt: z.string().min(1, "Укажите время окончания"),
+  guests: z.number().int().min(1, "Минимум 1 гость").max(50).optional(),
   comment: z.string().optional(),
   branchId: z.number().int().min(1),
   saunaId: z.number().int().min(1),
