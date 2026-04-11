@@ -173,7 +173,7 @@ export default function AdminStatsPage() {
     {
       label: "Выручка",
       value: `${totalRevenue.toLocaleString("ru-RU")}₽`,
-      icon: DollarSign,
+      icon: RussianRuble,
       tone: "text-emerald-400 bg-emerald-500/10",
     },
     {
