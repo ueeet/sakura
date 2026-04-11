@@ -46,10 +46,6 @@ function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
-function formatDayShort(date: Date) {
-  return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}`;
-}
-
 export default function AdminStatsPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
