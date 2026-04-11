@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Phone, MapPin } from "lucide-react";
 
@@ -17,7 +18,13 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Column 1 - Brand */}
           <div>
-            <h3 className="font-heading text-3xl text-primary mb-4">Сакура</h3>
+            <Image
+              src="/logo_sakura_2.png"
+              alt="Сакура"
+              width={1200}
+              height={400}
+              className="mb-4 h-[3.6rem] w-auto"
+            />
             <p className="text-sm text-muted-foreground leading-relaxed mb-6">
               Крупнейшая сеть саун в Набережных Челнах. Русские бани, финские
               сауны, турецкие хамамы.

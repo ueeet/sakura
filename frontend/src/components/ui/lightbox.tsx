@@ -98,9 +98,9 @@ export function Lightbox({
           {/* Image */}
           <motion.div
             key={openIndex}
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="relative h-[85vh] w-[90vw] max-w-6xl"
             onClick={(e) => e.stopPropagation()}
@@ -111,7 +111,6 @@ export function Lightbox({
               fill
               sizes="90vw"
               className="object-contain"
-              priority
             />
           </motion.div>
 

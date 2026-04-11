@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { ComplexHero } from "@/components/ComplexHero";
 import { complex50 } from "@/lib/saunas";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -20,37 +21,42 @@ export default function Complex50Page() {
     <>
       <Header />
       <main className="min-h-screen bg-background">
-        {/* Hero Banner */}
-        <section className="border-b border-border py-14 sm:py-18">
-          <div className="max-w-6xl mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading text-foreground mb-3">
-              Сауна 50 комплекс
-            </h1>
-            <p className="text-muted-foreground text-lg mb-1">
-              {complex50.address}
-            </p>
-            <p className="text-muted-foreground text-lg">
-              {complex50.phone}
-            </p>
-          </div>
-        </section>
+        {/* Hero */}
+        <ComplexHero
+          name={complex50.name}
+          address={complex50.address}
+          addressMapUrl="https://yandex.ru/maps/?pt=52.422554,55.773935&z=16&l=map"
+          phone={complex50.phone}
+          description="50-й комплекс — финские и русские сауны с бассейнами, шашлычным двором и мангалом. Идеально для компаний."
+          saunaCount={saunas.length}
+          poolCount={saunas.filter((s) => s.pool).length}
+          typeCount={new Set(saunas.map((s) => s.type)).size}
+          images={[
+            "/images/saunas/complex-50/1/1.webp",
+            "/images/saunas/complex-50/2/1.webp",
+            "/images/saunas/complex-50/3/1.webp",
+          ]}
+          scrollToId="saunas"
+        />
 
         {/* Sauna Cards Grid */}
-        <section className="container mx-auto px-4 py-10 sm:py-14">
+        <section
+          id="saunas"
+          className="container mx-auto px-4 py-10 sm:py-14"
+        >
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {saunas.map((sauna, index) => (
               <motion.div
                 key={sauna.id}
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.04, transition: { duration: 0.2 } }}
-                transition={{ duration: 0.3, delay: index * 0.06 }}
+                transition={{ duration: 0.4, delay: index * 0.06 }}
               >
                 <Link
                   href={`/complex-50/${sauna.id}`}
                   className="group block h-full"
                 >
-                  <div className="flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-shadow duration-200 hover:shadow-md">
+                  <div className="flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
                     {/* Image */}
                     <div className="relative aspect-[3/2] overflow-hidden bg-muted">
                       <Image

@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { HeroQuickBooking } from "@/components/HeroQuickBooking";
 import {
   Carousel,
   CarouselContent,
@@ -11,8 +13,9 @@ import {
   CarouselNavigation,
   CarouselIndicator,
 } from "@/components/ui/carousel";
+import { Lightbox } from "@/components/ui/lightbox";
 import { promotions } from "@/lib/saunas";
-import { Flame, Gift, Cake, ChevronDown, Phone, MapPin, ArrowRight } from "lucide-react";
+import { Flame, Gift, Cake, ChevronDown, Phone, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 
 const promoIcons: Record<string, React.ReactNode> = {
@@ -37,98 +40,128 @@ const yandexLinks = {
   complex50: "https://yandex.ru/maps/?pt=52.422554,55.773935&z=16&l=map",
 };
 
+// Variants для каскадной анимации hero-блока (h1 → подзаголовок → кнопки).
+// Плашка HeroQuickBooking — сиблинг ниже, ей выставлен совпадающий delay вручную.
+const HERO_ITEM_VARIANTS = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: "easeOut" as const },
+  },
+};
+
 export default function HomePage() {
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
     <>
       <Header />
       <main>
         {/* ===== HERO ===== */}
-        <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black">
+        <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black px-4 pb-16 pt-24 sm:pb-24 md:pb-32 md:pt-28">
           {/* Video background */}
           <video
             autoPlay
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             className="absolute inset-0 h-full w-full object-cover"
           >
             <source src="/hero.mp4" type="video/mp4" />
           </video>
 
-          {/* Base dark overlay */}
+          {/* Base dim — слегка приглушает всё видео для читаемости */}
           <div className="pointer-events-none absolute inset-0 bg-black/40" />
 
-          {/* Radial vignette — darker behind text */}
+          {/* Vignette — тёмные края, прозрачный центр */}
           <div
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse 85% 70% at 50% 50%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0) 100%)",
+                "radial-gradient(ellipse 90% 75% at 50% 50%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 75%, rgba(0,0,0,0.85) 100%)",
             }}
           />
 
-          {/* Soft backdrop blur — concentrated behind text */}
-          <div
-            className="pointer-events-none absolute inset-0 backdrop-blur-[1.5px]"
-            style={{
-              maskImage:
-                "radial-gradient(ellipse 65% 50% at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 85%)",
-              WebkitMaskImage:
-                "radial-gradient(ellipse 65% 50% at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 85%)",
-            }}
-          />
-
+          {/* Hero stagger: каждый ребёнок (h1 → p → кнопки → плашка) выезжает
+              с задержкой 0.18s через staggerChildren. Плашка лежит сиблингом
+              ниже, поэтому ей выставлен совпадающий delay вручную. */}
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 1.1 }}
-            animate={{ opacity: 1, y: 0, scale: 1.1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative z-10 flex flex-col items-center px-4 text-center"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: {
+                transition: { staggerChildren: 0.18, delayChildren: 0.1 },
+              },
+            }}
+            // scale 1.2375 — только на md+. На мобиле он выдавливал контент за края
+            // viewport (414px), из-за чего «Крупнейшая» обрезалась слева, а кнопки
+            // вылезали за горизонталь.
+            className="relative z-10 flex flex-col items-center text-center md:scale-[1.2375]"
           >
-            <h1
-              className="font-heading text-7xl tracking-wider text-white md:text-9xl"
-              style={{ textShadow: "0 4px 30px rgba(0,0,0,0.8), 0 2px 10px rgba(0,0,0,0.6)" }}
+            {/* Общая тень-подложка под заголовком, подзаголовком и кнопками */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[180%] w-[180%] -translate-x-1/2 -translate-y-1/2"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0) 85%)",
+                filter: "blur(30px)",
+              }}
+            />
+
+            <motion.h1
+              variants={HERO_ITEM_VARIANTS}
+              className="font-heading text-6xl tracking-wider text-white sm:text-7xl md:text-9xl"
             >
               САКУРА
-            </h1>
+            </motion.h1>
 
-            <p
-              className="mt-4 max-w-lg text-lg text-white/90 md:text-xl"
-              style={{ textShadow: "0 2px 12px rgba(0,0,0,0.8)" }}
+            <motion.p
+              variants={HERO_ITEM_VARIANTS}
+              className="mt-2 max-w-lg px-4 text-base text-white/90 sm:text-lg md:mt-1 md:text-xl"
             >
               Крупнейшая сеть саун в Набережных Челнах
-            </p>
+            </motion.p>
 
-            <div className="mt-10 flex flex-col gap-5 sm:flex-row">
+            <motion.div
+              variants={HERO_ITEM_VARIANTS}
+              className="mt-8 flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row sm:gap-5 md:mt-10"
+            >
               {/* Primary — Dark forest */}
               <Link
                 href="/complex-9"
-                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-emerald-800 via-green-900 to-emerald-950 px-10 py-5 text-base font-semibold text-white shadow-[0_8px_30px_rgba(6,78,59,0.55)] ring-1 ring-white/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(6,78,59,0.75)] hover:brightness-110"
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-emerald-800 via-green-900 to-emerald-950 px-8 py-4 text-base font-semibold text-white shadow-[0_8px_30px_rgba(6,78,59,0.55)] ring-1 ring-white/20 transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(6,78,59,0.75)] sm:px-10 sm:py-5"
               >
                 {/* Shine sweep on hover */}
                 <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-                <Flame className="h-5 w-5" />
                 <span className="relative">Сауна 9 комплекс</span>
-                <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
 
               {/* Secondary — Dark wood brown */}
               <Link
                 href="/complex-50"
-                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-900 via-stone-800 to-amber-950 px-10 py-5 text-base font-semibold text-white shadow-[0_8px_30px_rgba(68,40,20,0.6)] ring-1 ring-white/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(68,40,20,0.8)] hover:brightness-110"
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-900 via-stone-800 to-amber-950 px-8 py-4 text-base font-semibold text-white shadow-[0_8px_30px_rgba(68,40,20,0.6)] ring-1 ring-white/20 transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(68,40,20,0.8)] sm:px-10 sm:py-5"
               >
                 <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-                <Flame className="h-5 w-5" />
                 <span className="relative">Сауна 50 комплекс</span>
-                <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
-            </div>
+            </motion.div>
           </motion.div>
+
+          {/* Quick booking widget — sibling, не наследует scale заголовка.
+              Анимация живёт ВНУТРИ <form> (motion.form), чтобы opacity и
+              backdrop-filter были на одном элементе — иначе Chromium не
+              рендерит блюр пока opacity предка < 1. */}
+          <div className="relative z-10 mx-auto mt-8 w-full max-w-5xl sm:mt-12 md:mt-14">
+            <HeroQuickBooking />
+          </div>
 
           {/* Scroll indicator */}
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+            className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 md:block"
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
           >
@@ -170,22 +203,22 @@ export default function HomePage() {
               >
                 <Carousel>
                   <CarouselContent>
-                    {carouselSlides.map((slide) => (
+                    {carouselSlides.map((slide, i) => (
                       <CarouselItem key={slide.title} className="basis-full">
-                        <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted shadow-lg">
+                        <button
+                          type="button"
+                          onClick={() => setLightboxIndex(i)}
+                          className="group relative block aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-2xl bg-muted shadow-lg"
+                        >
                           <Image
                             src={slide.image}
                             alt={slide.title}
                             fill
                             sizes="(max-width: 768px) 100vw, 50vw"
-                            className="object-cover"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
                           />
-                          {/* Gradient overlay for text */}
-                          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-                          <span className="absolute bottom-5 left-6 text-2xl font-semibold text-white drop-shadow-lg">
-                            {slide.title}
-                          </span>
-                        </div>
+                          <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
+                        </button>
                       </CarouselItem>
                     ))}
                   </CarouselContent>
@@ -199,6 +232,14 @@ export default function HomePage() {
               </motion.div>
             </div>
           </div>
+
+          <Lightbox
+            images={carouselSlides.map((s) => s.image)}
+            openIndex={lightboxIndex}
+            onClose={() => setLightboxIndex(null)}
+            onChangeIndex={setLightboxIndex}
+            alt="Сакура"
+          />
         </section>
 
         {/* ===== PROMOTIONS ===== */}
@@ -221,10 +262,17 @@ export default function HomePage() {
                   key={promo.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  whileHover={{ scale: 1.04, transition: { duration: 0.2 } }}
+                  whileHover={{
+                    y: -4,
+                    transition: { duration: 0.2, ease: "easeOut" },
+                  }}
                   viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  className="rounded-2xl border bg-card p-8 shadow-md cursor-pointer transition-shadow hover:shadow-lg"
+                  transition={{
+                    duration: 0.5,
+                    delay: idx * 0.1,
+                    ease: "easeOut",
+                  }}
+                  className="rounded-2xl border bg-card p-8 shadow-md transition-shadow duration-200 hover:shadow-lg"
                 >
                   <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-forest/10">
                     {promoIcons[promo.icon] ?? (
@@ -324,7 +372,7 @@ export default function HomePage() {
                 <iframe
                   title="Карта расположения саун Сакура"
                   src={mapSrc}
-                  className="h-full min-h-[400px] w-full brightness-[0.85] contrast-[1.1] saturate-[0.7] hue-rotate-[15deg]"
+                  className="h-full min-h-[400px] w-full"
                   allowFullScreen
                   loading="lazy"
                 />

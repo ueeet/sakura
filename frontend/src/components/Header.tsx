@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -91,11 +92,17 @@ export function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 transition-opacity hover:opacity-80"
+            className="flex items-center transition-opacity hover:opacity-80"
+            aria-label="Сакура — на главную"
           >
-            <span className="font-heading text-3xl tracking-wide text-forest">
-              Сакура
-            </span>
+            <Image
+              src="/logo_sakura_2.png"
+              alt="Сакура"
+              width={1200}
+              height={400}
+              priority
+              className="h-10 w-auto md:h-12"
+            />
           </Link>
 
           {/* Desktop navigation — MegaMenu */}

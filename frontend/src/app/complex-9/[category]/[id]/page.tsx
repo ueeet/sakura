@@ -64,9 +64,12 @@ export default function Complex9DetailPage(props: {
                 9 Комплекс
               </Link>
               <ChevronRight className="h-3 w-3" />
-              <span className="hover:text-foreground transition-colors">
+              <Link
+                href={`/complex-9?tab=${category}`}
+                className="hover:text-foreground transition-colors"
+              >
                 {categoryData?.name}
-              </span>
+              </Link>
               <ChevronRight className="h-3 w-3" />
               <span className="text-foreground font-medium">{sauna.name}</span>
             </nav>

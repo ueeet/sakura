@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Clock, CalendarDays } from "lucide-react";
 
@@ -29,12 +29,28 @@ function getFirstDayOfMonth(year: number, month: number) {
 export function BookingPicker() {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<"date" | "time">("date");
+  const [timeSubStep, setTimeSubStep] = useState<"start" | "end">("start");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedEndTime, setSelectedEndTime] = useState<string | null>(null);
 
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
+
+  // Закрытие пикера по клику вне — единая UX с HeroQuickBooking.
+  const pickerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    function onMouseDown(e: MouseEvent) {
+      const target = e.target as Node;
+      if (pickerRef.current && !pickerRef.current.contains(target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onMouseDown);
+    return () => document.removeEventListener("mousedown", onMouseDown);
+  }, [isOpen]);
 
   const daysInMonth = getDaysInMonth(viewYear, viewMonth);
   const firstDay = getFirstDayOfMonth(viewYear, viewMonth);
@@ -60,12 +76,23 @@ export function BookingPicker() {
   const handleDateClick = (day: number) => {
     setSelectedDate(new Date(viewYear, viewMonth, day));
     setStep("time");
+    setTimeSubStep("start");
   };
 
-  const handleTimeClick = (time: string) => {
+  const handleStartTimeClick = (time: string) => {
     setSelectedTime(time);
-    setIsOpen(false);
-    setStep("date");
+    // Всегда сбрасываем конец — иначе при перевыборе старта в гриде «Время
+    // окончания» подсветится прошлый выбор пользователя. Он перевыберет конец
+    // явно (или закроет пикер, оставив только старт — это валидное состояние).
+    setSelectedEndTime(null);
+    setTimeSubStep("end");
+  };
+
+  const handleEndTimeClick = (time: string) => {
+    setSelectedEndTime(time);
+    // Пикер НЕ закрываем автоматически — пользователь закрывает сам
+    // (клик вне или повторный клик по триггеру). Это даёт возможность
+    // перевыбрать конец без переоткрытия.
   };
 
   const isToday = (day: number) => {
@@ -92,6 +119,9 @@ export function BookingPicker() {
   };
 
   const displayText = () => {
+    if (selectedDate && selectedTime && selectedEndTime) {
+      return `${selectedDate.getDate()} ${MONTHS[selectedDate.getMonth()].toLowerCase()} ${selectedDate.getFullYear()}, ${selectedTime} — ${selectedEndTime}`;
+    }
     if (selectedDate && selectedTime) {
       return `${selectedDate.getDate()} ${MONTHS[selectedDate.getMonth()].toLowerCase()} ${selectedDate.getFullYear()}, ${selectedTime}`;
     }
@@ -102,9 +132,14 @@ export function BookingPicker() {
   };
 
   return (
-    <div className="relative">
+    <div ref={pickerRef} className="relative">
       <button
-        onClick={() => { setIsOpen(!isOpen); setStep("date"); }}
+        type="button"
+        onClick={() => {
+          setIsOpen(!isOpen);
+          setStep("date");
+          setTimeSubStep("start");
+        }}
         className="w-full flex items-center gap-3 rounded-lg border border-border bg-muted px-4 py-3 text-sm text-left transition-colors hover:border-forest/50"
       >
         <CalendarDays className="h-4 w-4 shrink-0 text-forest" />
@@ -185,29 +220,74 @@ export function BookingPicker() {
                 {/* Time selection */}
                 <div className="flex items-center gap-2 mb-4">
                   <button
-                    onClick={() => setStep("date")}
+                    onClick={() => {
+                      if (timeSubStep === "end") {
+                        setTimeSubStep("start");
+                      } else {
+                        setStep("date");
+                      }
+                    }}
                     className="rounded-lg p-1.5 hover:bg-muted transition-colors"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
                   <Clock className="h-4 w-4 text-forest" />
-                  <span className="text-sm font-semibold">Выберите время</span>
+                  <span className="text-sm font-semibold">
+                    {timeSubStep === "start"
+                      ? "Время начала"
+                      : "Время окончания"}
+                  </span>
+                  {timeSubStep === "end" && selectedTime && (
+                    <span className="ml-auto text-xs text-muted-foreground">
+                      с {selectedTime}
+                    </span>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-3 gap-2">
-                  {TIME_SLOTS.map((time) => (
-                    <button
-                      key={time}
-                      onClick={() => handleTimeClick(time)}
-                      className={`rounded-lg py-2.5 text-sm font-medium transition-colors ${
-                        selectedTime === time
-                          ? "bg-forest text-white"
-                          : "bg-muted text-foreground hover:bg-forest/20 hover:text-forest"
-                      }`}
-                    >
-                      {time}
-                    </button>
-                  ))}
+                  {TIME_SLOTS.map((time) => {
+                    const slotH = parseInt(time.slice(0, 2), 10);
+                    const startH = selectedTime
+                      ? parseInt(selectedTime.slice(0, 2), 10)
+                      : -1;
+                    const endH = selectedEndTime
+                      ? parseInt(selectedEndTime.slice(0, 2), 10)
+                      : -1;
+                    const isEnd = timeSubStep === "end";
+                    const isDisabled = isEnd && slotH <= startH;
+                    const isActive = isEnd
+                      ? selectedEndTime === time
+                      : selectedTime === time;
+                    const inRange =
+                      isEnd &&
+                      !isDisabled &&
+                      endH > 0 &&
+                      slotH > startH &&
+                      slotH < endH;
+
+                    return (
+                      <button
+                        key={time}
+                        disabled={isDisabled}
+                        onClick={() =>
+                          isEnd
+                            ? handleEndTimeClick(time)
+                            : handleStartTimeClick(time)
+                        }
+                        className={`rounded-lg py-2.5 text-sm font-medium transition-colors ${
+                          isActive
+                            ? "bg-forest text-white"
+                            : isDisabled
+                              ? "cursor-not-allowed bg-muted/40 text-muted-foreground/40"
+                              : inRange
+                                ? "bg-forest/20 text-forest"
+                                : "bg-muted text-foreground hover:bg-forest/20 hover:text-forest"
+                        }`}
+                      >
+                        {time}
+                      </button>
+                    );
+                  })}
                 </div>
               </>
             )}

@@ -282,7 +282,8 @@ function CarouselContent({
     Array.from(childNodes).forEach((child) => observer.observe(child));
 
     return () => observer.disconnect();
-  }, [children, setItemsCount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemsLength]);
 
   useEffect(() => {
     if (!itemsLength) {
@@ -318,6 +319,7 @@ function CarouselContent({
       dragMomentum={disableDrag ? undefined : false}
       style={{
         x: disableDrag ? undefined : dragX,
+        willChange: 'transform',
       }}
       animate={{
         translateX: `-${index * (100 / visibleItemsCount)}%`,

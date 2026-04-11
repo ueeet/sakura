@@ -89,7 +89,7 @@ const MegaMenu = React.forwardRef<HTMLUListElement, MegaMenuProps>(
 
             <AnimatePresence>
               {openMenu === navItem.label && navItem.subMenus && (
-                <div className="absolute left-0 top-full w-auto pt-2 z-10">
+                <div className="absolute right-0 top-full w-auto pt-2 z-10">
                   <motion.div
                     className="w-max border border-border bg-card p-4 shadow-lg"
                     style={{
