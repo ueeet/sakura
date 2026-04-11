@@ -93,7 +93,7 @@ model Sauna {
 
   // Настройки бронирования
   cleaningMinutes Int      @default(60)
-  minHours        Int      @default(2)
+  minHours        Int      @default(1)
   openHour        Int      @default(0)
   closeHour       Int      @default(24)
   depositPercent  Int      @default(30)               // % предоплаты от totalPrice
