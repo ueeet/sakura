@@ -27,16 +27,17 @@ function SaunaCard({
   sauna,
   categorySlug,
   index,
+  onBook,
 }: {
   sauna: Sauna;
   categorySlug: string;
   index: number;
+  onBook: (s: Sauna) => void;
 }) {
   const numericId = extractNumericId(sauna.slug);
   const cover = sauna.mainImage ?? sauna.images?.[0] ?? "/placeholder.png";
 
   const detailHref = `/complex-9/${categorySlug}/${numericId}`;
-  const bookHref = `${detailHref}#booking`;
 
   return (
     <motion.div
