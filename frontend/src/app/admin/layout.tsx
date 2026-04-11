@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { isAuthenticated, clearTokens } from "@/lib/api";
 import { SSEToast } from "@/components/admin/SSEToast";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   LayoutDashboard, Calendar, Star, Settings, LogOut, Menu, X,
 } from "lucide-react";
@@ -39,19 +39,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-background text-foreground">
       <SSEToast />
 
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
 
-      <aside className={`fixed top-0 left-0 z-50 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transform transition-transform lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-800">
-          <Link href="/admin" className="text-xl font-bold text-pink-600 dark:text-pink-400">
-            Сакура
+      <aside
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-card border-r border-border transform transition-transform lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between h-16 px-4 border-b border-border">
+          <Link href="/admin" className="flex items-center gap-2">
+            <Image
+              src="/logo_sakura_2.png"
+              alt="Сакура"
+              width={1200}
+              height={400}
+              className="h-9 w-auto"
+            />
           </Link>
-          <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>
+          <button
+            className="lg:hidden text-muted-foreground hover:text-foreground"
+            onClick={() => setSidebarOpen(false)}
+          >
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -67,8 +83,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   active
-                    ? "bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    ? "bg-forest/15 text-forest"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
                 <Icon className="h-5 w-5" />
@@ -78,33 +94,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-800">
-          <div className="flex items-center justify-between">
-            <ThemeToggle />
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-            >
-              <LogOut className="h-4 w-4" />
-              Выйти
-            </button>
-          </div>
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            Выйти
+          </button>
         </div>
       </aside>
 
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-30 h-16 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 flex items-center px-4">
-          <button className="lg:hidden mr-4" onClick={() => setSidebarOpen(true)}>
+        <header className="sticky top-0 z-30 h-16 bg-background/80 backdrop-blur-md border-b border-border flex items-center px-4 sm:px-6">
+          <button
+            className="lg:hidden mr-4 text-muted-foreground hover:text-foreground"
+            onClick={() => setSidebarOpen(true)}
+          >
             <Menu className="h-6 w-6" />
           </button>
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <h1 className="text-lg font-semibold">
             {navItems.find((i) => i.href === pathname)?.label || "Админ-панель"}
           </h1>
         </header>
 
-        <main className="p-6">
-          {children}
-        </main>
+        <main className="p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );
