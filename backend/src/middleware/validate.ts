@@ -38,35 +38,42 @@ function fieldLabel(path: string): string {
   return FIELD_LABELS[last] || last;
 }
 
+// Если сообщение содержит кириллицу — оно задано вручную в схеме, используем как есть
+function isCustomRussian(msg: string | undefined): boolean {
+  return !!msg && /[А-Яа-яЁё]/.test(msg);
+}
+
 function humanizeIssue(issue: z.core.$ZodIssue): string {
+  // 1. Сначала смотрим, есть ли кастомное русское сообщение в схеме
+  if (isCustomRussian(issue.message)) {
+    return issue.message;
+  }
+
   const label = fieldLabel(issue.path.join("."));
   const code = issue.code;
 
-  // Обязательные / отсутствующие
   if (code === "invalid_type") {
     return `${label} — обязательное поле`;
   }
-  // Слишком короткое / маленькое
   if (code === "too_small") {
-    if ("minimum" in issue && issue.minimum === 1) {
-      return `${label} — обязательное поле`;
+    if ("type" in issue && issue.type === "string") {
+      if ("minimum" in issue && issue.minimum === 1) {
+        return `${label} — обязательное поле`;
+      }
+      return `${label}: слишком короткое значение`;
     }
     return `${label}: значение слишком маленькое`;
   }
-  // Слишком большое
   if (code === "too_big") {
     return `${label}: значение слишком большое`;
   }
-  // Неверное значение из перечисления
   if (code === "invalid_value") {
     return `${label}: недопустимое значение`;
   }
-  // Неверный формат
   if (code === "invalid_format") {
     return `${label}: неверный формат`;
   }
-  // Дефолт — используем сообщение из схемы или общее
-  return issue.message ? `${label}: ${issue.message}` : `${label}: ошибка`;
+  return `${label}: ошибка`;
 }
 
 export function validate(schema: z.ZodType) {
