@@ -499,19 +499,19 @@ export function HomeView({
 
 /* ───────── Reviews Section ───────── */
 
-const COMMUNITY_ITEMS = [
-  { name: "Айнур Русланович", image: "/images/saunas/complex-9/family/2/1.webp" },
-  { name: "Анна Осина", image: "/images/saunas/complex-9/family/1/2.webp" },
-  { name: "Дмитрий Юрьевич", image: "/images/saunas/complex-50/1/1.webp" },
-  { name: "Юлия Балакина", image: "/images/saunas/complex-9/family/3/1.webp" },
-  { name: "Элина Динаровна", image: "/images/saunas/complex-9/family/4/2.webp" },
-  { name: "Александра Гатина", image: "/images/saunas/complex-50/2/1.webp" },
-  { name: "Ралина Леонтьева", image: "/images/saunas/complex-9/family/2/3.webp" },
-  { name: "Алина Майкова", image: "/images/saunas/complex-50/3/1.webp" },
-  { name: "Ксюнчик", image: "/images/saunas/complex-9/family/1/3.webp" },
-  { name: "Лилия Курбанова", image: "/images/saunas/complex-50/4/1.webp" },
-  { name: "Денис Петров", image: "/images/saunas/complex-9/family/3/2.webp" },
-  { name: "Венера М.", image: "/images/saunas/complex-9/family/4/1.webp" },
+const PHOTO_REVIEWS = [
+  { name: "Айнур Русланович", rating: 5, text: "Отмечали день рождение с друзьями, очень понравилось, отличное место для отдыха, всё очень чисто аккуратно, вежливый приветливый персонал", image: "/images/saunas/complex-9/family/2/1.webp" },
+  { name: "Анна Осина", rating: 5, text: "Всё супер! Бываем здесь часто, чистый бассейн вода тёплая, вежливый персонал", image: "/images/saunas/complex-9/family/1/2.webp" },
+  { name: "Дмитрий Юрьевич", rating: 5, text: "Замечательный банный комплекс, сходили с компанией нам все понравилось, баня теплая, все было чисто и аккуратно", image: "/images/saunas/complex-50/1/1.webp" },
+  { name: "Юлия Балакина", rating: 5, text: "Самая хорошая сауна для похода с семьей, теплый бассейн, и очень жаркая парная, рекомендую)", image: "/images/saunas/complex-9/family/3/1.webp" },
+  { name: "Элина Динаровна", rating: 5, text: "Самая лучшая сауна. Тут чисто, вода теплая, вежливый персонал. Сыну понравилось", image: "/images/saunas/complex-9/family/4/2.webp" },
+  { name: "Александра Гатина", rating: 5, text: "Впервые посетила эту сауну. Всё очень понравилось. Чисто, аккуратно. Обязательно к посещению", image: "/images/saunas/complex-50/2/1.webp" },
+  { name: "Лилия Курбанова", rating: 5, text: "Русская баня отличная!! Бассейн тёплый, чистый! Очень хорошее место, советую!", image: "/images/saunas/complex-50/4/1.webp" },
+  { name: "Денис Петров", rating: 5, text: "Сауна очень хорошая, чистая, комфортная, уютная. Вода в бассейне очень чистая!", image: "/images/saunas/complex-9/family/3/2.webp" },
+  { name: "Венера М.", rating: 5, text: "Отметили в семейной сауне день рождения. Сауна и бассейн очень понравились. Всё чисто, красиво", image: "/images/saunas/complex-9/family/4/1.webp" },
+  { name: "Каролина Шайдуллина", rating: 5, text: "Посетили банный комплекс в будний день, очень чисто уютно! Баня горячая, бассейн теплый", image: "/images/saunas/complex-50/3/1.webp" },
+  { name: "Алла Файзуллина", rating: 5, text: "Место волшебное, в номере классный джакузи и массажное кресло, горячая русская баня", image: "/images/saunas/complex-9/family/2/3.webp" },
+  { name: "Венера Ишбулатова", rating: 5, text: "Отмечали день рождения дочери. Всё чисто, комфортно, в бассейне тёплая, чистая вода, парилка просто огонь", image: "/images/saunas/complex-9/family/1/3.webp" },
 ];
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
@@ -533,7 +533,34 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
   const [text, setText] = useState("");
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
-  const [showAll, setShowAll] = useState(false);
+  const [showTextReviews, setShowTextReviews] = useState(false);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    checkScroll();
+    el.addEventListener("scroll", checkScroll, { passive: true });
+    return () => el.removeEventListener("scroll", checkScroll);
+  }, [checkScroll]);
+
+  function scroll(dir: "left" | "right") {
+    const el = scrollRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>("[data-review-card]");
+    const step = card ? card.offsetWidth + 24 : 360;
+    el.scrollBy({ left: dir === "left" ? -step : step, behavior: "smooth" });
+  }
 
   const avg = reviews.length > 0
     ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
@@ -568,7 +595,7 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
     <section id="reviews" className="overflow-hidden py-24">
       <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16">
         {/* Header row */}
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between mb-14">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between mb-6">
           <div>
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -597,179 +624,200 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
           </motion.button>
         </div>
 
-        {/* Community marquee — horizontal auto-scroll */}
-        <div className="relative mb-14">
-          {/* Fade edges */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-background to-transparent sm:w-24" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-background to-transparent sm:w-24" />
+        {/* Average rating + arrow controls */}
+        <div className="flex items-center justify-between mb-8">
+          {reviews.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5 }}
+              className="flex items-center gap-4"
+            >
+              <span className="text-4xl font-bold text-foreground sm:text-5xl">
+                {avg.toFixed(1)}
+              </span>
+              <div>
+                <div className="flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-5 w-5 ${
+                        i < Math.round(avg) ? "text-amber-400 fill-amber-400" : "text-muted-foreground/30"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {reviews.length} {pluralReviews(reviews.length)}
+                </p>
+              </div>
+            </motion.div>
+          )}
 
-          <div className="flex gap-5 overflow-hidden">
-            <div className="flex shrink-0 animate-marquee gap-5">
-              {COMMUNITY_ITEMS.map((item, i) => (
-                <div key={i} className="relative w-48 shrink-0 sm:w-56">
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted shadow-md">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-3 pb-3 pt-10">
-                      <p className="text-sm font-semibold text-white">{item.name}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div aria-hidden className="flex shrink-0 animate-marquee gap-5">
-              {COMMUNITY_ITEMS.map((item, i) => (
-                <div key={i} className="relative w-48 shrink-0 sm:w-56">
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted shadow-md">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-3 pb-3 pt-10">
-                      <p className="text-sm font-semibold text-white">{item.name}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          {/* Arrows */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => scroll("left")}
+              disabled={!canScrollLeft}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted disabled:opacity-30 disabled:cursor-default"
+              aria-label="Назад"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              disabled={!canScrollRight}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted disabled:opacity-30 disabled:cursor-default"
+              aria-label="Вперёд"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Average rating */}
-        {reviews.length > 0 && (
+      {/* Photo review cards — horizontal scroll, full bleed */}
+      <div
+        ref={scrollRef}
+        className="flex gap-6 overflow-x-auto scroll-smooth px-6 pb-4 md:px-12 lg:px-16 scrollbar-hide"
+        style={{ scrollbarWidth: "none" }}
+      >
+        {PHOTO_REVIEWS.map((item, idx) => (
           <motion.div
+            key={idx}
+            data-review-card
+            style={{ willChange: "transform, opacity" }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5 }}
-            className="mb-12 flex items-center gap-4"
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: Math.min(idx, 4) * 0.08, ease: "easeOut" }}
+            className="w-[300px] shrink-0 sm:w-[340px] lg:w-[380px]"
           >
-            <span className="text-5xl font-bold text-foreground">
-              {avg.toFixed(1)}
-            </span>
-            <div>
-              <div className="flex gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-5 w-5 ${
-                      i < Math.round(avg) ? "text-amber-400 fill-amber-400" : "text-muted-foreground/30"
-                    }`}
-                  />
-                ))}
+            <div className="rounded-2xl border bg-card shadow-md overflow-hidden">
+              {/* Square photo */}
+              <div className="relative aspect-square overflow-hidden bg-muted">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {reviews.length} {pluralReviews(reviews.length)}
-              </p>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Review cards */}
-        {reviews.length > 0 ? (
-          <>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {(showAll ? reviews : reviews.slice(0, 6)).map((review, idx) => (
-                <motion.div
-                  key={review.id}
-                  style={{ willChange: "transform, opacity" }}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  whileHover={{
-                    y: -4,
-                    transition: { duration: 0.2, ease: "easeOut" },
-                  }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: (idx < 6 ? idx : 0) * 0.08,
-                    ease: "easeOut",
-                  }}
-                  className="relative rounded-2xl border bg-card p-6 shadow-md transition-shadow duration-200 hover:shadow-lg"
-                >
-                  <Quote className="absolute top-5 right-5 h-8 w-8 text-forest/10" />
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest/10 text-forest font-semibold text-sm">
-                      {review.authorName.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-foreground text-sm">
-                        {review.authorName}
-                      </p>
-                      <div className="flex gap-0.5 mt-0.5">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3.5 w-3.5 ${
-                              i < review.rating
-                                ? "text-amber-400 fill-amber-400"
-                                : "text-muted-foreground/30"
-                            }`}
-                          />
-                        ))}
-                      </div>
+              {/* Review body */}
+              <div className="p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-forest/10 text-forest font-semibold text-sm">
+                    {item.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">{item.name}</p>
+                    <div className="flex gap-0.5 mt-0.5">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-3.5 w-3.5 ${
+                            i < item.rating ? "text-amber-400 fill-amber-400" : "text-muted-foreground/30"
+                          }`}
+                        />
+                      ))}
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
-                    {review.text}
-                  </p>
-                  {review.source !== "site" && (
-                    <div className="mt-4">
-                      <span className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
-                        {review.source === "2gis" ? "2ГИС" : "Яндекс"}
-                      </span>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-
-            {reviews.length > 6 && (
-              <div className="mt-10 text-center">
-                <button
-                  onClick={() => setShowAll((v) => !v)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-                >
-                  {showAll ? "Скрыть" : `Ещё отзывы (${reviews.length - 6})`}
-                </button>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                  {item.text}
+                </p>
+                <span className="mt-3 inline-block text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+                  2ГИС
+                </span>
               </div>
-            )}
-          </>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="mx-auto max-w-xl rounded-2xl border bg-card p-10 text-center shadow-md"
-          >
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-forest/10">
-              <Quote className="h-7 w-7 text-forest/70" />
             </div>
-            <h3 className="text-xl font-semibold text-foreground">
-              Отзывов пока нет
-            </h3>
-            <p className="mt-3 text-base text-muted-foreground">
-              Станьте первым — расскажите о вашем опыте!
-            </p>
-            <button
-              onClick={() => { setFormOpen(true); setSubmitted(false); setError(""); }}
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-forest px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-forest-dark"
-            >
-              <Send className="h-4 w-4" />
-              Оставить отзыв
-            </button>
           </motion.div>
-        )}
+        ))}
       </div>
+
+      {/* "More reviews" — text-only reviews hidden by default */}
+      {reviews.length > 0 && (
+        <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16 mt-12">
+          <div className="text-center">
+            <button
+              onClick={() => setShowTextReviews((v) => !v)}
+              className="inline-flex items-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+            >
+              {showTextReviews ? "Скрыть отзывы" : `Ещё ${reviews.length} ${pluralReviews(reviews.length)}`}
+            </button>
+          </div>
+
+          <AnimatePresence>
+            {showTextReviews && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="overflow-hidden"
+              >
+                <div className="grid grid-cols-1 gap-6 pt-10 md:grid-cols-2 lg:grid-cols-3">
+                  {reviews.map((review, idx) => (
+                    <motion.div
+                      key={review.id}
+                      style={{ willChange: "transform, opacity" }}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      whileHover={{
+                        y: -4,
+                        transition: { duration: 0.2, ease: "easeOut" },
+                      }}
+                      viewport={{ once: true, amount: 0.2 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: Math.min(idx, 5) * 0.08,
+                        ease: "easeOut",
+                      }}
+                      className="relative rounded-2xl border bg-card p-6 shadow-md transition-shadow duration-200 hover:shadow-lg"
+                    >
+                      <Quote className="absolute top-5 right-5 h-8 w-8 text-forest/10" />
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest/10 text-forest font-semibold text-sm">
+                          {review.authorName.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground text-sm">
+                            {review.authorName}
+                          </p>
+                          <div className="flex gap-0.5 mt-0.5">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-3.5 w-3.5 ${
+                                  i < review.rating
+                                    ? "text-amber-400 fill-amber-400"
+                                    : "text-muted-foreground/30"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
+                        {review.text}
+                      </p>
+                      {review.source !== "site" && (
+                        <div className="mt-4">
+                          <span className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+                            {review.source === "2gis" ? "2ГИС" : "Яндекс"}
+                          </span>
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
 
       {/* ── Review form modal ── */}
       <AnimatePresence>
@@ -819,7 +867,6 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                     </button>
                   </div>
                   <form onSubmit={handleSubmit} className="space-y-5">
-                    {/* Name */}
                     <div>
                       <label className="mb-1.5 block text-sm font-medium text-foreground">
                         Ваше имя
@@ -832,8 +879,6 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                         className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-colors focus:border-forest"
                       />
                     </div>
-
-                    {/* Rating */}
                     <div>
                       <label className="mb-1.5 block text-sm font-medium text-foreground">
                         Оценка
@@ -859,8 +904,6 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                         ))}
                       </div>
                     </div>
-
-                    {/* Text */}
                     <div>
                       <label className="mb-1.5 block text-sm font-medium text-foreground">
                         Ваш отзыв
@@ -873,11 +916,7 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                         className="w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-colors focus:border-forest"
                       />
                     </div>
-
-                    {error && (
-                      <p className="text-sm text-red-500">{error}</p>
-                    )}
-
+                    {error && <p className="text-sm text-red-500">{error}</p>}
                     <button
                       type="submit"
                       disabled={sending}
