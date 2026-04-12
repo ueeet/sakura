@@ -697,9 +697,9 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
         className="flex gap-6 overflow-x-auto scroll-smooth pb-4 scrollbar-hide"
         style={{ scrollbarWidth: "none" }}
       >
-        {PHOTO_REVIEWS.map((item, idx) => (
+        {photoReviews.map((review, idx) => (
           <motion.div
-            key={idx}
+            key={review.id}
             data-review-card
             style={{ willChange: "transform, opacity" }}
             initial={{ opacity: 0, y: 20 }}
@@ -709,30 +709,28 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
             className="w-[300px] shrink-0 sm:w-[340px] lg:w-[380px]"
           >
             <div className="rounded-2xl border bg-card shadow-md overflow-hidden">
-              {/* Square photo */}
               <div className="relative aspect-square overflow-hidden bg-muted">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={review.image!}
+                  alt={review.authorName}
                   className="h-full w-full object-cover"
                   loading="lazy"
                 />
               </div>
-              {/* Review body */}
               <div className="p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-forest/10 text-forest font-semibold text-sm">
-                    {item.name.charAt(0).toUpperCase()}
+                    {review.authorName.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground text-sm">{item.name}</p>
+                    <p className="font-semibold text-foreground text-sm">{review.authorName}</p>
                     <div className="flex gap-0.5 mt-0.5">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star
                           key={i}
                           className={`h-3.5 w-3.5 ${
-                            i < item.rating ? "text-amber-400 fill-amber-400" : "text-muted-foreground/30"
+                            i < review.rating ? "text-amber-400 fill-amber-400" : "text-muted-foreground/30"
                           }`}
                         />
                       ))}
@@ -740,11 +738,13 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                  {item.text}
+                  {review.text}
                 </p>
-                <span className="mt-3 inline-block text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
-                  2ГИС
-                </span>
+                {review.source !== "site" && (
+                  <span className="mt-3 inline-block text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+                    {review.source === "2gis" ? "2ГИС" : "Яндекс"}
+                  </span>
+                )}
               </div>
             </div>
           </motion.div>
