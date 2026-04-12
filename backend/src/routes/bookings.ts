@@ -163,6 +163,49 @@ router.post("/", validate(createBookingSchema), asyncHandler(async (req, res) =>
   res.status(201).json({ ...item, payment });
 }));
 
+// Админская ручка создания брони — без обязательной оплаты и проверки на прошлое.
+// Админ может внести любую бронь (по телефону, в прошлое для фиксации и т.д.).
+router.post("/admin", requireAdmin, validate(createBookingSchema), asyncHandler(async (req, res) => {
+  const clean = sanitizeObject(req.body);
+  const startAt = parseMoscowDate(clean.startAt as string);
+  const endAt = parseMoscowDate(clean.endAt as string);
+
+  if (Number.isNaN(startAt.getTime()) || Number.isNaN(endAt.getTime())) {
+    res.status(400).json({ error: "Неверный формат даты" });
+    return;
+  }
+  if (startAt >= endAt) {
+    res.status(400).json({ error: "Время окончания должно быть позже времени начала" });
+    return;
+  }
+
+  const sauna = await prisma.sauna.findUnique({ where: { id: clean.saunaId as number } });
+  if (!sauna) { res.status(404).json({ error: "Сауна не найдена" }); return; }
+
+  const conflict = await hasBookingConflict(sauna.id, startAt, endAt, sauna.cleaningMinutes);
+  if (conflict) { res.status(409).json({ error: "Выбранное время уже занято" }); return; }
+
+  const item = await prisma.booking.create({
+    data: {
+      clientName: clean.clientName as string,
+      phone: clean.phone as string,
+      startAt,
+      endAt,
+      guests: (clean.guests as number) ?? 2,
+      comment: (clean.comment as string) ?? null,
+      branchId: clean.branchId as number,
+      saunaId: clean.saunaId as number,
+      totalPrice: (clean.totalPrice as number) ?? null,
+      status: "new", // админ создал — считаем подтверждённой заявкой
+      paymentStatus: "pending",
+    },
+    include: { branch: true, sauna: true },
+  });
+
+  broadcast("new_booking", item);
+  res.status(201).json(item);
+}));
+
 router.put("/:id", requireAdmin, validate(updateBookingSchema), asyncHandler(async (req, res) => {
   const clean = sanitizeObject(req.body) as Record<string, unknown>;
   const id = Number(req.params.id);
