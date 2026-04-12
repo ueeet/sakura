@@ -1,19 +1,27 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface SaunaCardCarouselProps {
   images: string[];
   alt: string;
+  /** Оставлено для обратной совместимости с вызывающим кодом; больше не используется. */
   sizes?: string;
 }
 
+/* eslint-disable @next/next/no-img-element */
+/*
+ * Карусель фото саун. Используем нативный <img> вместо next/image —
+ * все файлы уже .webp и небольшие, прогон через /_next/image endpoint
+ * только добавляет задержку на холодном кэше. Нативный img грузится
+ * прямо из public/ или CDN, все картинки рендерим сразу с opacity-0,
+ * чтобы листание было мгновенным (браузер параллельно тянет все 4 фото
+ * при появлении карточки во вьюпорте).
+ */
 export function SaunaCardCarousel({
   images,
   alt,
-  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
 }: SaunaCardCarouselProps) {
   const [current, setCurrent] = useState(0);
 
