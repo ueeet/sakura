@@ -15,6 +15,7 @@ const navLinks = [
   { href: "/#about", label: "О Сакуре" },
   { href: "/#promotions", label: "Акции" },
   { href: "/#contacts", label: "Контакты" },
+  { href: "/#reviews", label: "Отзывы" },
 ];
 
 const megaMenuItems: MegaMenuItem[] = [
