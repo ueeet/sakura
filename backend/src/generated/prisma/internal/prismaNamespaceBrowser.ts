@@ -256,6 +256,7 @@ export const ReviewScalarFieldEnum = {
   authorName: 'authorName',
   text: 'text',
   rating: 'rating',
+  image: 'image',
   source: 'source',
   sourceId: 'sourceId',
   branchId: 'branchId',
