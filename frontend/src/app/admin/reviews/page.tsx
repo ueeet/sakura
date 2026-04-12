@@ -17,6 +17,8 @@ import {
   Plus,
   AlertCircle,
   CheckCircle2,
+  Upload,
+  ImageIcon,
 } from "lucide-react";
 
 /* ───────── source badge ───────── */
