@@ -753,14 +753,14 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
       </div>
 
       {/* "More reviews" — text-only reviews hidden by default */}
-      {reviews.length > 0 && (
+      {textReviews.length > 0 && (
         <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16 mt-12">
           <div className="text-center">
             <button
               onClick={() => setShowTextReviews((v) => !v)}
               className="inline-flex items-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
             >
-              {showTextReviews ? "Скрыть отзывы" : `Ещё ${reviews.length} ${pluralReviews(reviews.length)}`}
+              {showTextReviews ? "Скрыть отзывы" : `Ещё ${textReviews.length} ${pluralReviews(textReviews.length)}`}
             </button>
           </div>
 
