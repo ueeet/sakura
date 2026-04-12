@@ -486,6 +486,51 @@ function ReviewEditor({ open, onClose, onSaved }: EditorProps) {
                 </div>
               </div>
 
+              {/* Photo upload */}
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                  Фото (опц.)
+                </label>
+                {form.image ? (
+                  <div className="relative w-full rounded-lg overflow-hidden border border-border">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={form.image} alt="Превью" className="w-full aspect-square object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, image: "" })}
+                      className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    disabled={uploading}
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border py-6 text-sm text-muted-foreground transition-colors hover:border-forest/50 hover:text-foreground"
+                  >
+                    {uploading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Upload className="h-4 w-4" />
+                    )}
+                    {uploading ? "Загрузка..." : "Загрузить фото"}
+                  </button>
+                )}
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleUpload(f);
+                    e.target.value = "";
+                  }}
+                />
+              </div>
+
               {/* Messages */}
               {error && (
                 <div className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
