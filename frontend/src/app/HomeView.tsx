@@ -499,20 +499,7 @@ export function HomeView({
 
 /* ───────── Reviews Section ───────── */
 
-const PHOTO_REVIEWS = [
-  { name: "Айнур Русланович", rating: 5, text: "Отмечали день рождение с друзьями, очень понравилось, отличное место для отдыха, всё очень чисто аккуратно, вежливый приветливый персонал", image: "/images/saunas/complex-9/family/2/1.webp" },
-  { name: "Анна Осина", rating: 5, text: "Всё супер! Бываем здесь часто, чистый бассейн вода тёплая, вежливый персонал", image: "/images/saunas/complex-9/family/1/2.webp" },
-  { name: "Дмитрий Юрьевич", rating: 5, text: "Замечательный банный комплекс, сходили с компанией нам все понравилось, баня теплая, все было чисто и аккуратно", image: "/images/saunas/complex-50/1/1.webp" },
-  { name: "Юлия Балакина", rating: 5, text: "Самая хорошая сауна для похода с семьей, теплый бассейн, и очень жаркая парная, рекомендую)", image: "/images/saunas/complex-9/family/3/1.webp" },
-  { name: "Элина Динаровна", rating: 5, text: "Самая лучшая сауна. Тут чисто, вода теплая, вежливый персонал. Сыну понравилось", image: "/images/saunas/complex-9/family/4/2.webp" },
-  { name: "Александра Гатина", rating: 5, text: "Впервые посетила эту сауну. Всё очень понравилось. Чисто, аккуратно. Обязательно к посещению", image: "/images/saunas/complex-50/2/1.webp" },
-  { name: "Лилия Курбанова", rating: 5, text: "Русская баня отличная!! Бассейн тёплый, чистый! Очень хорошее место, советую!", image: "/images/saunas/complex-50/4/1.webp" },
-  { name: "Денис Петров", rating: 5, text: "Сауна очень хорошая, чистая, комфортная, уютная. Вода в бассейне очень чистая!", image: "/images/saunas/complex-9/family/3/2.webp" },
-  { name: "Венера М.", rating: 5, text: "Отметили в семейной сауне день рождения. Сауна и бассейн очень понравились. Всё чисто, красиво", image: "/images/saunas/complex-9/family/4/1.webp" },
-  { name: "Каролина Шайдуллина", rating: 5, text: "Посетили банный комплекс в будний день, очень чисто уютно! Баня горячая, бассейн теплый", image: "/images/saunas/complex-50/3/1.webp" },
-  { name: "Алла Файзуллина", rating: 5, text: "Место волшебное, в номере классный джакузи и массажное кресло, горячая русская баня", image: "/images/saunas/complex-9/family/2/3.webp" },
-  { name: "Венера Ишбулатова", rating: 5, text: "Отмечали день рождения дочери. Всё чисто, комфортно, в бассейне тёплая, чистая вода, парилка просто огонь", image: "/images/saunas/complex-9/family/1/3.webp" },
-];
+// Photo reviews are loaded from the database (reviews with image != null)
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
