@@ -305,12 +305,13 @@ interface ReviewForm {
   authorName: string;
   text: string;
   rating: number;
+  image: string;
   source: "site" | "2gis" | "yandex";
   branchId: string;
 }
 
 function emptyForm(): ReviewForm {
-  return { authorName: "", text: "", rating: 5, source: "site", branchId: "" };
+  return { authorName: "", text: "", rating: 5, image: "", source: "site", branchId: "" };
 }
 
 function ReviewEditor({ open, onClose, onSaved }: EditorProps) {
