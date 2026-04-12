@@ -183,6 +183,7 @@ export interface Review {
   authorName: string;
   text: string;
   rating: number;
+  image: string | null;
   source: "site" | "2gis" | "yandex";
   sourceId: string | null;
   branchId: number | null;
