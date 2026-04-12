@@ -112,4 +112,45 @@ router.post(
   }),
 );
 
+// Public upload for review photos — smaller limit, no auth
+router.post(
+  "/review-photo",
+  handleMulter,
+  asyncHandler(async (req, res) => {
+    if (!req.file) {
+      res.status(400).json({ error: "Файл не передан" });
+      return;
+    }
+
+    await ensureBucket();
+
+    let buffer: Buffer;
+    try {
+      buffer = await sharp(req.file.buffer)
+        .resize({ width: 1200, withoutEnlargement: true })
+        .webp({ quality: 80 })
+        .toBuffer();
+    } catch {
+      res.status(400).json({ error: "Не удалось обработать изображение" });
+      return;
+    }
+
+    const fileName = `reviews/${Date.now()}-${randomUUID().slice(0, 8)}.webp`;
+    const { error: uploadError } = await supabase.storage
+      .from(BUCKET)
+      .upload(fileName, buffer, {
+        contentType: "image/webp",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      res.status(500).json({ error: "Не удалось загрузить файл" });
+      return;
+    }
+
+    const { data } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+    res.json({ url: data.publicUrl });
+  }),
+);
+
 export default router;
