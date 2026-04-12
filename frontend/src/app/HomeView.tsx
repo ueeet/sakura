@@ -499,6 +499,21 @@ export function HomeView({
 
 /* ───────── Reviews Section ───────── */
 
+const COMMUNITY_ITEMS = [
+  { name: "Айнур Русланович", image: "/images/saunas/complex-9/family/2/1.webp" },
+  { name: "Анна Осина", image: "/images/saunas/complex-9/family/1/2.webp" },
+  { name: "Дмитрий Юрьевич", image: "/images/saunas/complex-50/1/1.webp" },
+  { name: "Юлия Балакина", image: "/images/saunas/complex-9/family/3/1.webp" },
+  { name: "Элина Динаровна", image: "/images/saunas/complex-9/family/4/2.webp" },
+  { name: "Александра Гатина", image: "/images/saunas/complex-50/2/1.webp" },
+  { name: "Ралина Леонтьева", image: "/images/saunas/complex-9/family/2/3.webp" },
+  { name: "Алина Майкова", image: "/images/saunas/complex-50/3/1.webp" },
+  { name: "Ксюнчик", image: "/images/saunas/complex-9/family/1/3.webp" },
+  { name: "Лилия Курбанова", image: "/images/saunas/complex-50/4/1.webp" },
+  { name: "Денис Петров", image: "/images/saunas/complex-9/family/3/2.webp" },
+  { name: "Венера М.", image: "/images/saunas/complex-9/family/4/1.webp" },
+];
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 function pluralReviews(n: number) {
