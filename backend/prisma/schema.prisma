@@ -148,6 +148,9 @@ model Promotion {
 }
 
 // ========== Бронирование ==========
+// telegramChatId + telegramMessageId сохраняются после отправки уведомления
+// в телеграм (после оплаты депозита). Нужны чтобы редактировать то же самое
+// сообщение при подтверждении/отмене брони из админки или из inline-кнопок.
 model Booking {
   id            Int      @id @default(autoincrement())
   clientName    String
