@@ -403,6 +403,9 @@ export function HomeView({
           </div>
         </section>
 
+        {/* ===== REVIEWS ===== */}
+        <ReviewsSection reviews={reviews} />
+
         {/* ===== CONTACTS ===== */}
         <section id="contacts" className="overflow-hidden py-24">
           <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16">
@@ -489,8 +492,6 @@ export function HomeView({
             </div>
           </div>
         </section>
-        {/* ===== REVIEWS ===== */}
-        <ReviewsSection reviews={reviews} />
       </main>
       <Footer />
     </>
