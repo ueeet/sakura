@@ -4,6 +4,7 @@ import { validate } from "../middleware/validate";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { createReviewSchema, updateReviewSchema, publicReviewSchema } from "../lib/validators";
 import { cacheGet, cacheSet, cacheInvalidate } from "../lib/cache";
+import { broadcast } from "../lib/sse";
 import prisma from "../prismaClient";
 
 const router = Router();
