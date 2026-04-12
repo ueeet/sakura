@@ -69,19 +69,58 @@ export function useSoundSettings() {
 }
 
 /**
+ * Shared AudioContext + auto-unlock на первый жест пользователя.
+ *
+ * Браузеры (Chrome/Safari) создают AudioContext в состоянии `suspended`,
+ * пока юзер не кликнул/тапнул по странице. Без resume() звук молчит.
+ * Вешаем один раз listener на pointerdown/keydown, который разблокирует
+ * контекст — дальше звук играет при любом push-событии.
+ */
+let sharedCtx: AudioContext | null = null;
+
+function getAudioCtx(): AudioContext | null {
+  if (typeof window === "undefined") return null;
+  if (sharedCtx) return sharedCtx;
+  const AudioCtx =
+    window.AudioContext ||
+    (window as unknown as { webkitAudioContext: typeof AudioContext })
+      .webkitAudioContext;
+  if (!AudioCtx) return null;
+  sharedCtx = new AudioCtx();
+
+  const unlock = () => {
+    if (sharedCtx && sharedCtx.state === "suspended") {
+      sharedCtx.resume().catch(() => {});
+    }
+    window.removeEventListener("pointerdown", unlock);
+    window.removeEventListener("keydown", unlock);
+    window.removeEventListener("touchstart", unlock);
+  };
+  window.addEventListener("pointerdown", unlock, { once: true });
+  window.addEventListener("keydown", unlock, { once: true });
+  window.addEventListener("touchstart", unlock, { once: true });
+
+  return sharedCtx;
+}
+
+/**
  * Звонкое короткое уведомление (~0.7 сек) через Web Audio API.
  * Колокольчик из 2 нот, каждая = синусоида + октавная гармоника.
  * Low-pass фильтр срезает резкость на верхах.
  */
 export function playNotificationSound(vol: number) {
   if (vol <= 0) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+
+  // Пытаемся разблокировать контекст. Если пользователь ещё не
+  // взаимодействовал со страницей — resume() откажет, и звук пропадёт
+  // тихо. После первого клика/нажатия всё начнёт работать.
+  if (ctx.state === "suspended") {
+    ctx.resume().catch(() => {});
+  }
+
   try {
-    const AudioCtx =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
     const now = ctx.currentTime;
 
     // Low-pass на ~4кГц убирает звенящие верхи, оставляя яркость
@@ -96,17 +135,16 @@ export function playNotificationSound(vol: number) {
     filter.connect(master);
     master.connect(ctx.destination);
 
-    // Две ноты: A5 → C#6 (мажорная терция, светлая)
+    // Две ноты: A5 → D6 (светлый мажорный интервал)
     const notes = [
-      { freq: 880, start: 0.0, peak: 0.4, dur: 0.5 }, // A5
-      { freq: 1175, start: 0.18, peak: 0.4, dur: 0.52 }, // D6
+      { freq: 880, start: 0.0, peak: 0.4, dur: 0.5 },
+      { freq: 1175, start: 0.18, peak: 0.4, dur: 0.52 },
     ];
 
     for (const n of notes) {
       const t0 = now + n.start;
       const tEnd = t0 + n.dur;
 
-      // Основной тон
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = "sine";
@@ -114,12 +152,11 @@ export function playNotificationSound(vol: number) {
       osc.connect(gain);
       gain.connect(filter);
       gain.gain.setValueAtTime(0, t0);
-      gain.gain.linearRampToValueAtTime(n.peak, t0 + 0.012); // быстрая атака
+      gain.gain.linearRampToValueAtTime(n.peak, t0 + 0.012);
       gain.gain.exponentialRampToValueAtTime(0.0001, tEnd);
       osc.start(t0);
       osc.stop(tEnd);
 
-      // Октавная гармоника — добавляет звонкости как у колокола
       const harm = ctx.createOscillator();
       const harmGain = ctx.createGain();
       harm.type = "sine";
@@ -132,8 +169,6 @@ export function playNotificationSound(vol: number) {
       harm.start(t0);
       harm.stop(tEnd);
     }
-
-    setTimeout(() => ctx.close().catch(() => {}), 900);
   } catch {
     // ignore
   }
