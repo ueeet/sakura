@@ -569,6 +569,23 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
     ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
     : 0;
 
+  async function handlePhotoUpload(file: File) {
+    setUploading(true);
+    setError("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch(`${API_URL}/upload/review-photo`, { method: "POST", body: fd });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setPhotoUrl(data.url);
+    } catch {
+      setError("Не удалось загрузить фото");
+    } finally {
+      setUploading(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -577,16 +594,19 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
 
     setSending(true);
     try {
+      const payload: Record<string, unknown> = { authorName: name.trim(), text: text.trim(), rating };
+      if (photoUrl) payload.image = photoUrl;
       const res = await fetch(`${API_URL}/reviews/public`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ authorName: name.trim(), text: text.trim(), rating }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error();
       setSubmitted(true);
       setName("");
       setText("");
       setRating(5);
+      setPhotoUrl("");
     } catch {
       setError("Не удалось отправить отзыв. Попробуйте позже.");
     } finally {
