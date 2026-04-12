@@ -677,10 +677,11 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
         </div>
       </div>
 
-      {/* Photo review cards — horizontal scroll, full bleed */}
+      {/* Photo review cards — horizontal scroll */}
+      <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16">
       <div
         ref={scrollRef}
-        className="flex gap-6 overflow-x-auto scroll-smooth px-6 pb-4 md:px-12 lg:px-16 scrollbar-hide"
+        className="flex gap-6 overflow-x-auto scroll-smooth pb-4 scrollbar-hide"
         style={{ scrollbarWidth: "none" }}
       >
         {PHOTO_REVIEWS.map((item, idx) => (
