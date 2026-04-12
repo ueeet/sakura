@@ -347,6 +347,7 @@ function ReviewEditor({ open, onClose, onSaved }: EditorProps) {
       text: form.text,
       rating: form.rating,
     };
+    if (form.image) payload.image = form.image;
     if (form.branchId) payload.branchId = Number(form.branchId);
 
     try {
