@@ -56,7 +56,7 @@ function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
 
 /* ───────── filter type ───────── */
 
-type FilterStatus = "all" | "pending" | "approved" | "hidden";
+type FilterStatus = "all" | "pending" | "approved" | "hidden" | "with_photo" | "without_photo";
 
 /* ───────── main page ───────── */
 
