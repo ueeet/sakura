@@ -845,7 +845,20 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-            onClick={() => setFormOpen(false)}
+            onMouseDown={(e) => {
+              // Запоминаем, началось ли нажатие на бэкдропе, а не внутри модалки.
+              // Так drag от текста в инпуте, отпущенный за пределами, не закроет
+              // окно — классический UX-паттерн «click-outside».
+              (e.currentTarget as HTMLElement & { _backdropDown?: boolean })._backdropDown =
+                e.target === e.currentTarget;
+            }}
+            onMouseUp={(e) => {
+              const el = e.currentTarget as HTMLElement & { _backdropDown?: boolean };
+              if (el._backdropDown && e.target === e.currentTarget) {
+                setFormOpen(false);
+              }
+              el._backdropDown = false;
+            }}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -853,7 +866,6 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
               style={{ willChange: "transform, opacity" }}
-              onClick={(e) => e.stopPropagation()}
               className="w-full max-w-lg rounded-2xl border bg-card p-6 shadow-2xl sm:p-8"
             >
               {submitted ? (
