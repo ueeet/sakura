@@ -30,6 +30,7 @@ import promotionsRoutes from "./routes/promotions";
 import bookingsRoutes from "./routes/bookings";
 import paymentsRoutes from "./routes/payments";
 import reviewsRoutes from "./routes/reviews";
+import generateRoutes from "./routes/generate";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -52,7 +53,7 @@ app.use(compression({
     return true;
   },
 }));
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "10mb" }));
 
 // Rate limiting
 app.use("/api/auth/login", rateLimit({
@@ -114,6 +115,7 @@ app.use("/api/promotions", promotionsRoutes);
 app.use("/api/bookings", bookingsRoutes);
 app.use("/api/payments", paymentsRoutes);
 app.use("/api/reviews", reviewsRoutes);
+app.use("/api/generate-image", generateRoutes);
 
 // SSE
 app.get("/api/events", (req, res) => addSSEClient(req, res));

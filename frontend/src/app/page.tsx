@@ -1,5 +1,5 @@
 import { publicApi } from "@/lib/publicApi";
-import type { Promotion, HomeSlide } from "@/lib/types";
+import type { Promotion, HomeSlide, Review } from "@/lib/types";
 import { HomeView } from "./HomeView";
 
 // Кеш главной на 60с — акции и слайды меняются редко.
@@ -9,9 +9,10 @@ export const revalidate = 60;
 
 export default async function HomePage() {
   // Параллельные запросы — ни один не блокирует другой.
-  const [promotions, slides] = await Promise.all([
+  const [promotions, slides, reviews] = await Promise.all([
     publicApi.getPromotions().catch((): Promotion[] => []),
     publicApi.getHomeSlides().catch((): HomeSlide[] => []),
+    publicApi.getReviews().catch((): Review[] => []),
   ]);
-  return <HomeView promotions={promotions} slides={slides} />;
+  return <HomeView promotions={promotions} slides={slides} reviews={reviews} />;
 }

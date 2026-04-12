@@ -1,15 +1,17 @@
 "use client";
 
-import { Suspense, useState } from "react";
-import Image from "next/image";
+import { Suspense, useState, useMemo } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ComplexHero } from "@/components/ComplexHero";
 import { BookingModal } from "@/components/BookingModal";
+import { SaunaCardCarousel } from "@/components/SaunaCardCarousel";
+import { SaunaFilters, applyFilters, defaultFilters, type SaunaFilterState } from "@/components/SaunaFilters";
 import type { BranchWithSaunas, Sauna } from "@/lib/types";
+import { Users } from "lucide-react";
 
 const badge = "bg-wood-dark/80 text-white";
 
@@ -28,7 +30,8 @@ function SaunaCard({
   onBook: (s: Sauna) => void;
 }) {
   const numericId = extractNumericId(sauna.slug);
-  const cover = sauna.mainImage ?? sauna.images?.[0] ?? "/placeholder.png";
+  const images = [...new Set([sauna.mainImage, ...(sauna.images ?? [])].filter(Boolean) as string[])];
+  if (images.length === 0) images.push("/placeholder.png");
   const detailHref = `/complex-50/${numericId}`;
 
   return (
@@ -36,18 +39,13 @@ function SaunaCard({
       key={sauna.id}
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4, transition: { duration: 0.3, ease: "easeOut" } }}
       transition={{ duration: 0.4, delay: index * 0.06 }}
       className="group"
     >
-      <div className="flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-[box-shadow,transform] duration-200 hover:-translate-y-1 hover:shadow-md">
+      <div className="flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition-shadow duration-300 hover:shadow-md">
         <Link href={detailHref} className="relative block aspect-[3/2] overflow-hidden bg-muted">
-          <Image
-            src={cover}
-            alt={sauna.name}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+          <SaunaCardCarousel images={images} alt={sauna.name} />
           <span className={`absolute left-3 top-3 z-10 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${badge}`}>
             {sauna.typeLabel ?? sauna.type}
           </span>
@@ -56,15 +54,22 @@ function SaunaCard({
           <Link href={detailHref} className="hover:text-forest transition-colors">
             <h3 className="text-lg font-semibold">{sauna.name}</h3>
           </Link>
-          {sauna.sizeLabel && (
-            <p className="mt-1 text-sm text-muted-foreground">{sauna.sizeLabel}</p>
-          )}
+          <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+            {sauna.sizeLabel && <span>{sauna.sizeLabel}</span>}
+            {sauna.sizeLabel && sauna.capacity > 0 && <span>·</span>}
+            {sauna.capacity > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <Users className="h-3 w-3" />
+                до {sauna.capacity} гостей
+              </span>
+            )}
+          </div>
           {sauna.description && (
             <p className="mt-2 line-clamp-2 text-sm text-muted-foreground/80">{sauna.description}</p>
           )}
           {sauna.priceFrom != null && (
-            <p className="mt-2 text-sm font-medium text-forest">
-              от {sauna.priceFrom}₽/час
+            <p className="mt-3 text-lg font-bold text-forest">
+              от {sauna.priceFrom}₽<span className="text-xs font-medium text-muted-foreground">/час</span>
             </p>
           )}
           <div className="mt-auto pt-4 flex gap-2">
@@ -89,17 +94,20 @@ function SaunaCard({
 }
 
 function Complex50Inner({ branch }: { branch: BranchWithSaunas }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const allSaunas = branch.saunas ?? [];
   const guestsParam = searchParams.get("guests");
-  const guestsFilter = guestsParam ? Math.max(1, parseInt(guestsParam, 10)) : null;
+  const initialCapacity = guestsParam ? Math.max(1, parseInt(guestsParam, 10)) : 0;
+  const [filters, setFilters] = useState<SaunaFilterState>({
+    ...defaultFilters,
+    minCapacity: initialCapacity,
+  });
 
-  // Применяем фильтр по гостям
-  const saunas = guestsFilter
-    ? allSaunas.filter((s) => s.capacity >= guestsFilter)
-    : allSaunas;
+  const saunas = useMemo(
+    () => applyFilters(allSaunas, filters),
+    [allSaunas, filters],
+  );
 
   const [bookingSauna, setBookingSauna] = useState<Sauna | null>(null);
   const heroImages: [string, string, string] | [string] =
@@ -135,22 +143,11 @@ function Complex50Inner({ branch }: { branch: BranchWithSaunas }) {
         />
 
         <section id="saunas" className="container mx-auto px-4 py-10 sm:py-14">
-          {guestsFilter && (
-            <div className="mb-6 flex flex-wrap items-center justify-center gap-3 rounded-xl border border-forest/30 bg-forest/10 px-4 py-3 text-sm">
-              <span className="text-foreground">
-                Показаны сауны вместимостью от{" "}
-                <strong>{guestsFilter}</strong>{" "}
-                {guestsFilter === 1 ? "гостя" : guestsFilter < 5 ? "гостей" : "гостей"}
-              </span>
-              <button
-                type="button"
-                onClick={() => router.push("/complex-50", { scroll: false })}
-                className="text-xs text-forest hover:underline"
-              >
-                Сбросить фильтр
-              </button>
-            </div>
-          )}
+          <SaunaFilters
+            filters={filters}
+            onChange={setFilters}
+            saunas={allSaunas}
+          />
 
           {saunas.length === 0 ? (
             <div className="rounded-2xl border border-border bg-card p-10 text-center text-muted-foreground">

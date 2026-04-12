@@ -23,6 +23,7 @@ import type {
   Promotion,
   SaunaAvailability,
   HomeSlide,
+  Review,
 } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
@@ -59,6 +60,7 @@ export const CACHE_TAGS = {
   saunas: "saunas",
   promotions: "promotions",
   home: "home",
+  reviews: "reviews",
 } as const;
 
 export const publicApi = {
@@ -95,4 +97,6 @@ export const publicApi = {
     publicGet<Promotion[]>("/promotions", { tags: [CACHE_TAGS.promotions] }),
   getHomeSlides: () =>
     publicGet<HomeSlide[]>("/home/slides", { tags: [CACHE_TAGS.home] }),
+  getReviews: () =>
+    publicGet<Review[]>("/reviews", { tags: [CACHE_TAGS.reviews] }),
 };

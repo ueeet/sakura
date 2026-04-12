@@ -38,11 +38,7 @@ const MONTHS_LOWER = MONTHS.map((m) => m.toLowerCase());
 
 const WEEKDAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
-const TIME_SLOTS = [
-  "09:00", "10:00", "11:00", "12:00", "13:00", "14:00",
-  "15:00", "16:00", "17:00", "18:00", "19:00", "20:00",
-  "21:00", "22:00", "23:00",
-];
+const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
@@ -57,12 +53,9 @@ function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
-function getDefaultTime() {
+function getDefaultStartHour() {
   const now = new Date();
-  const next = now.getHours() + 1;
-  if (next < 9) return "09:00";
-  if (next > 22) return "22:00";
-  return `${pad(next)}:00`;
+  return Math.min(22, now.getHours() + 1);
 }
 
 export function HeroQuickBooking() {
@@ -70,13 +63,8 @@ export function HeroQuickBooking() {
 
   const [branch, setBranch] = useState<Branch>("any");
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
-  const [selectedTime, setSelectedTime] = useState<string>(getDefaultTime);
-  const [selectedEndTime, setSelectedEndTime] = useState<string>(() => {
-    const start = getDefaultTime();
-    const startH = parseInt(start.slice(0, 2), 10);
-    const endH = Math.min(23, startH + 2);
-    return `${pad(endH)}:00`;
-  });
+  const [startHour, setStartHour] = useState<number>(getDefaultStartHour);
+  const [endHour, setEndHour] = useState<number>(() => Math.min(23, getDefaultStartHour() + 2));
   const [guests, setGuests] = useState(2);
   const [guestsOpen, setGuestsOpen] = useState(false);
   const guestsRef = useRef<HTMLDivElement>(null);
@@ -84,14 +72,8 @@ export function HeroQuickBooking() {
   // Date + time picker state
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerStep, setPickerStep] = useState<"date" | "time">("date");
-  const [timeSubStep, setTimeSubStep] = useState<"start" | "end">("start");
   const [viewYear, setViewYear] = useState(() => new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(() => new Date().getMonth());
-  // Был ли конец явно выбран пользователем в текущей сессии пикера.
-  // Сбрасывается в false при каждом клике по старту, ставится в true только
-  // при клике по кнопке конца. Управляет подсветкой в гриде «Время окончания»,
-  // чтобы НЕ показывать предыдущий выбор как активный.
-  const [endTimeFreshlyChosen, setEndTimeFreshlyChosen] = useState(false);
 
   const pickerRef = useRef<HTMLDivElement>(null);
 
@@ -165,33 +147,25 @@ export function HeroQuickBooking() {
   const handleDateClick = (day: number) => {
     setSelectedDate(new Date(viewYear, viewMonth, day));
     setPickerStep("time");
-    setTimeSubStep("start");
   };
 
-  const handleStartTimeClick = (time: string) => {
-    setSelectedTime(time);
-    // Всегда задаём дефолтный конец = старт + 2ч (с потолком 23:00) — чтобы
-    // форма содержала валидный диапазон, даже если юзер закроет пикер кликом
-    // вне (не выбрав явно конец). Грид при этом ничего не подсвечивает —
-    // см. endTimeFreshlyChosen ниже.
-    const startH = parseInt(time.slice(0, 2), 10);
-    const newEnd = Math.min(23, startH + 2);
-    setSelectedEndTime(`${pad(newEnd)}:00`);
-    setEndTimeFreshlyChosen(false);
-    setTimeSubStep("end");
-  };
-
-  const handleEndTimeClick = (time: string) => {
-    setSelectedEndTime(time);
-    setEndTimeFreshlyChosen(true);
-    // Пикер НЕ закрываем автоматически — пользователь закрывает сам
-    // (клик вне или повторный клик по триггеру). Это даёт возможность
-    // спокойно перевыбрать конец, не открывая пикер заново.
+  const handleSlotClick = (hour: number) => {
+    // Повторный клик на стартовый час с одночасовой бронью — ничего
+    if (hour === startHour && endHour === startHour + 1) {
+      return;
+    }
+    // Клик раньше или равно старту — новый старт, 1 час
+    if (hour <= startHour) {
+      setStartHour(hour);
+      setEndHour(hour + 1);
+      return;
+    }
+    // Клик позже старта — расширяем диапазон
+    setEndHour(hour + 1);
   };
 
   const openPicker = () => {
     setPickerStep("date");
-    setTimeSubStep("start");
     setViewYear(selectedDate.getFullYear());
     setViewMonth(selectedDate.getMonth());
     setPickerOpen(true);
@@ -201,9 +175,10 @@ export function HeroQuickBooking() {
     setBranchOpen((p) => !p);
   };
 
+  const hoursCount = endHour - startHour;
   const dateTimeDisplay = `${selectedDate.getDate()} ${
     MONTHS_LOWER[selectedDate.getMonth()]
-  } ${selectedDate.getFullYear()}, ${selectedTime} — ${selectedEndTime}`;
+  } ${selectedDate.getFullYear()}, ${pad(startHour)}:00 — ${pad(endHour)}:00`;
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -212,8 +187,8 @@ export function HeroQuickBooking() {
     )}-${pad(selectedDate.getDate())}`;
     const params = new URLSearchParams({
       date: dateStr,
-      time: selectedTime,
-      endTime: selectedEndTime,
+      time: `${pad(startHour)}:00`,
+      endTime: `${pad(endHour)}:00`,
       guests: String(guests),
     });
     if (branch === "any") {
@@ -382,75 +357,51 @@ export function HeroQuickBooking() {
                   </>
                 ) : (
                   <>
-                    <div className="mb-4 flex items-center gap-2">
+                    <div className="mb-3 flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => {
-                          if (timeSubStep === "end") {
-                            setTimeSubStep("start");
-                          } else {
-                            setPickerStep("date");
-                          }
-                        }}
+                        onClick={() => setPickerStep("date")}
                         className="rounded-lg p-1.5 transition-colors hover:bg-muted"
                       >
                         <ChevronLeft className="h-4 w-4" />
                       </button>
                       <Clock className="h-4 w-4 text-forest" />
                       <span className="text-sm font-semibold">
-                        {timeSubStep === "start"
-                          ? "Время начала"
-                          : "Время окончания"}
+                        Выберите время
                       </span>
-                      {timeSubStep === "end" && (
-                        <span className="ml-auto text-xs text-muted-foreground">
-                          с {selectedTime}
-                        </span>
-                      )}
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2">
-                      {TIME_SLOTS.map((time) => {
-                        const slotH = parseInt(time.slice(0, 2), 10);
-                        const startH = parseInt(selectedTime.slice(0, 2), 10);
-                        const isEnd = timeSubStep === "end";
-                        const isDisabled = isEnd && slotH <= startH;
-                        const isActive = isEnd
-                          ? endTimeFreshlyChosen && selectedEndTime === time
-                          : selectedTime === time;
-                        const inRange =
-                          isEnd &&
-                          endTimeFreshlyChosen &&
-                          !isDisabled &&
-                          slotH > startH &&
-                          slotH <
-                            parseInt(selectedEndTime.slice(0, 2), 10);
+                    <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      Один клик — 1 час, второй — расширить диапазон
+                    </div>
 
+                    <div className="grid grid-cols-6 gap-1.5">
+                      {HOURS.map((hour) => {
+                        const inRange = hour >= startHour && hour < endHour;
                         return (
                           <button
                             type="button"
-                            key={time}
-                            disabled={isDisabled}
-                            onClick={() =>
-                              isEnd
-                                ? handleEndTimeClick(time)
-                                : handleStartTimeClick(time)
-                            }
-                            className={`rounded-lg py-2.5 text-sm font-medium transition-colors ${
-                              isActive
+                            key={hour}
+                            onClick={() => handleSlotClick(hour)}
+                            className={`rounded py-1.5 text-xs font-medium transition-colors ${
+                              inRange
                                 ? "bg-forest text-white"
-                                : isDisabled
-                                  ? "cursor-not-allowed bg-muted/40 text-muted-foreground/40"
-                                  : inRange
-                                    ? "bg-forest/20 text-forest"
-                                    : "bg-muted text-foreground hover:bg-forest/20 hover:text-forest"
+                                : "bg-muted hover:bg-forest/20 text-foreground"
                             }`}
                           >
-                            {time}
+                            {pad(hour)}
                           </button>
                         );
                       })}
                     </div>
+
+                    {hoursCount > 0 && (
+                      <div className="mt-3 text-center text-xs text-muted-foreground">
+                        {pad(startHour)}:00 — {pad(endHour)}:00 ({hoursCount}{" "}
+                        {hoursCount === 1 ? "час" : hoursCount < 5 ? "часа" : "часов"})
+                      </div>
+                    )}
                   </>
                 )}
               </motion.div>

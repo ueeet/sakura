@@ -2,7 +2,7 @@ import { Router } from "express";
 import { requireAdmin } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { asyncHandler } from "../middleware/asyncHandler";
-import { updateReviewSchema } from "../lib/validators";
+import { createReviewSchema, updateReviewSchema } from "../lib/validators";
 import { cacheGet, cacheSet, cacheInvalidate } from "../lib/cache";
 import prisma from "../prismaClient";
 
@@ -26,6 +26,12 @@ router.get("/all", requireAdmin, asyncHandler(async (_req, res) => {
     orderBy: { createdAt: "desc" },
   });
   res.json(data);
+}));
+
+router.post("/", requireAdmin, validate(createReviewSchema), asyncHandler(async (req, res) => {
+  const item = await prisma.review.create({ data: req.body });
+  cacheInvalidate("reviews:");
+  res.status(201).json(item);
 }));
 
 router.put("/:id", requireAdmin, validate(updateReviewSchema), asyncHandler(async (req, res) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -118,11 +119,16 @@ interface BookingPickerProps {
 type Step = "select" | "form";
 
 export function BookingPicker({ sauna }: BookingPickerProps) {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<Step>("select");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [startHour, setStartHour] = useState<number | null>(null);
   const [endHour, setEndHour] = useState<number | null>(null);
   const [guests, setGuests] = useState(2);
+
+  // Храним ожидающие параметры из URL (time/endTime) —
+  // применим их после загрузки availability (т.к. setSelectedDate сбрасывает часы).
+  const pendingInitRef = useRef<{ start: number; end: number } | null>(null);
 
   const [clientName, setClientName] = useState("");
   const [phone, setPhone] = useState("");
@@ -157,6 +163,53 @@ export function BookingPicker({ sauna }: BookingPickerProps) {
 
   const [availability, setAvailability] = useState<SaunaAvailability | null>(null);
   const [loadingAvailability, setLoadingAvailability] = useState(false);
+
+  // ── Инициализация из URL-параметров быстрого бронирования ──
+  // При маунте читаем ?date=…&time=…&endTime=…&guests=… и ставим дату + гостей.
+  // Часы записываем в pendingInitRef, т.к. setSelectedDate ниже сбрасывает
+  // startHour/endHour при загрузке availability.
+  useEffect(() => {
+    const dateParam = searchParams.get("date");
+    const timeParam = searchParams.get("time");
+    const endTimeParam = searchParams.get("endTime");
+    const guestsParam = searchParams.get("guests");
+
+    if (!dateParam || !timeParam || !endTimeParam) return;
+
+    const [y, m, d] = dateParam.split("-").map(Number);
+    const startH = parseInt(timeParam.split(":")[0], 10);
+    const endH = parseInt(endTimeParam.split(":")[0], 10);
+
+    if (isNaN(y) || isNaN(m) || isNaN(d) || isNaN(startH) || isNaN(endH)) return;
+    if (endH <= startH) return;
+
+    pendingInitRef.current = { start: startH, end: endH };
+    if (guestsParam) setGuests(Math.max(1, parseInt(guestsParam, 10) || 2));
+    setSelectedDate(new Date(y, m - 1, d));
+    setViewYear(y);
+    setViewMonth(m - 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Когда availability загрузилась, применяем ожидающие часы из URL
+  // и сразу переходим на форму подтверждения (шаг "form").
+  useEffect(() => {
+    if (!availability || !pendingInitRef.current) return;
+    const { start, end } = pendingInitRef.current;
+    pendingInitRef.current = null;
+
+    // Проверяем, что все слоты в диапазоне свободны
+    const allFree = availability.slots
+      .filter((s) => s.hour >= start && s.hour < end)
+      .every((s) => s.available && !isPastHour(s.hour));
+
+    if (allFree && end > start) {
+      setStartHour(start);
+      setEndHour(end);
+      setStep("form");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availability]);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
