@@ -39,13 +39,26 @@ export function SaunaCardCarousel({
 
   return (
     <>
-      <Image
-        src={images[current]}
-        alt={alt}
-        fill
-        sizes={sizes}
-        className="object-cover transition-transform duration-500 group-hover:scale-105"
-      />
+      {/* Все слайды рендерим сразу и переключаем через opacity —
+          иначе Next.js оптимизирует изображение лениво при смене src
+          и при каждом листании видна задержка на прогрузку. Здесь
+          браузер параллельно подтянет все картинки карточки, и листание
+          становится мгновенным. loading="eager" только у первой, чтобы
+          не перегружать прилет страницы. */}
+      {images.map((src, i) => (
+        <Image
+          key={src}
+          src={src}
+          alt={alt}
+          fill
+          sizes={sizes}
+          loading={i === 0 ? "eager" : "lazy"}
+          className={`object-cover transition-transform duration-500 group-hover:scale-105 ${
+            i === current ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ transition: "opacity 0.2s ease-out, transform 0.5s ease-out" }}
+        />
+      ))}
 
       {hasMultiple && (
         <>
