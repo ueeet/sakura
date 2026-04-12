@@ -824,6 +824,16 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                     </motion.div>
                   ))}
                 </div>
+                {textReviewsShown < textReviews.length && (
+                  <div className="mt-10 text-center">
+                    <button
+                      onClick={() => setTextReviewsShown((n) => n + 6)}
+                      className="inline-flex items-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                    >
+                      Ещё ({textReviews.length - textReviewsShown})
+                    </button>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
