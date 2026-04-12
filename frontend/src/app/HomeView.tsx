@@ -525,6 +525,9 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
   const [uploading, setUploading] = useState(false);
   const photoRef = useRef<HTMLInputElement>(null);
 
+  const photoReviews = reviews.filter((r) => !!r.image);
+  const textReviews = reviews.filter((r) => !r.image);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
