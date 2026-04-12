@@ -597,6 +597,52 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
           </motion.button>
         </div>
 
+        {/* Community marquee — horizontal auto-scroll */}
+        <div className="relative mb-14">
+          {/* Fade edges */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-background to-transparent sm:w-24" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-background to-transparent sm:w-24" />
+
+          <div className="flex gap-5 overflow-hidden">
+            <div className="flex shrink-0 animate-marquee gap-5">
+              {COMMUNITY_ITEMS.map((item, i) => (
+                <div key={i} className="relative w-48 shrink-0 sm:w-56">
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted shadow-md">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-3 pb-3 pt-10">
+                      <p className="text-sm font-semibold text-white">{item.name}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div aria-hidden className="flex shrink-0 animate-marquee gap-5">
+              {COMMUNITY_ITEMS.map((item, i) => (
+                <div key={i} className="relative w-48 shrink-0 sm:w-56">
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted shadow-md">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-3 pb-3 pt-10">
+                      <p className="text-sm font-semibold text-white">{item.name}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Average rating */}
         {reviews.length > 0 && (
           <motion.div
