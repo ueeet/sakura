@@ -941,10 +941,47 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                         className="w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-colors focus:border-forest"
                       />
                     </div>
+                    {/* Photo upload */}
+                    <div>
+                      {photoUrl ? (
+                        <div className="relative rounded-xl overflow-hidden border border-border">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={photoUrl} alt="Превью" className="w-full aspect-[4/3] object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => setPhotoUrl("")}
+                            className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => photoRef.current?.click()}
+                          disabled={uploading}
+                          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border py-4 text-sm text-muted-foreground transition-colors hover:border-forest/50 hover:text-foreground"
+                        >
+                          {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                          {uploading ? "Загрузка..." : "Добавить фото (опционально)"}
+                        </button>
+                      )}
+                      <input
+                        ref={photoRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) handlePhotoUpload(f);
+                          e.target.value = "";
+                        }}
+                      />
+                    </div>
                     {error && <p className="text-sm text-red-500">{error}</p>}
                     <button
                       type="submit"
-                      disabled={sending}
+                      disabled={sending || uploading}
                       className="w-full rounded-xl bg-forest px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-forest-dark disabled:opacity-50"
                     >
                       {sending ? "Отправка..." : "Отправить отзыв"}
