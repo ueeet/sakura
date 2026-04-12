@@ -28,6 +28,7 @@ function connect() {
   es.addEventListener("booking_updated", handle("booking_updated"));
   es.addEventListener("booking_deleted", handle("booking_deleted"));
   es.addEventListener("new_review", handle("new_review"));
+  es.addEventListener("payment_received", handle("payment_received"));
 }
 
 let connected = false;
