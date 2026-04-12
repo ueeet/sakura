@@ -752,6 +752,7 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
         ))}
       </div>
       </div>
+      )}
 
       {/* "More reviews" — text-only reviews hidden by default */}
       {textReviews.length > 0 && (
