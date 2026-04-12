@@ -720,22 +720,17 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                 />
               </div>
               <div className="p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-forest/10 text-forest font-semibold text-sm">
-                    {review.authorName.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-foreground text-sm">{review.authorName}</p>
-                    <div className="flex gap-0.5 mt-0.5">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-3.5 w-3.5 ${
-                            i < review.rating ? "text-amber-400 fill-amber-400" : "text-muted-foreground/30"
-                          }`}
-                        />
-                      ))}
-                    </div>
+                <div className="mb-3">
+                  <p className="font-semibold text-foreground text-sm">{review.authorName}</p>
+                  <div className="flex gap-0.5 mt-1">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-3.5 w-3.5 ${
+                          i < review.rating ? "text-amber-400 fill-amber-400" : "text-muted-foreground/30"
+                        }`}
+                      />
+                    ))}
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
