@@ -222,6 +222,8 @@ export const BookingScalarFieldEnum = {
   paidAmount: 'paidAmount',
   branchId: 'branchId',
   saunaId: 'saunaId',
+  telegramChatId: 'telegramChatId',
+  telegramMessageId: 'telegramMessageId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

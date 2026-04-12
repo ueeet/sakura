@@ -33,6 +33,7 @@ export type BookingAvgAggregateOutputType = {
   paidAmount: number | null
   branchId: number | null
   saunaId: number | null
+  telegramMessageId: number | null
 }
 
 export type BookingSumAggregateOutputType = {
@@ -42,6 +43,7 @@ export type BookingSumAggregateOutputType = {
   paidAmount: number | null
   branchId: number | null
   saunaId: number | null
+  telegramMessageId: number | null
 }
 
 export type BookingMinAggregateOutputType = {
@@ -59,6 +61,8 @@ export type BookingMinAggregateOutputType = {
   paidAmount: number | null
   branchId: number | null
   saunaId: number | null
+  telegramChatId: string | null
+  telegramMessageId: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -78,6 +82,8 @@ export type BookingMaxAggregateOutputType = {
   paidAmount: number | null
   branchId: number | null
   saunaId: number | null
+  telegramChatId: string | null
+  telegramMessageId: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -97,6 +103,8 @@ export type BookingCountAggregateOutputType = {
   paidAmount: number
   branchId: number
   saunaId: number
+  telegramChatId: number
+  telegramMessageId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -110,6 +118,7 @@ export type BookingAvgAggregateInputType = {
   paidAmount?: true
   branchId?: true
   saunaId?: true
+  telegramMessageId?: true
 }
 
 export type BookingSumAggregateInputType = {
@@ -119,6 +128,7 @@ export type BookingSumAggregateInputType = {
   paidAmount?: true
   branchId?: true
   saunaId?: true
+  telegramMessageId?: true
 }
 
 export type BookingMinAggregateInputType = {
@@ -136,6 +146,8 @@ export type BookingMinAggregateInputType = {
   paidAmount?: true
   branchId?: true
   saunaId?: true
+  telegramChatId?: true
+  telegramMessageId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -155,6 +167,8 @@ export type BookingMaxAggregateInputType = {
   paidAmount?: true
   branchId?: true
   saunaId?: true
+  telegramChatId?: true
+  telegramMessageId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -174,6 +188,8 @@ export type BookingCountAggregateInputType = {
   paidAmount?: true
   branchId?: true
   saunaId?: true
+  telegramChatId?: true
+  telegramMessageId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -280,6 +296,8 @@ export type BookingGroupByOutputType = {
   paidAmount: number
   branchId: number
   saunaId: number
+  telegramChatId: string | null
+  telegramMessageId: number | null
   createdAt: Date
   updatedAt: Date
   _count: BookingCountAggregateOutputType | null
@@ -322,6 +340,8 @@ export type BookingWhereInput = {
   paidAmount?: Prisma.IntFilter<"Booking"> | number
   branchId?: Prisma.IntFilter<"Booking"> | number
   saunaId?: Prisma.IntFilter<"Booking"> | number
+  telegramChatId?: Prisma.StringNullableFilter<"Booking"> | string | null
+  telegramMessageId?: Prisma.IntNullableFilter<"Booking"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Booking"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Booking"> | Date | string
   branch?: Prisma.XOR<Prisma.BranchScalarRelationFilter, Prisma.BranchWhereInput>
@@ -344,6 +364,8 @@ export type BookingOrderByWithRelationInput = {
   paidAmount?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   saunaId?: Prisma.SortOrder
+  telegramChatId?: Prisma.SortOrderInput | Prisma.SortOrder
+  telegramMessageId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   branch?: Prisma.BranchOrderByWithRelationInput
@@ -369,6 +391,8 @@ export type BookingWhereUniqueInput = Prisma.AtLeast<{
   paidAmount?: Prisma.IntFilter<"Booking"> | number
   branchId?: Prisma.IntFilter<"Booking"> | number
   saunaId?: Prisma.IntFilter<"Booking"> | number
+  telegramChatId?: Prisma.StringNullableFilter<"Booking"> | string | null
+  telegramMessageId?: Prisma.IntNullableFilter<"Booking"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Booking"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Booking"> | Date | string
   branch?: Prisma.XOR<Prisma.BranchScalarRelationFilter, Prisma.BranchWhereInput>
@@ -391,6 +415,8 @@ export type BookingOrderByWithAggregationInput = {
   paidAmount?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   saunaId?: Prisma.SortOrder
+  telegramChatId?: Prisma.SortOrderInput | Prisma.SortOrder
+  telegramMessageId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BookingCountOrderByAggregateInput
@@ -418,6 +444,8 @@ export type BookingScalarWhereWithAggregatesInput = {
   paidAmount?: Prisma.IntWithAggregatesFilter<"Booking"> | number
   branchId?: Prisma.IntWithAggregatesFilter<"Booking"> | number
   saunaId?: Prisma.IntWithAggregatesFilter<"Booking"> | number
+  telegramChatId?: Prisma.StringNullableWithAggregatesFilter<"Booking"> | string | null
+  telegramMessageId?: Prisma.IntNullableWithAggregatesFilter<"Booking"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Booking"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Booking"> | Date | string
 }
@@ -434,6 +462,8 @@ export type BookingCreateInput = {
   smsSent?: boolean
   paymentStatus?: string
   paidAmount?: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutBookingsInput
@@ -456,6 +486,8 @@ export type BookingUncheckedCreateInput = {
   paidAmount?: number
   branchId: number
   saunaId: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingInput
@@ -473,6 +505,8 @@ export type BookingUpdateInput = {
   smsSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutBookingsNestedInput
@@ -495,6 +529,8 @@ export type BookingUncheckedUpdateInput = {
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
   saunaId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingNestedInput
@@ -515,6 +551,8 @@ export type BookingCreateManyInput = {
   paidAmount?: number
   branchId: number
   saunaId: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -531,6 +569,8 @@ export type BookingUpdateManyMutationInput = {
   smsSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -550,6 +590,8 @@ export type BookingUncheckedUpdateManyInput = {
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
   saunaId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -579,6 +621,8 @@ export type BookingCountOrderByAggregateInput = {
   paidAmount?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   saunaId?: Prisma.SortOrder
+  telegramChatId?: Prisma.SortOrder
+  telegramMessageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -590,6 +634,7 @@ export type BookingAvgOrderByAggregateInput = {
   paidAmount?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   saunaId?: Prisma.SortOrder
+  telegramMessageId?: Prisma.SortOrder
 }
 
 export type BookingMaxOrderByAggregateInput = {
@@ -607,6 +652,8 @@ export type BookingMaxOrderByAggregateInput = {
   paidAmount?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   saunaId?: Prisma.SortOrder
+  telegramChatId?: Prisma.SortOrder
+  telegramMessageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -626,6 +673,8 @@ export type BookingMinOrderByAggregateInput = {
   paidAmount?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   saunaId?: Prisma.SortOrder
+  telegramChatId?: Prisma.SortOrder
+  telegramMessageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -637,6 +686,7 @@ export type BookingSumOrderByAggregateInput = {
   paidAmount?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
   saunaId?: Prisma.SortOrder
+  telegramMessageId?: Prisma.SortOrder
 }
 
 export type BookingScalarRelationFilter = {
@@ -754,6 +804,8 @@ export type BookingCreateWithoutBranchInput = {
   smsSent?: boolean
   paymentStatus?: string
   paidAmount?: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   sauna: Prisma.SaunaCreateNestedOneWithoutBookingsInput
@@ -774,6 +826,8 @@ export type BookingUncheckedCreateWithoutBranchInput = {
   paymentStatus?: string
   paidAmount?: number
   saunaId: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingInput
@@ -823,6 +877,8 @@ export type BookingScalarWhereInput = {
   paidAmount?: Prisma.IntFilter<"Booking"> | number
   branchId?: Prisma.IntFilter<"Booking"> | number
   saunaId?: Prisma.IntFilter<"Booking"> | number
+  telegramChatId?: Prisma.StringNullableFilter<"Booking"> | string | null
+  telegramMessageId?: Prisma.IntNullableFilter<"Booking"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Booking"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Booking"> | Date | string
 }
@@ -839,6 +895,8 @@ export type BookingCreateWithoutSaunaInput = {
   smsSent?: boolean
   paymentStatus?: string
   paidAmount?: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutBookingsInput
@@ -859,6 +917,8 @@ export type BookingUncheckedCreateWithoutSaunaInput = {
   paymentStatus?: string
   paidAmount?: number
   branchId: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingInput
@@ -902,6 +962,8 @@ export type BookingCreateWithoutPaymentsInput = {
   smsSent?: boolean
   paymentStatus?: string
   paidAmount?: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   branch: Prisma.BranchCreateNestedOneWithoutBookingsInput
@@ -923,6 +985,8 @@ export type BookingUncheckedCreateWithoutPaymentsInput = {
   paidAmount?: number
   branchId: number
   saunaId: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -955,6 +1019,8 @@ export type BookingUpdateWithoutPaymentsInput = {
   smsSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutBookingsNestedInput
@@ -976,6 +1042,8 @@ export type BookingUncheckedUpdateWithoutPaymentsInput = {
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
   saunaId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -994,6 +1062,8 @@ export type BookingCreateManyBranchInput = {
   paymentStatus?: string
   paidAmount?: number
   saunaId: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1010,6 +1080,8 @@ export type BookingUpdateWithoutBranchInput = {
   smsSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sauna?: Prisma.SaunaUpdateOneRequiredWithoutBookingsNestedInput
@@ -1030,6 +1102,8 @@ export type BookingUncheckedUpdateWithoutBranchInput = {
   paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
   saunaId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingNestedInput
@@ -1049,6 +1123,8 @@ export type BookingUncheckedUpdateManyWithoutBranchInput = {
   paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
   saunaId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1067,6 +1143,8 @@ export type BookingCreateManySaunaInput = {
   paymentStatus?: string
   paidAmount?: number
   branchId: number
+  telegramChatId?: string | null
+  telegramMessageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1083,6 +1161,8 @@ export type BookingUpdateWithoutSaunaInput = {
   smsSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneRequiredWithoutBookingsNestedInput
@@ -1103,6 +1183,8 @@ export type BookingUncheckedUpdateWithoutSaunaInput = {
   paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingNestedInput
@@ -1122,6 +1204,8 @@ export type BookingUncheckedUpdateManyWithoutSaunaInput = {
   paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
   paidAmount?: Prisma.IntFieldUpdateOperationsInput | number
   branchId?: Prisma.IntFieldUpdateOperationsInput | number
+  telegramChatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1172,6 +1256,8 @@ export type BookingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   paidAmount?: boolean
   branchId?: boolean
   saunaId?: boolean
+  telegramChatId?: boolean
+  telegramMessageId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
@@ -1195,6 +1281,8 @@ export type BookingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   paidAmount?: boolean
   branchId?: boolean
   saunaId?: boolean
+  telegramChatId?: boolean
+  telegramMessageId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
@@ -1216,6 +1304,8 @@ export type BookingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   paidAmount?: boolean
   branchId?: boolean
   saunaId?: boolean
+  telegramChatId?: boolean
+  telegramMessageId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
@@ -1237,11 +1327,13 @@ export type BookingSelectScalar = {
   paidAmount?: boolean
   branchId?: boolean
   saunaId?: boolean
+  telegramChatId?: boolean
+  telegramMessageId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BookingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientName" | "phone" | "startAt" | "endAt" | "guests" | "comment" | "status" | "totalPrice" | "smsSent" | "paymentStatus" | "paidAmount" | "branchId" | "saunaId" | "createdAt" | "updatedAt", ExtArgs["result"]["booking"]>
+export type BookingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientName" | "phone" | "startAt" | "endAt" | "guests" | "comment" | "status" | "totalPrice" | "smsSent" | "paymentStatus" | "paidAmount" | "branchId" | "saunaId" | "telegramChatId" | "telegramMessageId" | "createdAt" | "updatedAt", ExtArgs["result"]["booking"]>
 export type BookingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   branch?: boolean | Prisma.BranchDefaultArgs<ExtArgs>
   sauna?: boolean | Prisma.SaunaDefaultArgs<ExtArgs>
@@ -1279,6 +1371,8 @@ export type $BookingPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     paidAmount: number
     branchId: number
     saunaId: number
+    telegramChatId: string | null
+    telegramMessageId: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["booking"]>
@@ -1721,6 +1815,8 @@ export interface BookingFieldRefs {
   readonly paidAmount: Prisma.FieldRef<"Booking", 'Int'>
   readonly branchId: Prisma.FieldRef<"Booking", 'Int'>
   readonly saunaId: Prisma.FieldRef<"Booking", 'Int'>
+  readonly telegramChatId: Prisma.FieldRef<"Booking", 'String'>
+  readonly telegramMessageId: Prisma.FieldRef<"Booking", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Booking", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Booking", 'DateTime'>
 }

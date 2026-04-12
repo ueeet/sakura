@@ -48,8 +48,11 @@ export function initTelegramBot() {
       const booking = await prisma.booking.update({
         where: { id },
         data: { status: "confirmed" },
+        include: { branch: true, sauna: true },
       });
-      await ctx.editMessageReplyMarkup({ inline_keyboard: [] });
+      // Редактируем сообщение целиком (текст + убираем кнопки)
+      const newText = renderBookingMessage(booking, "confirmed");
+      await ctx.editMessageText(newText, { parse_mode: "HTML" });
       await ctx.answerCbQuery("✅ Подтверждено");
       broadcast("booking_updated", booking);
     } catch (err) {
@@ -65,8 +68,10 @@ export function initTelegramBot() {
       const booking = await prisma.booking.update({
         where: { id },
         data: { status: "cancelled" },
+        include: { branch: true, sauna: true },
       });
-      await ctx.editMessageReplyMarkup({ inline_keyboard: [] });
+      const newText = renderBookingMessage(booking, "cancelled");
+      await ctx.editMessageText(newText, { parse_mode: "HTML" });
       await ctx.answerCbQuery("❌ Отклонено");
       broadcast("booking_updated", booking);
     } catch (err) {
