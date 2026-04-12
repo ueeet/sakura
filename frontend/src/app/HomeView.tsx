@@ -614,68 +614,74 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
 
         {/* Review cards */}
         {reviews.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {reviews.slice(0, 6).map((review, idx) => (
-              <motion.div
-                key={review.id}
-                style={{ willChange: "transform, opacity" }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{
-                  y: -4,
-                  transition: { duration: 0.2, ease: "easeOut" },
-                }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  duration: 0.5,
-                  delay: idx * 0.08,
-                  ease: "easeOut",
-                }}
-                className="relative rounded-2xl border bg-card p-6 shadow-md transition-shadow duration-200 hover:shadow-lg"
-              >
-                <Quote className="absolute top-5 right-5 h-8 w-8 text-forest/10" />
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest/10 text-forest font-semibold text-sm">
-                    {review.authorName.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-foreground text-sm">
-                      {review.authorName}
-                    </p>
-                    <div className="flex gap-0.5 mt-0.5">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-3.5 w-3.5 ${
-                            i < review.rating
-                              ? "text-amber-400 fill-amber-400"
-                              : "text-muted-foreground/30"
-                          }`}
-                        />
-                      ))}
+          <>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {(showAll ? reviews : reviews.slice(0, 6)).map((review, idx) => (
+                <motion.div
+                  key={review.id}
+                  style={{ willChange: "transform, opacity" }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{
+                    y: -4,
+                    transition: { duration: 0.2, ease: "easeOut" },
+                  }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: (idx < 6 ? idx : 0) * 0.08,
+                    ease: "easeOut",
+                  }}
+                  className="relative rounded-2xl border bg-card p-6 shadow-md transition-shadow duration-200 hover:shadow-lg"
+                >
+                  <Quote className="absolute top-5 right-5 h-8 w-8 text-forest/10" />
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest/10 text-forest font-semibold text-sm">
+                      {review.authorName.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">
+                        {review.authorName}
+                      </p>
+                      <div className="flex gap-0.5 mt-0.5">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-3.5 w-3.5 ${
+                              i < review.rating
+                                ? "text-amber-400 fill-amber-400"
+                                : "text-muted-foreground/30"
+                            }`}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
-                  {review.text}
-                </p>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-[11px] text-muted-foreground/60">
-                    {new Date(review.createdAt).toLocaleDateString("ru", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </span>
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
+                    {review.text}
+                  </p>
                   {review.source !== "site" && (
-                    <span className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
-                      {review.source === "2gis" ? "2ГИС" : "Яндекс"}
-                    </span>
+                    <div className="mt-4">
+                      <span className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+                        {review.source === "2gis" ? "2ГИС" : "Яндекс"}
+                      </span>
+                    </div>
                   )}
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {reviews.length > 6 && (
+              <div className="mt-10 text-center">
+                <button
+                  onClick={() => setShowAll((v) => !v)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                >
+                  {showAll ? "Скрыть" : `Ещё отзывы (${reviews.length - 6})`}
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
