@@ -327,10 +327,9 @@ function CarouselContent({
       onDragEnd={disableDrag ? undefined : onDragEnd}
       transition={
         transition || {
-          damping: 18,
-          stiffness: 90,
-          type: 'spring',
-          duration: 0.2,
+          type: 'tween',
+          duration: 0.3,
+          ease: [0.25, 0.1, 0.25, 1],
         }
       }
       className={cn(

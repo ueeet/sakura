@@ -8,13 +8,14 @@ import { isAuthenticated, clearTokens } from "@/lib/api";
 import { SSEToast } from "@/components/admin/SSEToast";
 import { SoundSettings } from "@/components/admin/SoundSettings";
 import {
-  LayoutDashboard, Calendar, Flame, Settings, LogOut, Menu, X,
+  LayoutDashboard, Calendar, Flame, Settings, LogOut, Menu, X, Home,
 } from "lucide-react";
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Статистика" },
   { href: "/admin/bookings", icon: Calendar, label: "Брони" },
   { href: "/admin/saunas", icon: Flame, label: "Сауны" },
+  { href: "/admin/home", icon: Home, label: "Главная" },
   { href: "/admin/settings", icon: Settings, label: "Настройки" },
 ];
 

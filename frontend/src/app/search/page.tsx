@@ -2,7 +2,7 @@ import { publicApi } from "@/lib/publicApi";
 import type { Sauna } from "@/lib/types";
 import { SearchView } from "./SearchView";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function SearchPage() {
   let saunas: Sauna[] = [];

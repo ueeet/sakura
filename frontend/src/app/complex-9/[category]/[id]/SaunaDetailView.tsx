@@ -91,7 +91,7 @@ export function SaunaDetailView({
                 </span>
               )}
             </div>
-            <h1 className="font-heading text-4xl md:text-5xl text-foreground">
+            <h1 className="font-heading text-4xl tracking-tight md:text-5xl text-foreground">
               {sauna.name}
             </h1>
             <p className="mt-2 text-muted-foreground">

@@ -193,6 +193,10 @@ export interface Review {
 }
 
 // ========== Settings ==========
+export interface HomeSlide {
+  image: string;
+}
+
 export interface Settings {
   id: number;
   companyName: string;
@@ -202,6 +206,7 @@ export interface Settings {
   instagram: string;
   telegramChatId: string;
   smsEnabled: boolean;
+  homeCarouselSlides: HomeSlide[];
   updatedAt: string;
 }
 

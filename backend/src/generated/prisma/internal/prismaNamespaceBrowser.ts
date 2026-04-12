@@ -100,6 +100,7 @@ export const SettingsScalarFieldEnum = {
   instagram: 'instagram',
   telegramChatId: 'telegramChatId',
   smsEnabled: 'smsEnabled',
+  homeCarouselSlides: 'homeCarouselSlides',
   updatedAt: 'updatedAt'
 } as const
 
@@ -273,6 +274,13 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const NullableJsonNullValueInput = {

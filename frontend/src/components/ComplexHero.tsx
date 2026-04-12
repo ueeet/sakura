@@ -97,7 +97,7 @@ export function ComplexHero({
           {/* Stats row */}
           <motion.div
             variants={itemVariants}
-            className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-foreground/90"
+            className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-muted-foreground"
           >
             <span className="inline-flex items-center gap-2">
               <Bath className="h-4 w-4 text-forest" />
@@ -140,7 +140,7 @@ export function ComplexHero({
               href={mapUrl}
               target="_blank"
               rel="noreferrer"
-              className="group inline-flex items-center gap-3 text-base text-foreground/90 hover:text-foreground"
+              className="group inline-flex items-center gap-3 text-base text-muted-foreground hover:text-foreground"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card transition-colors group-hover:border-forest/50">
                 <MapPin className="h-4 w-4 text-forest" />
@@ -151,7 +151,7 @@ export function ComplexHero({
             </a>
             <a
               href={`tel:${phoneClean}`}
-              className="group flex items-center gap-3 text-base text-foreground/90 hover:text-foreground"
+              className="group flex items-center gap-3 text-base text-muted-foreground hover:text-foreground"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card transition-colors group-hover:border-forest/50">
                 <Phone className="h-4 w-4 text-forest" />

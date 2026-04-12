@@ -1,4 +1,4 @@
-import { Router } from "express";
+import express, { Router } from "express";
 import multer from "multer";
 import sharp from "sharp";
 import { randomUUID } from "node:crypto";
@@ -8,9 +8,12 @@ import { supabase } from "../supabaseClient";
 import logger from "../lib/logger";
 
 const router = Router();
+// Лимит 25 МБ — ретина-скриншоты и несжатые PNG из фотошопа легко лезут за 8 МБ.
+// На выходе всё равно получится webp ~200–400 КБ, так что аплоадить можно спокойно.
+const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 8 * 1024 * 1024 },
+  limits: { fileSize: MAX_UPLOAD_BYTES },
 });
 
 const BUCKET = "photos";
@@ -38,10 +41,36 @@ async function ensureBucket() {
   }
 }
 
+// Multer-ошибки (lIMIT_FILE_SIZE и др.) кидаются синхронно и мимо asyncHandler,
+// поэтому ловим через отдельный middleware — иначе клиент получает HTML-500.
+function handleMulter(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) {
+  upload.single("file")(req, res, (err: unknown) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        res.status(413).json({
+          error: `Файл слишком большой. Максимум ${Math.round(MAX_UPLOAD_BYTES / 1024 / 1024)} МБ`,
+        });
+        return;
+      }
+      res.status(400).json({ error: `Ошибка загрузки: ${err.message}` });
+      return;
+    }
+    if (err) {
+      next(err);
+      return;
+    }
+    next();
+  });
+}
+
 router.post(
   "/",
   requireAdmin,
-  upload.single("file"),
+  handleMulter,
   asyncHandler(async (req, res) => {
     if (!req.file) {
       res.status(400).json({ error: "Файл не передан" });

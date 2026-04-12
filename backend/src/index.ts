@@ -15,11 +15,13 @@ import { addSSEClient } from "./lib/sse";
 import { initTelegramBot } from "./lib/telegram";
 import { initReviewParser } from "./lib/reviewParser";
 import { initBookingCleanup } from "./lib/bookingCleanup";
+import { triggerRevalidate, tagForPath } from "./lib/revalidate";
 
 import authRoutes from "./routes/auth";
 import uploadRoutes from "./routes/upload";
 import statsRoutes from "./routes/stats";
 import settingsRoutes from "./routes/settings";
+import homeRoutes from "./routes/home";
 import branchesRoutes from "./routes/branches";
 import categoriesRoutes from "./routes/categories";
 import saunasRoutes from "./routes/saunas";
@@ -75,11 +77,35 @@ app.use((req, _res, next) => {
   next();
 });
 
+// Авто-инвалидация кеша Next.js фронтенда после успешных мутаций.
+// На каждый POST/PUT/PATCH/DELETE к /api/saunas|branches|categories|prices|promotions
+// после того как ответ отправлен клиенту (res.on("finish")), в fire-and-forget
+// стиле дёргаем фронтовый /api/revalidate с соответствующим тегом.
+// Это гарантирует, что публичный сайт сразу показывает актуальные данные.
+app.use((req, res, next) => {
+  const isMutation =
+    req.method === "POST" ||
+    req.method === "PUT" ||
+    req.method === "PATCH" ||
+    req.method === "DELETE";
+  if (!isMutation) return next();
+
+  res.on("finish", () => {
+    // Инвалидируем только при успешных ответах
+    if (res.statusCode < 200 || res.statusCode >= 300) return;
+    const tag = tagForPath(req.originalUrl.split("?")[0]);
+    if (tag) triggerRevalidate(tag);
+  });
+
+  next();
+});
+
 // Роуты
 app.use("/api/auth", authRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/home", homeRoutes);
 app.use("/api/branches", branchesRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/saunas", saunasRoutes);

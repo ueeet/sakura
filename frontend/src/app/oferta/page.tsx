@@ -21,12 +21,12 @@ export default function OfertaPage() {
           На главную
         </Link>
 
-        <h1 className="font-heading text-4xl md:text-5xl mb-2">Публичная оферта</h1>
+        <h1 className="font-heading text-4xl tracking-tight md:text-5xl mb-2">Публичная оферта</h1>
         <p className="text-sm text-muted-foreground mb-10">
           Сеть саун «Сакура», г. Набережные Челны
         </p>
 
-        <div className="prose prose-invert max-w-none space-y-6 text-foreground/90 leading-relaxed">
+        <div className="prose prose-invert max-w-none space-y-6 text-muted-foreground leading-relaxed">
           <section>
             <h2 className="text-xl font-semibold text-foreground mb-3">
               1. Общие положения
@@ -117,6 +117,20 @@ export default function OfertaPage() {
               По всем вопросам обращайтесь по телефону +7 (927) 465-1000 или
               приходите по адресу: г. Набережные Челны, пр. Мира, д. 9/04А.
             </p>
+          </section>
+
+          <section className="not-prose mt-8 rounded-2xl border border-border bg-card/50 p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-4">
+              Реквизиты Исполнителя
+            </h2>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+              <dt className="text-muted-foreground">ИП</dt>
+              <dd className="text-foreground">Тябина Алсу Раисовна</dd>
+              <dt className="text-muted-foreground">ИНН</dt>
+              <dd className="text-foreground tabular-nums">165031737901</dd>
+              <dt className="text-muted-foreground">ОГРНИП</dt>
+              <dd className="text-foreground tabular-nums">324169000135143</dd>
+            </dl>
           </section>
 
           <p className="text-sm text-muted-foreground mt-10 italic">

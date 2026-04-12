@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { publicApi } from "@/lib/publicApi";
 import { Complex50View } from "./Complex50View";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function Complex50Page() {
   try {

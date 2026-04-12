@@ -5,16 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Thermometer, Users, Sparkles } from "lucide-react";
-import { AnimatedThemeToggle } from "@/components/ui/animated-theme-toggle";
+import { Menu, X } from "lucide-react";
 import MegaMenu, { type MegaMenuItem } from "@/components/ui/mega-menu";
 
 const navLinks = [
   { href: "/", label: "Главная" },
   { href: "/complex-9", label: "9 Комплекс" },
   { href: "/complex-50", label: "50 Комплекс" },
-  { href: "#promotions", label: "Акции" },
-  { href: "#contacts", label: "Контакты" },
+  { href: "/#about", label: "О Сакуре" },
+  { href: "/#promotions", label: "Акции" },
+  { href: "/#contacts", label: "Контакты" },
 ];
 
 const megaMenuItems: MegaMenuItem[] = [
@@ -24,37 +24,25 @@ const megaMenuItems: MegaMenuItem[] = [
     label: "Сауны",
     subMenus: [
       {
-        title: "9 Комплекс",
+        title: "",
         items: [
           {
-            label: "Семейная сауна",
-            description: "Уютные сауны для семейного отдыха",
-            icon: Users,
+            label: "9 Комплекс",
+            description: "пр. Мира, д. 9/04А",
             link: "/complex-9",
           },
-          {
-            label: "Обычная сауна",
-            description: "Классические сауны для компаний",
-            icon: Thermometer,
-            link: "/complex-9",
-          },
-        ],
-      },
-      {
-        title: "50 Комплекс",
-        items: [
           {
             label: "50 Комплекс",
-            description: "Премиум сауны на 50 Лет ВЛКСМ",
-            icon: Sparkles,
+            description: "ул. Нижняя Боровецкая, 20",
             link: "/complex-50",
           },
         ],
       },
     ],
   },
-  { id: 3, label: "Акции", link: "/#promotions" },
-  { id: 4, label: "Контакты", link: "/#contacts" },
+  { id: 3, label: "О Сакуре", link: "/#about" },
+  { id: 4, label: "Акции", link: "/#promotions" },
+  { id: 5, label: "Контакты", link: "/#contacts" },
 ];
 
 export function Header() {
@@ -87,11 +75,17 @@ export function Header() {
         scrolled ? "shadow-md shadow-wood-dark/5" : ""
       }`}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+      <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16">
+        <div className="flex h-[70px] items-center justify-between">
           {/* Logo */}
           <Link
             href="/"
+            onClick={(e) => {
+              if (pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
             className="flex items-center transition-opacity hover:opacity-80"
             aria-label="Сакура — на главную"
           >
@@ -101,7 +95,7 @@ export function Header() {
               width={1200}
               height={400}
               priority
-              className="h-10 w-auto md:h-12"
+              className="h-11 w-auto md:h-[52px]"
             />
           </Link>
 
@@ -111,18 +105,13 @@ export function Header() {
               items={megaMenuItems}
               className=""
             />
-
-            <div className="ml-4 flex items-center border-l border-border pl-4">
-              <AnimatedThemeToggle />
-            </div>
           </nav>
 
           {/* Mobile controls */}
           <div className="flex items-center gap-2 md:hidden">
-            <AnimatedThemeToggle />
             <button
               onClick={() => setMobileOpen((prev) => !prev)}
-              className="rounded-lg p-2 text-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
+              className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               aria-label="Открыть меню"
             >
               <AnimatePresence mode="wait" initial={false}>
@@ -163,7 +152,7 @@ export function Header() {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden border-t border-border md:hidden"
           >
-            <div className="mx-auto max-w-7xl space-y-1 px-4 pb-4 pt-2">
+            <div className="mx-auto max-w-[1536px] space-y-1 px-6 pb-4 pt-2">
               {navLinks.map((link, index) => {
                 const active = isActive(link.href);
                 return (
@@ -182,7 +171,7 @@ export function Header() {
                       className={`block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                         active
                           ? "bg-forest/10 text-forest"
-                          : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
                     >
                       {link.label}

@@ -19,15 +19,16 @@ model Admin {
 
 // ========== Глобальные настройки (singleton) ==========
 model Settings {
-  id             Int      @id @default(1)
-  companyName    String   @default("Сакура")
-  mainPhone      String   @default("")
-  email          String   @default("")
-  vk             String   @default("")
-  instagram      String   @default("")
-  telegramChatId String   @default("")
-  smsEnabled     Boolean  @default(false)
-  updatedAt      DateTime @updatedAt
+  id                 Int      @id @default(1)
+  companyName        String   @default("Сакура")
+  mainPhone          String   @default("")
+  email              String   @default("")
+  vk                 String   @default("")
+  instagram          String   @default("")
+  telegramChatId     String   @default("")
+  smsEnabled         Boolean  @default(false)
+  homeCarouselSlides Json     @default("[]")           // { title: string, image: string }[]
+  updatedAt          DateTime @updatedAt
 }
 
 // ========== Филиал ==========

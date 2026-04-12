@@ -91,7 +91,17 @@ export const api = {
     const headers: Record<string, string> = {};
     if (access) headers["Authorization"] = `Bearer ${access}`;
     const res = await fetch(`${API_URL}/upload`, { method: "POST", headers, body: formData });
-    if (!res.ok) throw new Error("Upload failed");
+    if (!res.ok) {
+      // Пробрасываем нормальное сообщение с бэка вместо голого "Upload failed".
+      // Особенно важно для LIMIT_FILE_SIZE — иначе юзер не поймёт что у него
+      // просто слишком большой файл.
+      let message = `Ошибка загрузки (${res.status})`;
+      try {
+        const body = await res.json();
+        if (body?.error && typeof body.error === "string") message = body.error;
+      } catch {}
+      throw new Error(message);
+    }
     return res.json() as Promise<{ url: string }>;
   },
 };

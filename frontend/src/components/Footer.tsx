@@ -2,20 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Phone, MapPin } from "lucide-react";
+import { Phone } from "lucide-react";
 
 export function Footer() {
   return (
     <footer
       className="relative mt-16 w-full overflow-hidden"
       style={{
-        backdropFilter: "blur(12px) saturate(150%)",
         background: "radial-gradient(circle at 30% 50%, rgba(255,255,255,0.04) 0%, rgba(80,50,20,0.08) 50%, rgba(40,25,10,0.12) 100%)",
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_auto_auto] gap-x-16 gap-y-8">
           {/* Column 1 - Brand */}
           <div>
             <Image
@@ -88,86 +87,42 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Column 3 - Услуги */}
+          {/* Column 3 - Документы */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Услуги</h4>
+            <h4 className="font-semibold text-foreground mb-4">Документы</h4>
             <ul className="space-y-3">
-              <li className="text-sm text-muted-foreground">Русская баня</li>
-              <li className="text-sm text-muted-foreground">Финская сауна</li>
-              <li className="text-sm text-muted-foreground">Турецкий хамам</li>
+              <li>
+                <Link
+                  href="/oferta"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Публичная оферта
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/privacy"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Политика конфиденциальности
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/personal-data"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Согласие на обработку ПД
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Column 4 - Контакты */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Контакты</h4>
-            <div className="space-y-5">
-              {/* 9 комплекс */}
-              <div>
-                <p className="text-xs uppercase tracking-wide text-foreground/70 mb-2">
-                  Сауна 9 комплекс
-                </p>
-                <div className="space-y-1.5">
-                  <a
-                    href="tel:+79274651000"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <Phone className="w-4 h-4 shrink-0" />
-                    +7 (927) 465-1000
-                  </a>
-                  <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
-                    пр. Мира, д. 9/04А
-                  </div>
-                </div>
-              </div>
-
-              {/* 50 комплекс */}
-              <div>
-                <p className="text-xs uppercase tracking-wide text-foreground/70 mb-2">
-                  Сауна 50 комплекс
-                </p>
-                <div className="space-y-1.5">
-                  <a
-                    href="tel:+78552784000"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <Phone className="w-4 h-4 shrink-0" />
-                    +7 (8552) 784 000
-                  </a>
-                  <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
-                    ул. Нижняя Боровецкая, 20
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* Bottom: copyright + legal links */}
-        <div className="mt-10 pt-8 border-t border-white/5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm text-muted-foreground">
-          <span>&copy; 2025 Сакура. Все права защищены.</span>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
-            <Link
-              href="/oferta"
-              className="text-muted-foreground/80 hover:text-primary transition-colors"
-            >
-              Публичная оферта
-            </Link>
-            <Link
-              href="/privacy"
-              className="text-muted-foreground/80 hover:text-primary transition-colors"
-            >
-              Политика конфиденциальности
-            </Link>
-            <Link
-              href="/personal-data"
-              className="text-muted-foreground/80 hover:text-primary transition-colors"
-            >
-              Согласие на обработку ПД
-            </Link>
-          </div>
+        {/* Bottom: copyright */}
+        <div className="mt-10 pt-8 border-t border-white/5 text-sm text-muted-foreground">
+          <span>&copy; 2026 Сакура. Все права защищены.</span>
         </div>
       </div>
     </footer>

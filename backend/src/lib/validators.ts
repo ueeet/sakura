@@ -136,6 +136,10 @@ export const updateReviewSchema = z.object({
 });
 
 // ========== Settings ==========
+export const homeSlideSchema = z.object({
+  image: z.string().min(1, "Укажите фото"),
+});
+
 export const updateSettingsSchema = z.object({
   companyName: z.string().optional(),
   mainPhone: z.string().optional(),
@@ -144,4 +148,5 @@ export const updateSettingsSchema = z.object({
   instagram: z.string().optional(),
   telegramChatId: z.string().optional(),
   smsEnabled: z.boolean().optional(),
+  homeCarouselSlides: z.array(homeSlideSchema).optional(),
 });

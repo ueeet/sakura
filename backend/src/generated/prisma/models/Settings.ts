@@ -67,6 +67,7 @@ export type SettingsCountAggregateOutputType = {
   instagram: number
   telegramChatId: number
   smsEnabled: number
+  homeCarouselSlides: number
   updatedAt: number
   _all: number
 }
@@ -113,6 +114,7 @@ export type SettingsCountAggregateInputType = {
   instagram?: true
   telegramChatId?: true
   smsEnabled?: true
+  homeCarouselSlides?: true
   updatedAt?: true
   _all?: true
 }
@@ -212,6 +214,7 @@ export type SettingsGroupByOutputType = {
   instagram: string
   telegramChatId: string
   smsEnabled: boolean
+  homeCarouselSlides: runtime.JsonValue
   updatedAt: Date
   _count: SettingsCountAggregateOutputType | null
   _avg: SettingsAvgAggregateOutputType | null
@@ -247,6 +250,7 @@ export type SettingsWhereInput = {
   instagram?: Prisma.StringFilter<"Settings"> | string
   telegramChatId?: Prisma.StringFilter<"Settings"> | string
   smsEnabled?: Prisma.BoolFilter<"Settings"> | boolean
+  homeCarouselSlides?: Prisma.JsonFilter<"Settings">
   updatedAt?: Prisma.DateTimeFilter<"Settings"> | Date | string
 }
 
@@ -259,6 +263,7 @@ export type SettingsOrderByWithRelationInput = {
   instagram?: Prisma.SortOrder
   telegramChatId?: Prisma.SortOrder
   smsEnabled?: Prisma.SortOrder
+  homeCarouselSlides?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -274,6 +279,7 @@ export type SettingsWhereUniqueInput = Prisma.AtLeast<{
   instagram?: Prisma.StringFilter<"Settings"> | string
   telegramChatId?: Prisma.StringFilter<"Settings"> | string
   smsEnabled?: Prisma.BoolFilter<"Settings"> | boolean
+  homeCarouselSlides?: Prisma.JsonFilter<"Settings">
   updatedAt?: Prisma.DateTimeFilter<"Settings"> | Date | string
 }, "id">
 
@@ -286,6 +292,7 @@ export type SettingsOrderByWithAggregationInput = {
   instagram?: Prisma.SortOrder
   telegramChatId?: Prisma.SortOrder
   smsEnabled?: Prisma.SortOrder
+  homeCarouselSlides?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SettingsCountOrderByAggregateInput
   _avg?: Prisma.SettingsAvgOrderByAggregateInput
@@ -306,6 +313,7 @@ export type SettingsScalarWhereWithAggregatesInput = {
   instagram?: Prisma.StringWithAggregatesFilter<"Settings"> | string
   telegramChatId?: Prisma.StringWithAggregatesFilter<"Settings"> | string
   smsEnabled?: Prisma.BoolWithAggregatesFilter<"Settings"> | boolean
+  homeCarouselSlides?: Prisma.JsonWithAggregatesFilter<"Settings">
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Settings"> | Date | string
 }
 
@@ -318,6 +326,7 @@ export type SettingsCreateInput = {
   instagram?: string
   telegramChatId?: string
   smsEnabled?: boolean
+  homeCarouselSlides?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
 }
 
@@ -330,6 +339,7 @@ export type SettingsUncheckedCreateInput = {
   instagram?: string
   telegramChatId?: string
   smsEnabled?: boolean
+  homeCarouselSlides?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
 }
 
@@ -342,6 +352,7 @@ export type SettingsUpdateInput = {
   instagram?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.StringFieldUpdateOperationsInput | string
   smsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  homeCarouselSlides?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -354,6 +365,7 @@ export type SettingsUncheckedUpdateInput = {
   instagram?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.StringFieldUpdateOperationsInput | string
   smsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  homeCarouselSlides?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -366,6 +378,7 @@ export type SettingsCreateManyInput = {
   instagram?: string
   telegramChatId?: string
   smsEnabled?: boolean
+  homeCarouselSlides?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Date | string
 }
 
@@ -378,6 +391,7 @@ export type SettingsUpdateManyMutationInput = {
   instagram?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.StringFieldUpdateOperationsInput | string
   smsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  homeCarouselSlides?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -390,6 +404,7 @@ export type SettingsUncheckedUpdateManyInput = {
   instagram?: Prisma.StringFieldUpdateOperationsInput | string
   telegramChatId?: Prisma.StringFieldUpdateOperationsInput | string
   smsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  homeCarouselSlides?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -402,6 +417,7 @@ export type SettingsCountOrderByAggregateInput = {
   instagram?: Prisma.SortOrder
   telegramChatId?: Prisma.SortOrder
   smsEnabled?: Prisma.SortOrder
+  homeCarouselSlides?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -452,6 +468,7 @@ export type SettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   instagram?: boolean
   telegramChatId?: boolean
   smsEnabled?: boolean
+  homeCarouselSlides?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["settings"]>
 
@@ -464,6 +481,7 @@ export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   instagram?: boolean
   telegramChatId?: boolean
   smsEnabled?: boolean
+  homeCarouselSlides?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["settings"]>
 
@@ -476,6 +494,7 @@ export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   instagram?: boolean
   telegramChatId?: boolean
   smsEnabled?: boolean
+  homeCarouselSlides?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["settings"]>
 
@@ -488,10 +507,11 @@ export type SettingsSelectScalar = {
   instagram?: boolean
   telegramChatId?: boolean
   smsEnabled?: boolean
+  homeCarouselSlides?: boolean
   updatedAt?: boolean
 }
 
-export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyName" | "mainPhone" | "email" | "vk" | "instagram" | "telegramChatId" | "smsEnabled" | "updatedAt", ExtArgs["result"]["settings"]>
+export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyName" | "mainPhone" | "email" | "vk" | "instagram" | "telegramChatId" | "smsEnabled" | "homeCarouselSlides" | "updatedAt", ExtArgs["result"]["settings"]>
 
 export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Settings"
@@ -505,6 +525,7 @@ export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     instagram: string
     telegramChatId: string
     smsEnabled: boolean
+    homeCarouselSlides: runtime.JsonValue
     updatedAt: Date
   }, ExtArgs["result"]["settings"]>
   composites: {}
@@ -937,6 +958,7 @@ export interface SettingsFieldRefs {
   readonly instagram: Prisma.FieldRef<"Settings", 'String'>
   readonly telegramChatId: Prisma.FieldRef<"Settings", 'String'>
   readonly smsEnabled: Prisma.FieldRef<"Settings", 'Boolean'>
+  readonly homeCarouselSlides: Prisma.FieldRef<"Settings", 'Json'>
   readonly updatedAt: Prisma.FieldRef<"Settings", 'DateTime'>
 }
     

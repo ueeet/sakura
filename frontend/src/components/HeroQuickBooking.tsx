@@ -65,24 +65,6 @@ function getDefaultTime() {
   return `${pad(next)}:00`;
 }
 
-/**
- * Решает, в какую сторону открывать попап от триггера: вниз по умолчанию,
- * вверх если снизу не хватает места на `popupHeight` пикселей. Учитывает 16px
- * запаса от края viewport. Безопасно вызывать с null контейнером.
- */
-function computeDirection(
-  container: HTMLElement | null,
-  popupHeight: number,
-): "down" | "up" {
-  if (typeof window === "undefined" || !container) return "down";
-  const rect = container.getBoundingClientRect();
-  const spaceBelow = window.innerHeight - rect.bottom - 16;
-  const spaceAbove = rect.top - 16;
-  if (spaceBelow >= popupHeight) return "down";
-  if (spaceAbove > spaceBelow) return "up";
-  return "down";
-}
-
 export function HeroQuickBooking() {
   const router = useRouter();
 
@@ -110,15 +92,11 @@ export function HeroQuickBooking() {
   // при клике по кнопке конца. Управляет подсветкой в гриде «Время окончания»,
   // чтобы НЕ показывать предыдущий выбор как активный.
   const [endTimeFreshlyChosen, setEndTimeFreshlyChosen] = useState(false);
-  // Направление, в котором открывать попап календаря: вниз по умолчанию,
-  // вверх если снизу не хватает места (низкие лептопы / горизонтальный таблет).
-  const [pickerDirection, setPickerDirection] = useState<"down" | "up">("down");
 
   const pickerRef = useRef<HTMLDivElement>(null);
 
   // Branch dropdown state
   const [branchOpen, setBranchOpen] = useState(false);
-  const [branchDirection, setBranchDirection] = useState<"down" | "up">("down");
   const branchRef = useRef<HTMLDivElement>(null);
 
   // Click outside to close
@@ -216,18 +194,11 @@ export function HeroQuickBooking() {
     setTimeSubStep("start");
     setViewYear(selectedDate.getFullYear());
     setViewMonth(selectedDate.getMonth());
-    setPickerDirection(computeDirection(pickerRef.current, 440));
     setPickerOpen(true);
   };
 
   const toggleBranchOpen = () => {
-    if (branchOpen) {
-      setBranchOpen(false);
-      return;
-    }
-    // Высота попапа филиала ≈ 3 пункта × ~46px + padding ≈ 160px
-    setBranchDirection(computeDirection(branchRef.current, 180));
-    setBranchOpen(true);
+    setBranchOpen((p) => !p);
   };
 
   const dateTimeDisplay = `${selectedDate.getDate()} ${
@@ -258,7 +229,7 @@ export function HeroQuickBooking() {
       onSubmit={handleSubmit}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, delay: 0.64, ease: "easeOut" }}
+      transition={{ duration: 0.7, delay: 0.46, ease: "easeOut" }}
       style={{ willChange: "transform, opacity" }}
       className="w-full rounded-2xl border border-white/20 bg-white/10 p-4 shadow-2xl backdrop-blur-xl md:p-5"
     >
@@ -270,8 +241,8 @@ export function HeroQuickBooking() {
             onClick={toggleBranchOpen}
             className="flex w-full items-center justify-between gap-2 rounded-xl bg-black/30 px-3 py-2 text-left ring-1 ring-white/15 transition hover:ring-white/30 focus:outline-none focus:ring-white/40"
           >
-            <span className="flex min-w-0 flex-col gap-1">
-              <span className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-white/60">
+            <span className="flex min-w-0 flex-col gap-0.5">
+              <span className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-white/60">
                 <MapPin className="h-3 w-3" />
                 Филиал
               </span>
@@ -289,23 +260,11 @@ export function HeroQuickBooking() {
           <AnimatePresence>
             {branchOpen && (
               <motion.div
-                initial={{
-                  opacity: 0,
-                  y: branchDirection === "down" ? -8 : 8,
-                  scale: 0.96,
-                }}
+                initial={{ opacity: 0, y: -8, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{
-                  opacity: 0,
-                  y: branchDirection === "down" ? -8 : 8,
-                  scale: 0.96,
-                }}
+                exit={{ opacity: 0, y: -8, scale: 0.96 }}
                 transition={{ duration: 0.2 }}
-                className={`absolute left-0 right-0 z-50 rounded-xl border border-border bg-card p-2 shadow-xl ${
-                  branchDirection === "down"
-                    ? "top-full mt-2"
-                    : "bottom-full mb-2"
-                }`}
+                className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border border-border bg-card p-2 shadow-xl"
               >
                 {BRANCH_OPTIONS.map((opt) => {
                   const active = opt.value === branch;
@@ -338,9 +297,9 @@ export function HeroQuickBooking() {
           <button
             type="button"
             onClick={() => (pickerOpen ? setPickerOpen(false) : openPicker())}
-            className="flex w-full flex-col gap-1 rounded-xl bg-black/30 px-3 py-2 text-left ring-1 ring-white/15 transition hover:ring-white/30 focus:outline-none focus:ring-white/40"
+            className="flex w-full flex-col gap-0.5 rounded-xl bg-black/30 px-3 py-2 text-left ring-1 ring-white/15 transition hover:ring-white/30 focus:outline-none focus:ring-white/40"
           >
-            <span className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-white/60">
+            <span className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-white/60">
               <CalendarDays className="h-3 w-3" />
               Дата и время
             </span>
@@ -352,23 +311,11 @@ export function HeroQuickBooking() {
           <AnimatePresence>
             {pickerOpen && (
               <motion.div
-                initial={{
-                  opacity: 0,
-                  y: pickerDirection === "down" ? -8 : 8,
-                  scale: 0.96,
-                }}
+                initial={{ opacity: 0, y: -8, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{
-                  opacity: 0,
-                  y: pickerDirection === "down" ? -8 : 8,
-                  scale: 0.96,
-                }}
+                exit={{ opacity: 0, y: -8, scale: 0.96 }}
                 transition={{ duration: 0.2 }}
-                className={`absolute left-0 right-0 z-50 rounded-xl border border-border bg-card p-4 shadow-xl ${
-                  pickerDirection === "down"
-                    ? "top-full mt-2"
-                    : "bottom-full mb-2"
-                }`}
+                className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border border-border bg-card p-4 shadow-xl"
               >
                 {pickerStep === "date" ? (
                   <>
@@ -518,8 +465,8 @@ export function HeroQuickBooking() {
             onClick={() => setGuestsOpen((p) => !p)}
             className="flex w-full items-center justify-between gap-2 rounded-xl bg-black/30 px-3 py-2 text-left ring-1 ring-white/15 transition hover:ring-white/30 focus:outline-none focus:ring-white/40"
           >
-            <span className="flex min-w-0 flex-col gap-1">
-              <span className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-white/60">
+            <span className="flex min-w-0 flex-col gap-0.5">
+              <span className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-white/60">
                 <Users className="h-3 w-3" />
                 Гостей
               </span>
@@ -576,11 +523,11 @@ export function HeroQuickBooking() {
         {/* Submit */}
         <button
           type="submit"
-          className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-900 px-6 py-3 text-sm font-semibold text-white shadow-lg ring-1 ring-emerald-500/40 transition-all hover:-translate-y-0.5 hover:brightness-110"
+          className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-900 px-6 py-3 text-sm font-semibold text-white shadow-lg ring-1 ring-emerald-500/40 transition-[transform,filter,box-shadow] duration-200 hover:-translate-y-0.5 hover:brightness-110"
         >
           <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
           <Search className="h-4 w-4" />
-          Подобрать
+          Найти сауну
         </button>
       </div>
     </motion.form>

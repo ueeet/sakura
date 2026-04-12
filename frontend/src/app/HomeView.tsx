@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/Header";
@@ -14,9 +14,9 @@ import {
   CarouselIndicator,
 } from "@/components/ui/carousel";
 import { Lightbox } from "@/components/ui/lightbox";
-import type { Promotion } from "@/lib/types";
+import type { Promotion, HomeSlide } from "@/lib/types";
 import { Flame, Gift, Cake, ChevronDown, Phone, MapPin } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const promoIcons: Record<string, React.ReactNode> = {
   flame: <Flame className="h-8 w-8 text-forest" />,
@@ -24,21 +24,25 @@ const promoIcons: Record<string, React.ReactNode> = {
   cake: <Cake className="h-8 w-8 text-forest" />,
 };
 
-const carouselSlides = [
-  { title: "Русская баня", image: "/images/saunas/complex-9/family/2/1.webp" },
-  { title: "Финская сауна", image: "/images/saunas/complex-9/family/1/1.webp" },
-  { title: "Турецкий хамам", image: "/images/saunas/complex-9/family/4/1.webp" },
-  { title: "Бассейн", image: "/images/saunas/complex-9/regular/1/1.webp" },
-  { title: "Комната отдыха", image: "/images/saunas/complex-9/family/3/2.webp" },
-  { title: "Шашлычная", image: "/images/saunas/complex-50/1/1.webp" },
+// Фолбэк на случай, если админка опустошила список слайдов —
+// карусель «О Сакуре» всё равно должна что-то показывать, иначе будет
+// пустой aspect-[4/3] контейнер = явный визуальный баг.
+const FALLBACK_SLIDES: HomeSlide[] = [
+  { image: "/images/saunas/complex-9/family/2/1.webp" },
+  { image: "/images/saunas/complex-9/family/1/1.webp" },
+  { image: "/images/saunas/complex-9/family/4/1.webp" },
+  { image: "/images/saunas/complex-9/regular/1/1.webp" },
+  { image: "/images/saunas/complex-9/family/3/2.webp" },
+  { image: "/images/saunas/complex-50/1/1.webp" },
+];
+
+const HERO_PHRASES = [
+  "Крупнейшая сеть саун в Набережных Челнах",
+  "Онлайн-бронирование 24/7",
+  "Русские бани · Финские сауны · Хамамы",
 ];
 
 const mapSrc = "https://yandex.ru/map-widget/v1/?ll=52.406%2C55.750&z=12&pt=52.389442,55.726188,pm2gnm1~52.422554,55.773935,pm2gnm2";
-
-const yandexLinks = {
-  complex9: "https://yandex.ru/maps/?pt=52.389442,55.726188&z=16&l=map",
-  complex50: "https://yandex.ru/maps/?pt=52.422554,55.773935&z=16&l=map",
-};
 
 // Variants для каскадной анимации hero-блока (h1 → подзаголовок → кнопки).
 // Плашка HeroQuickBooking — сиблинг ниже, ей выставлен совпадающий delay вручную.
@@ -51,15 +55,37 @@ const HERO_ITEM_VARIANTS = {
   },
 };
 
-export function HomeView({ promotions }: { promotions: Promotion[] }) {
+export function HomeView({
+  promotions,
+  slides,
+}: {
+  promotions: Promotion[];
+  slides: HomeSlide[];
+}) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const carouselSlides = slides.length > 0 ? slides : FALLBACK_SLIDES;
+
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const nextPhrase = useCallback(() => {
+    setPhraseIdx((i) => (i + 1) % HERO_PHRASES.length);
+  }, []);
+  useEffect(() => {
+    const id = setInterval(nextPhrase, 3500);
+    return () => clearInterval(id);
+  }, [nextPhrase]);
 
   return (
     <>
       <Header />
       <main>
-        {/* ===== HERO ===== */}
-        <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black px-4 pb-16 pt-24 sm:pb-24 md:pb-32 md:pt-28">
+        {/* ===== HERO =====
+            overflow-x-clip (не overflow-hidden!) — клипаем только по X, чтобы
+            декоративная тень-подложка под заголовком (h-[180%] w-[180%]) не
+            вылезала горизонтально на мобиле (180% от ~250px > 375px viewport).
+            По Y оставляем overflow: visible, иначе попапы календаря/гостей
+            HeroQuickBooking обрезаются границей секции, когда открываются
+            вниз (visible-bug см. скрин от пользователя). */}
+        <section className="relative flex min-h-screen flex-col items-center justify-center overflow-x-clip bg-black px-4 pb-[126px] pt-5 sm:pb-[142px] md:pb-[158px] md:pt-9">
           {/* Video background */}
           <video
             autoPlay
@@ -73,7 +99,7 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
           </video>
 
           {/* Base dim — слегка приглушает всё видео для читаемости */}
-          <div className="pointer-events-none absolute inset-0 bg-black/40" />
+          <div className="pointer-events-none absolute inset-0 bg-black/65" />
 
           {/* Vignette — тёмные края, прозрачный центр */}
           <div
@@ -84,9 +110,10 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
             }}
           />
 
-          {/* Hero stagger: каждый ребёнок (h1 → p → кнопки → плашка) выезжает
-              с задержкой 0.18s через staggerChildren. Плашка лежит сиблингом
-              ниже, поэтому ей выставлен совпадающий delay вручную. */}
+          {/* Hero stagger: каждый ребёнок (h1 → p) выезжает с задержкой 0.18s
+              через staggerChildren. Плашка HeroQuickBooking и строка вторичных
+              ссылок лежат сиблингами ниже, им выставлены совпадающие delay'и
+              вручную (0.46 и 0.85). */}
           <motion.div
             initial="hidden"
             animate="visible"
@@ -101,77 +128,97 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
             // вылезали за горизонталь.
             className="relative z-10 flex flex-col items-center text-center md:scale-[1.2375]"
           >
-            {/* Общая тень-подложка под заголовком, подзаголовком и кнопками */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[180%] w-[180%] -translate-x-1/2 -translate-y-1/2"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0) 85%)",
-                filter: "blur(30px)",
-              }}
-            />
-
             <motion.h1
               variants={HERO_ITEM_VARIANTS}
-              className="font-heading text-6xl tracking-wider text-white sm:text-7xl md:text-9xl"
+              className="font-heading text-6xl tracking-tight text-white sm:text-7xl md:text-9xl"
             >
               САКУРА
             </motion.h1>
 
-            <motion.p
-              variants={HERO_ITEM_VARIANTS}
-              className="mt-2 max-w-lg px-4 text-base text-white/90 sm:text-lg md:mt-1 md:text-xl"
-            >
-              Крупнейшая сеть саун в Набережных Челнах
-            </motion.p>
-
             <motion.div
               variants={HERO_ITEM_VARIANTS}
-              className="mt-8 flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row sm:gap-5 md:mt-10"
+              className="relative mt-2 flex h-8 w-screen max-w-none items-center justify-center px-4 sm:h-9 md:mt-1 md:h-10"
             >
-              {/* Primary — Dark forest */}
-              <Link
-                href="/complex-9"
-                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-emerald-800 via-green-900 to-emerald-950 px-8 py-4 text-base font-semibold text-white shadow-[0_8px_30px_rgba(6,78,59,0.55)] ring-1 ring-white/20 transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(6,78,59,0.75)] sm:px-10 sm:py-5"
-              >
-                {/* Shine sweep on hover */}
-                <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-                <span className="relative">Сауна 9 комплекс</span>
-              </Link>
-
-              {/* Secondary — Dark wood brown */}
-              <Link
-                href="/complex-50"
-                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-900 via-stone-800 to-amber-950 px-8 py-4 text-base font-semibold text-white shadow-[0_8px_30px_rgba(68,40,20,0.6)] ring-1 ring-white/20 transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(68,40,20,0.8)] sm:px-10 sm:py-5"
-              >
-                <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-                <span className="relative">Сауна 50 комплекс</span>
-              </Link>
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={phraseIdx}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -16 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="absolute whitespace-nowrap text-xl text-white/90 sm:text-2xl md:text-[27px]"
+                >
+                  {HERO_PHRASES[phraseIdx]}
+                </motion.p>
+              </AnimatePresence>
             </motion.div>
           </motion.div>
 
-          {/* Quick booking widget — sibling, не наследует scale заголовка.
+          {/* Quick booking widget — единственный primary CTA в hero.
+              Сиблинг, не наследует scale заголовка.
               Анимация живёт ВНУТРИ <form> (motion.form), чтобы opacity и
               backdrop-filter были на одном элементе — иначе Chromium не
-              рендерит блюр пока opacity предка < 1. */}
-          <div className="relative z-10 mx-auto mt-8 w-full max-w-5xl sm:mt-12 md:mt-14">
+              рендерит блюр пока opacity предка < 1.
+              Delay формы пересчитан после удаления группы больших кнопок:
+              было 0.64 (= 0.1 + 0.18×3), стало 0.46 (= 0.1 + 0.18×2).
+
+              z-20 (не z-10) — чтобы весь stacking context формы, включая
+              выпадающие попапы календаря/гостей/филиала, рендерился над
+              secondary-строкой ссылок ниже. Иначе попапы рисуются под
+              «Посмотреть 9/50 комплекс», потому что secondary-строка идёт
+              позже в DOM с тем же z-10 и перекрывает их. */}
+          <div className="relative z-20 mx-auto mt-12 w-full max-w-5xl sm:mt-14 md:mt-16">
             <HeroQuickBooking />
           </div>
 
-          {/* Scroll indicator */}
+          {/* Secondary — тонкие текстовые ссылки на страницы комплексов.
+              Сознательно приглушены (text-white/60, text-xs/sm, underline-only),
+              чтобы не конкурировать с формой за внимание. Даём аффорданс
+              «посмотреть страницу комплекса целиком» тем, кто хочет обзор
+              перед бронированием. */}
           <motion.div
-            className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 md:block"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.85, ease: "easeOut" }}
+            className="relative z-10 mt-6 flex items-center justify-center gap-4 text-xs text-white/60 sm:gap-5 sm:text-sm"
+          >
+            <Link
+              href="/complex-9"
+              className="underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+            >
+              Посмотреть 9 комплекс →
+            </Link>
+            <span aria-hidden className="text-white/30">•</span>
+            <Link
+              href="/complex-50"
+              className="underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+            >
+              Посмотреть 50 комплекс →
+            </Link>
+          </motion.div>
+
+          {/* Scroll indicator — всегда на всех экранах, прижат к низу ПЕРВОГО
+              экрана (а не к низу всей секции). Секция `min-h-screen` и часто
+              вырастает выше 100svh из-за формы бронирования + secondary-строки
+              — тогда `bottom-N` уезжает ниже фолда и стрелка не видна.
+              Формула: `top: calc(100svh - 64px - 24px)` =
+              (высота вьюпорта) − (h-16 sticky header, он в потоке и съедает
+              первые 64px фолда) − (24px отступ от нижней кромки). svh, не vh —
+              чтобы на мобильных Safari/Chrome учитывалась уменьшённая высота
+              с панелью адреса. */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-[calc(100svh-113px)] -translate-x-1/2"
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
           >
-            <ChevronDown className="h-8 w-8 text-white/60" />
+            <ChevronDown className="h-7 w-7 text-white/70 sm:h-8 sm:w-8" />
           </motion.div>
         </section>
 
         {/* ===== ABOUT ===== */}
-        <section id="about" className="overflow-hidden py-20">
-          <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
+        <section id="about" className="overflow-hidden py-24">
+          <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16">
             <div className="grid grid-cols-1 items-center gap-28 md:grid-cols-2 md:gap-36">
               {/* Left — text */}
               <motion.div
@@ -180,10 +227,10 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.6 }}
               >
-                <h2 className="font-heading text-4xl text-foreground md:text-5xl">
+                <h2 className="font-heading text-5xl tracking-tight text-foreground md:text-7xl">
                   О Сакуре
                 </h2>
-                <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+                <p className="mt-6 text-lg leading-relaxed text-muted-foreground md:text-xl">
                   «Сакура» — крупнейшая сеть саун в Набережных Челнах. Мы
                   предлагаем русские бани, финские сауны и турецкие хамамы для
                   любого формата отдыха: от камерного семейного вечера до
@@ -204,7 +251,7 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
                 <Carousel>
                   <CarouselContent>
                     {carouselSlides.map((slide, i) => (
-                      <CarouselItem key={slide.title} className="basis-full">
+                      <CarouselItem key={slide.image} className="basis-full">
                         <button
                           type="button"
                           onClick={() => setLightboxIndex(i)}
@@ -212,7 +259,7 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
                         >
                           <Image
                             src={slide.image}
-                            alt={slide.title}
+                            alt="Сакура"
                             fill
                             sizes="(max-width: 768px) 100vw, 50vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -243,19 +290,50 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
         </section>
 
         {/* ===== PROMOTIONS ===== */}
-        <section id="promotions" className="overflow-hidden py-28">
-          <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
+        <section id="promotions" className="overflow-hidden py-24">
+          <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6 }}
-              className="font-heading text-5xl text-foreground md:text-6xl mb-4"
+              className="font-heading text-5xl tracking-tight text-foreground md:text-7xl mb-4"
             >
               Акции
             </motion.h2>
-            <p className="text-lg text-muted-foreground mb-14">Специальные предложения для наших гостей</p>
+            <p className="text-lg text-muted-foreground mb-14 md:text-xl">Специальные предложения для наших гостей</p>
 
+            {promotions.length === 0 ? (
+              /* Empty state — если бэк вернул [] или упал.
+                 Rule 5.8: NEVER blank, no dead ends. Объяснение + направление
+                 + CTA. Телефон берём из 9 комплекса как основной публичный
+                 номер (совпадает с карточкой контактов ниже по странице). */
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="mx-auto max-w-xl rounded-2xl border bg-card p-10 text-center shadow-md"
+              >
+                <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-forest/10">
+                  <Gift className="h-7 w-7 text-forest/70" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">
+                  Сейчас активных акций нет
+                </h3>
+                <p className="mt-3 text-base text-muted-foreground">
+                  Следите за обновлениями или позвоните — подскажем
+                  персональное предложение под вашу компанию и дату.
+                </p>
+                <a
+                  href="tel:+79274651000"
+                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-forest px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-forest-dark"
+                >
+                  <Phone className="h-4 w-4" />
+                  Позвонить
+                </a>
+              </motion.div>
+            ) : (
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               {promotions.map((promo, idx) => (
                 <motion.div
@@ -283,7 +361,7 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
                   <h3 className="text-xl font-semibold text-foreground">
                     {promo.title}
                   </h3>
-                  <p className="mt-3 text-base text-foreground/80">
+                  <p className="mt-3 text-base text-muted-foreground">
                     {promo.description}
                   </p>
                   {promo.note && (
@@ -294,18 +372,19 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
                 </motion.div>
               ))}
             </div>
+            )}
           </div>
         </section>
 
         {/* ===== CONTACTS ===== */}
-        <section id="contacts" className="overflow-hidden py-20">
-          <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
+        <section id="contacts" className="overflow-hidden py-24">
+          <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6 }}
-              className="font-heading text-4xl text-foreground md:text-5xl"
+              className="font-heading text-5xl tracking-tight text-foreground md:text-7xl"
             >
               Контакты
             </motion.h2>
@@ -320,47 +399,47 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
                 className="flex flex-col justify-between gap-6"
               >
                 <a
-                  href={yandexLinks.complex9}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 rounded-xl border bg-card p-6 shadow-sm flex flex-col justify-center transition-colors hover:border-forest/50"
+                  href="tel:+79274651000"
+                  className="group flex-1 rounded-2xl border bg-card p-6 shadow-sm flex flex-col justify-center transition-colors hover:border-forest/50"
                 >
                   <h3 className="text-xl font-semibold text-foreground">
                     Сауна 9 комплекс
                   </h3>
                   <div className="mt-4 space-y-3">
-                    <div className="flex items-center gap-3 text-sm text-foreground/80">
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
                       <MapPin className="h-5 w-5 shrink-0 text-forest" />
                       <span>пр. Мира, д. 9/04А</span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-foreground/80">
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
                       <Phone className="h-5 w-5 shrink-0 text-forest" />
                       <span>+7 (927) 465-1000</span>
                     </div>
                   </div>
-                  <span className="mt-4 text-xs text-forest">Открыть на карте →</span>
+                  <span className="mt-5 inline-flex w-fit items-center rounded-xl bg-forest px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors group-hover:bg-forest-dark">
+                    Позвонить
+                  </span>
                 </a>
 
                 <a
-                  href={yandexLinks.complex50}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 rounded-xl border bg-card p-6 shadow-sm flex flex-col justify-center transition-colors hover:border-forest/50"
+                  href="tel:+78552784000"
+                  className="group flex-1 rounded-2xl border bg-card p-6 shadow-sm flex flex-col justify-center transition-colors hover:border-forest/50"
                 >
                   <h3 className="text-xl font-semibold text-foreground">
                     Сауна 50 комплекс
                   </h3>
                   <div className="mt-4 space-y-3">
-                    <div className="flex items-center gap-3 text-sm text-foreground/80">
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
                       <MapPin className="h-5 w-5 shrink-0 text-forest" />
                       <span>ул. Нижняя Боровецкая, 20</span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-foreground/80">
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
                       <Phone className="h-5 w-5 shrink-0 text-forest" />
                       <span>+7 (8552) 784 000</span>
                     </div>
                   </div>
-                  <span className="mt-4 text-xs text-forest">Открыть на карте →</span>
+                  <span className="mt-5 inline-flex w-fit items-center rounded-xl bg-forest px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors group-hover:bg-forest-dark">
+                    Позвонить
+                  </span>
                 </a>
               </motion.div>
 
@@ -370,7 +449,7 @@ export function HomeView({ promotions }: { promotions: Promotion[] }) {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.6 }}
-                className="relative overflow-hidden rounded-xl border shadow-sm"
+                className="relative overflow-hidden rounded-2xl border shadow-sm"
               >
                 <iframe
                   title="Карта расположения саун Сакура"

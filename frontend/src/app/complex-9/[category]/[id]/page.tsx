@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { publicApi } from "@/lib/publicApi";
 import { SaunaDetailView } from "./SaunaDetailView";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function Complex9DetailPage({
   params,

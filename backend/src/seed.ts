@@ -16,6 +16,14 @@ async function main() {
   }
 
   // ========== Settings ==========
+  const defaultHomeSlides = [
+    { image: "/images/saunas/complex-9/family/2/1.webp" },
+    { image: "/images/saunas/complex-9/family/1/1.webp" },
+    { image: "/images/saunas/complex-9/family/4/1.webp" },
+    { image: "/images/saunas/complex-9/regular/1/1.webp" },
+    { image: "/images/saunas/complex-9/family/3/2.webp" },
+    { image: "/images/saunas/complex-50/1/1.webp" },
+  ];
   await prisma.settings.upsert({
     where: { id: 1 },
     update: {},
@@ -25,8 +33,22 @@ async function main() {
       mainPhone: "+7 (8552) 782-000",
       email: "info@sauna-chelny.com",
       vk: "https://vk.com/sauna_sakura",
+      homeCarouselSlides: defaultHomeSlides,
     },
   });
+  // Если Settings уже существует, но homeCarouselSlides пустой — доливаем дефолты.
+  const existingSettings = await prisma.settings.findUnique({ where: { id: 1 } });
+  if (existingSettings) {
+    const current = Array.isArray(existingSettings.homeCarouselSlides)
+      ? existingSettings.homeCarouselSlides
+      : [];
+    if (current.length === 0) {
+      await prisma.settings.update({
+        where: { id: 1 },
+        data: { homeCarouselSlides: defaultHomeSlides },
+      });
+    }
+  }
   console.log("✅ Settings initialized");
 
   // ========== Branches ==========

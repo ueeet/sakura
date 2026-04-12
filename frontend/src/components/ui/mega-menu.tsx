@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export type MegaMenuItem = {
   id: number;
@@ -13,7 +14,7 @@ export type MegaMenuItem = {
     items: {
       label: string;
       description: string;
-      icon: React.ElementType;
+      icon?: React.ElementType;
       link?: string;
     }[];
   }[];
@@ -29,9 +30,28 @@ const MegaMenu = React.forwardRef<HTMLUListElement, MegaMenuProps>(
   ({ items, className, ...props }, ref) => {
     const [openMenu, setOpenMenu] = React.useState<string | null>(null);
     const [isHover, setIsHover] = React.useState<number | null>(null);
+    const pathname = usePathname();
 
     const handleHover = (menuLabel: string | null) => {
       setOpenMenu(menuLabel);
+    };
+
+    /** Если уже на главной и ссылка — якорь или "/" → плавный скролл. */
+    const handleNavClick = (
+      e: React.MouseEvent,
+      link: string,
+    ) => {
+      if (link === "/" && pathname === "/") {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      // /#about, /#promotions, /#contacts — скролл к секции если на главной
+      if (link.startsWith("/#") && pathname === "/") {
+        e.preventDefault();
+        const id = link.slice(2);
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      }
     };
 
     return (
@@ -50,7 +70,8 @@ const MegaMenu = React.forwardRef<HTMLUListElement, MegaMenuProps>(
             {navItem.link && !navItem.subMenus ? (
               <Link
                 href={navItem.link}
-                className="relative flex cursor-pointer items-center justify-center gap-1 py-1.5 px-4 text-sm text-foreground/60 transition-colors duration-300 hover:text-foreground group"
+                onClick={(e) => handleNavClick(e, navItem.link!)}
+                className="relative flex cursor-pointer items-center justify-center gap-1 py-1.5 px-4 text-[17px] text-foreground/60 transition-colors duration-300 hover:text-foreground group"
                 onMouseEnter={() => setIsHover(navItem.id)}
                 onMouseLeave={() => setIsHover(null)}
               >
@@ -65,7 +86,7 @@ const MegaMenu = React.forwardRef<HTMLUListElement, MegaMenuProps>(
               </Link>
             ) : (
               <button
-                className="relative flex cursor-pointer items-center justify-center gap-1 py-1.5 px-4 text-sm text-foreground/60 transition-colors duration-300 hover:text-foreground group"
+                className="relative flex cursor-pointer items-center justify-center gap-1 py-1.5 px-4 text-[17px] text-foreground/60 transition-colors duration-300 hover:text-foreground group"
                 onMouseEnter={() => setIsHover(navItem.id)}
                 onMouseLeave={() => setIsHover(null)}
               >
@@ -89,21 +110,28 @@ const MegaMenu = React.forwardRef<HTMLUListElement, MegaMenuProps>(
 
             <AnimatePresence>
               {openMenu === navItem.label && navItem.subMenus && (
-                <div className="absolute right-0 top-full w-auto pt-2 z-10">
+                <div className="absolute left-1/2 top-full z-10 w-auto -translate-x-1/2 pt-2">
                   <motion.div
                     className="w-max border border-border bg-card p-4 shadow-lg"
                     style={{
                       borderRadius: 16,
+                      transformOrigin: "top center",
+                      willChange: "transform, opacity",
                     }}
-                    layoutId="menu"
+                    initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                    transition={{ duration: 0.22, ease: "easeOut" }}
                   >
                     <div className="flex w-fit shrink-0 space-x-9 overflow-hidden">
                       {navItem.subMenus.map((sub) => (
-                        <motion.div layout className="w-full" key={sub.title}>
-                          <h3 className="mb-4 text-sm font-medium capitalize text-muted-foreground">
-                            {sub.title}
-                          </h3>
-                          <ul className="space-y-6">
+                        <div className="w-full" key={sub.title}>
+                          {sub.title && (
+                            <h3 className="mb-4 text-sm font-medium capitalize text-muted-foreground">
+                              {sub.title}
+                            </h3>
+                          )}
+                          <ul className="flex gap-8">
                             {sub.items.map((item) => {
                               const Icon = item.icon;
                               return (
@@ -112,14 +140,16 @@ const MegaMenu = React.forwardRef<HTMLUListElement, MegaMenuProps>(
                                     href={item.link || "#"}
                                     className="flex items-start space-x-3 group"
                                   >
-                                    <div className="flex size-9 shrink-0 items-center justify-center rounded-md border border-border text-foreground transition-colors duration-300 group-hover:bg-forest group-hover:text-white">
-                                      <Icon className="h-5 w-5 flex-none" />
-                                    </div>
+                                    {Icon && (
+                                      <div className="flex size-9 shrink-0 items-center justify-center rounded-md border border-border text-foreground transition-colors duration-300 group-hover:bg-forest group-hover:text-white">
+                                        <Icon className="h-5 w-5 flex-none" />
+                                      </div>
+                                    )}
                                     <div className="w-max leading-5">
-                                      <p className="shrink-0 text-sm font-medium text-foreground">
+                                      <p className="shrink-0 text-sm font-medium text-foreground transition-colors duration-300 group-hover:text-forest">
                                         {item.label}
                                       </p>
-                                      <p className="shrink-0 text-xs text-muted-foreground transition-colors duration-300 group-hover:text-foreground">
+                                      <p className="shrink-0 text-xs text-muted-foreground">
                                         {item.description}
                                       </p>
                                     </div>
@@ -128,7 +158,7 @@ const MegaMenu = React.forwardRef<HTMLUListElement, MegaMenuProps>(
                               );
                             })}
                           </ul>
-                        </motion.div>
+                        </div>
                       ))}
                     </div>
                   </motion.div>

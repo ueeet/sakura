@@ -3,6 +3,7 @@ import { requireAdmin } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { updateSettingsSchema } from "../lib/validators";
+import { cacheInvalidate } from "../lib/cache";
 import prisma from "../prismaClient";
 
 const router = Router();
@@ -21,6 +22,8 @@ router.put("/", requireAdmin, validate(updateSettingsSchema), asyncHandler(async
     update: req.body,
     create: req.body,
   });
+  // Слайды главной живут внутри Settings — сбрасываем публичный кеш.
+  cacheInvalidate("home:");
   res.json(settings);
 }));
 
