@@ -123,6 +123,10 @@ router.post("/mock/confirm", asyncHandler(async (req, res) => {
   broadcast("payment_received", { payment: updated, booking: updatedBooking });
   broadcast("booking_updated", updatedBooking);
 
+  // Telegram: отправляем новую бронь админу только после оплаты депозита,
+  // чтобы не спамить уведомлениями брошенные корзины
+  notifyNewBooking(updatedBooking);
+
   // SMS клиенту — бронь подтверждена
   const dateStr = formatMoscowHuman(updatedBooking.startAt);
   sendBookingConfirmedSms(updatedBooking.phone, updatedBooking.clientName, dateStr, "");
