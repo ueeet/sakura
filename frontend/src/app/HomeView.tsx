@@ -518,6 +518,7 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
   const [text, setText] = useState("");
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
+  const [showAll, setShowAll] = useState(false);
 
   const avg = reviews.length > 0
     ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
