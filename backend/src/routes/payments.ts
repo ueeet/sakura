@@ -4,6 +4,7 @@ import { requireAdmin } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { broadcast } from "../lib/sse";
+import { notifyNewBooking } from "../lib/telegram";
 import { sendBookingConfirmedSms } from "../lib/sms";
 import { formatMoscowHuman } from "../lib/timezone";
 import { getPaymentProvider } from "../lib/payment";
