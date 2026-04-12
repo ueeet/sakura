@@ -317,8 +317,23 @@ function emptyForm(): ReviewForm {
 function ReviewEditor({ open, onClose, onSaved }: EditorProps) {
   const [form, setForm] = useState<ReviewForm>(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleUpload = async (file: File) => {
+    setUploading(true);
+    setError(null);
+    try {
+      const res = await api.upload(file);
+      setForm((f) => ({ ...f, image: res.url }));
+    } catch {
+      setError("Не удалось загрузить фото");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     if (!open) return;
