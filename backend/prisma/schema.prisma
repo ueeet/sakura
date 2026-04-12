@@ -210,6 +210,7 @@ model Review {
   authorName String
   text       String
   rating     Int
+  image      String?
   source     String   @default("site")               // "site" | "2gis" | "yandex"
   sourceId   String?  @unique
   branchId   Int?
