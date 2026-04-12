@@ -33,6 +33,7 @@ router.post("/public", validate(publicReviewSchema), asyncHandler(async (req, re
     },
   });
   cacheInvalidate("reviews:");
+  broadcast("new_review", item);
   res.status(201).json({ success: true, id: item.id });
 }));
 
