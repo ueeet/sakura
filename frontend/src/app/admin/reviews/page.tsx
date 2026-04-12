@@ -114,6 +114,8 @@ export default function AdminReviewsPage() {
     if (filter === "pending") return !r.isApproved;
     if (filter === "approved") return r.isApproved && r.isVisible;
     if (filter === "hidden") return !r.isVisible;
+    if (filter === "with_photo") return !!r.image;
+    if (filter === "without_photo") return !r.image;
     return true;
   });
 
@@ -122,6 +124,8 @@ export default function AdminReviewsPage() {
     pending: reviews.filter((r) => !r.isApproved).length,
     approved: reviews.filter((r) => r.isApproved && r.isVisible).length,
     hidden: reviews.filter((r) => !r.isVisible).length,
+    with_photo: reviews.filter((r) => !!r.image).length,
+    without_photo: reviews.filter((r) => !r.image).length,
   };
 
   if (loading) {
