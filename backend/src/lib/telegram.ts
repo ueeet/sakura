@@ -100,24 +100,39 @@ export function initTelegramBot() {
   }
 }
 
-export async function notifyNewBooking(booking: {
+type BookingForMsg = {
   id: number;
   clientName: string;
   phone: string;
   startAt: Date;
   endAt: Date;
-  guests?: number;
+  guests?: number | null;
   totalPrice?: number | null;
+  paidAmount?: number;
   branch?: { name: string } | null;
   sauna?: { name: string } | null;
-}) {
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!bot || !chatId) return;
+};
 
-  const fmt = (d: Date) => formatMoscowHuman(d);
+const STATUS_EMOJI: Record<string, string> = {
+  new: "🟡 <b>Ожидает подтверждения</b>",
+  confirmed: "✅ <b>Подтверждена</b>",
+  cancelled: "❌ <b>Отменена</b>",
+  completed: "🏁 <b>Завершена</b>",
+};
+
+/**
+ * Рендерит текст сообщения брони. Используется и при первой отправке,
+ * и при редактировании после смены статуса — один источник правды для
+ * форматирования, чтобы обновлённое сообщение выглядело идентично новому.
+ */
+function renderBookingMessage(booking: BookingForMsg, status: string): string {
+  const fmt = (d: Date) => formatMoscowHuman(new Date(d));
+  const header = status === "new"
+    ? "🔔 <b>Новая оплаченная бронь!</b>"
+    : STATUS_EMOJI[status] || `<b>Статус:</b> ${status}`;
 
   const lines = [
-    "🔔 <b>Новая бронь!</b>",
+    header,
     "",
     `<b>Клиент:</b> ${booking.clientName}`,
     `<b>Телефон:</b> ${booking.phone}`,
@@ -127,11 +142,24 @@ export async function notifyNewBooking(booking: {
     `<b>Конец:</b> ${fmt(booking.endAt)}`,
     booking.guests != null && `<b>Гостей:</b> ${booking.guests}`,
     booking.totalPrice != null && `<b>Сумма:</b> ${booking.totalPrice}₽`,
+    booking.paidAmount != null && booking.paidAmount > 0 && `<b>Оплачено:</b> ${booking.paidAmount}₽`,
   ].filter(Boolean);
-  const text = lines.join("\n");
+  return lines.join("\n");
+}
+
+/**
+ * Отправляет уведомление о новой (оплаченной) брони и сохраняет
+ * message_id в БД, чтобы потом можно было редактировать сообщение
+ * при confirm/cancel из админки.
+ */
+export async function notifyNewBooking(booking: BookingForMsg) {
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!bot || !chatId) return;
+
+  const text = renderBookingMessage(booking, "new");
 
   try {
-    await bot.telegram.sendMessage(chatId, text, {
+    const sent = await bot.telegram.sendMessage(chatId, text, {
       parse_mode: "HTML",
       reply_markup: {
         inline_keyboard: [
@@ -142,7 +170,44 @@ export async function notifyNewBooking(booking: {
         ],
       },
     });
+    // Сохраняем ID сообщения, чтобы можно было его отредактировать
+    await prisma.booking.update({
+      where: { id: booking.id },
+      data: {
+        telegramChatId: String(chatId),
+        telegramMessageId: sent.message_id,
+      },
+    });
   } catch (err) {
     logger.error(err, "Telegram notification error");
+  }
+}
+
+/**
+ * Редактирует ранее отправленное сообщение о брони — меняет текст
+ * и убирает inline-кнопки (confirm/cancel уже не нужны).
+ * Вызывается из PUT /bookings/:id и из inline-callback'ов бота.
+ */
+export async function updateBookingMessage(booking: BookingForMsg & {
+  status: string;
+  telegramChatId?: string | null;
+  telegramMessageId?: number | null;
+}) {
+  if (!bot || !booking.telegramChatId || !booking.telegramMessageId) return;
+  const text = renderBookingMessage(booking, booking.status);
+  try {
+    await bot.telegram.editMessageText(
+      booking.telegramChatId,
+      booking.telegramMessageId,
+      undefined,
+      text,
+      { parse_mode: "HTML" },
+    );
+  } catch (err) {
+    // 400 "message is not modified" — нормальный случай, игнорируем
+    const msg = err instanceof Error ? err.message : String(err);
+    if (!msg.includes("message is not modified")) {
+      logger.error({ err, bookingId: booking.id }, "Telegram edit error");
+    }
   }
 }
