@@ -496,3 +496,334 @@ export function HomeView({
     </>
   );
 }
+
+/* ───────── Reviews Section ───────── */
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+
+function pluralReviews(n: number) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "отзыв";
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "отзыва";
+  return "отзывов";
+}
+
+function ReviewsSection({ reviews }: { reviews: Review[] }) {
+  const [formOpen, setFormOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [text, setText] = useState("");
+  const [rating, setRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
+
+  const avg = reviews.length > 0
+    ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
+    : 0;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (name.trim().length < 2) { setError("Введите ваше имя"); return; }
+    if (text.trim().length < 10) { setError("Отзыв слишком короткий (минимум 10 символов)"); return; }
+
+    setSending(true);
+    try {
+      const res = await fetch(`${API_URL}/reviews/public`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ authorName: name.trim(), text: text.trim(), rating }),
+      });
+      if (!res.ok) throw new Error();
+      setSubmitted(true);
+      setName("");
+      setText("");
+      setRating(5);
+    } catch {
+      setError("Не удалось отправить отзыв. Попробуйте позже.");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <section id="reviews" className="overflow-hidden py-24">
+      <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16">
+        {/* Header row */}
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between mb-14">
+          <div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6 }}
+              className="font-heading text-5xl tracking-tight text-foreground md:text-7xl mb-4"
+            >
+              Отзывы
+            </motion.h2>
+            <p className="text-lg text-muted-foreground md:text-xl">
+              Что говорят наши гости
+            </p>
+          </div>
+
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            onClick={() => { setFormOpen(true); setSubmitted(false); setError(""); }}
+            className="inline-flex w-fit items-center gap-2 rounded-xl bg-forest px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-forest-dark"
+          >
+            <Send className="h-4 w-4" />
+            Оставить отзыв
+          </motion.button>
+        </div>
+
+        {/* Average rating */}
+        {reviews.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="mb-12 flex items-center gap-4"
+          >
+            <span className="text-5xl font-bold text-foreground">
+              {avg.toFixed(1)}
+            </span>
+            <div>
+              <div className="flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-5 w-5 ${
+                      i < Math.round(avg) ? "text-amber-400 fill-amber-400" : "text-muted-foreground/30"
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {reviews.length} {pluralReviews(reviews.length)}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Review cards */}
+        {reviews.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {reviews.slice(0, 6).map((review, idx) => (
+              <motion.div
+                key={review.id}
+                style={{ willChange: "transform, opacity" }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{
+                  y: -4,
+                  transition: { duration: 0.2, ease: "easeOut" },
+                }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.5,
+                  delay: idx * 0.08,
+                  ease: "easeOut",
+                }}
+                className="relative rounded-2xl border bg-card p-6 shadow-md transition-shadow duration-200 hover:shadow-lg"
+              >
+                <Quote className="absolute top-5 right-5 h-8 w-8 text-forest/10" />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest/10 text-forest font-semibold text-sm">
+                    {review.authorName.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">
+                      {review.authorName}
+                    </p>
+                    <div className="flex gap-0.5 mt-0.5">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-3.5 w-3.5 ${
+                            i < review.rating
+                              ? "text-amber-400 fill-amber-400"
+                              : "text-muted-foreground/30"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
+                  {review.text}
+                </p>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-[11px] text-muted-foreground/60">
+                    {new Date(review.createdAt).toLocaleDateString("ru", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>
+                  {review.source !== "site" && (
+                    <span className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+                      {review.source === "2gis" ? "2ГИС" : "Яндекс"}
+                    </span>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="mx-auto max-w-xl rounded-2xl border bg-card p-10 text-center shadow-md"
+          >
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-forest/10">
+              <Quote className="h-7 w-7 text-forest/70" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground">
+              Отзывов пока нет
+            </h3>
+            <p className="mt-3 text-base text-muted-foreground">
+              Станьте первым — расскажите о вашем опыте!
+            </p>
+            <button
+              onClick={() => { setFormOpen(true); setSubmitted(false); setError(""); }}
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-forest px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-forest-dark"
+            >
+              <Send className="h-4 w-4" />
+              Оставить отзыв
+            </button>
+          </motion.div>
+        )}
+      </div>
+
+      {/* ── Review form modal ── */}
+      <AnimatePresence>
+        {formOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+            onClick={() => setFormOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              style={{ willChange: "transform, opacity" }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-lg rounded-2xl border bg-card p-6 shadow-2xl sm:p-8"
+            >
+              {submitted ? (
+                <div className="flex flex-col items-center text-center py-6">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15">
+                    <CheckCircle2 className="h-7 w-7 text-emerald-500" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground">Спасибо за отзыв!</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Он появится на сайте после модерации.
+                  </p>
+                  <button
+                    onClick={() => setFormOpen(false)}
+                    className="mt-6 rounded-xl bg-forest px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-forest-dark"
+                  >
+                    Закрыть
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xl font-semibold text-foreground">Оставить отзыв</h3>
+                    <button
+                      onClick={() => setFormOpen(false)}
+                      className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    {/* Name */}
+                    <div>
+                      <label className="mb-1.5 block text-sm font-medium text-foreground">
+                        Ваше имя
+                      </label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Иван"
+                        className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-colors focus:border-forest"
+                      />
+                    </div>
+
+                    {/* Rating */}
+                    <div>
+                      <label className="mb-1.5 block text-sm font-medium text-foreground">
+                        Оценка
+                      </label>
+                      <div className="flex gap-1">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => setRating(i + 1)}
+                            onMouseEnter={() => setHoverRating(i + 1)}
+                            onMouseLeave={() => setHoverRating(0)}
+                            className="p-0.5 transition-transform hover:scale-110"
+                          >
+                            <Star
+                              className={`h-7 w-7 ${
+                                i < (hoverRating || rating)
+                                  ? "text-amber-400 fill-amber-400"
+                                  : "text-muted-foreground/30"
+                              }`}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Text */}
+                    <div>
+                      <label className="mb-1.5 block text-sm font-medium text-foreground">
+                        Ваш отзыв
+                      </label>
+                      <textarea
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        rows={4}
+                        placeholder="Расскажите о вашем опыте..."
+                        className="w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-colors focus:border-forest"
+                      />
+                    </div>
+
+                    {error && (
+                      <p className="text-sm text-red-500">{error}</p>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={sending}
+                      className="w-full rounded-xl bg-forest px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-forest-dark disabled:opacity-50"
+                    >
+                      {sending ? "Отправка..." : "Отправить отзыв"}
+                    </button>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
