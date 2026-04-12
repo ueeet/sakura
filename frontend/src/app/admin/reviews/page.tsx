@@ -164,6 +164,8 @@ export default function AdminReviewsPage() {
           { key: "pending", label: "На модерации" },
           { key: "approved", label: "Опубликованные" },
           { key: "hidden", label: "Скрытые" },
+          { key: "with_photo", label: "С фото" },
+          { key: "without_photo", label: "Без фото" },
         ] as const).map(({ key, label }) => (
           <button
             key={key}
