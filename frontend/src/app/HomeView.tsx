@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/carousel";
 import { Lightbox } from "@/components/ui/lightbox";
 import type { Promotion, HomeSlide, Review } from "@/lib/types";
-import { Flame, Gift, Cake, ChevronDown, ChevronLeft, ChevronRight, Phone, MapPin, Star, Quote, Send, CheckCircle2, X } from "lucide-react";
+import { Flame, Gift, Cake, ChevronDown, ChevronLeft, ChevronRight, Phone, MapPin, Star, Quote, Send, CheckCircle2, X, Upload, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const promoIcons: Record<string, React.ReactNode> = {
