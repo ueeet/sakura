@@ -156,7 +156,8 @@ router.post("/", validate(createBookingSchema), asyncHandler(async (req, res) =>
   }
 
   broadcast("new_booking", item);
-  notifyNewBooking(item);
+  // notifyNewBooking перенесён в payments.ts — отправляем в телегу только
+  // после успешной оплаты депозита, а не сразу при создании неоплаченной брони.
   sendBookingCreatedSms(item.phone, item.clientName);
 
   res.status(201).json({ ...item, payment });
