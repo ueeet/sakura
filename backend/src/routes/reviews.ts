@@ -2,7 +2,7 @@ import { Router } from "express";
 import { requireAdmin } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { asyncHandler } from "../middleware/asyncHandler";
-import { createReviewSchema, updateReviewSchema } from "../lib/validators";
+import { createReviewSchema, updateReviewSchema, publicReviewSchema } from "../lib/validators";
 import { cacheGet, cacheSet, cacheInvalidate } from "../lib/cache";
 import prisma from "../prismaClient";
 
