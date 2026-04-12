@@ -130,6 +130,13 @@ export const createReviewSchema = z.object({
   branchId: z.number().int().min(1).optional(),
 });
 
+export const publicReviewSchema = z.object({
+  authorName: z.string().min(2).max(100),
+  text: z.string().min(10).max(2000),
+  rating: z.number().int().min(1).max(5),
+  branchId: z.number().int().min(1).optional(),
+});
+
 export const updateReviewSchema = z.object({
   isApproved: z.boolean().optional(),
   isVisible: z.boolean().optional(),
