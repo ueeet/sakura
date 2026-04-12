@@ -755,7 +755,10 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
         <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16 mt-12">
           <div className="text-center">
             <button
-              onClick={() => setShowTextReviews((v) => !v)}
+              onClick={() => {
+                setShowTextReviews((v) => !v);
+                setTextReviewsShown(6);
+              }}
               className="inline-flex items-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
             >
               {showTextReviews ? "Скрыть отзывы" : `Ещё ${textReviews.length} ${pluralReviews(textReviews.length)}`}
