@@ -790,26 +790,21 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                       className="relative rounded-2xl border bg-card p-6 shadow-md transition-shadow duration-200 hover:shadow-lg"
                     >
                       <Quote className="absolute top-5 right-5 h-8 w-8 text-forest/10" />
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-forest/10 text-forest font-semibold text-sm">
-                          {review.authorName.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-foreground text-sm">
-                            {review.authorName}
-                          </p>
-                          <div className="flex gap-0.5 mt-0.5">
-                            {Array.from({ length: 5 }).map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-3.5 w-3.5 ${
-                                  i < review.rating
-                                    ? "text-amber-400 fill-amber-400"
-                                    : "text-muted-foreground/30"
-                                }`}
-                              />
-                            ))}
-                          </div>
+                      <div className="mb-4">
+                        <p className="font-semibold text-foreground text-sm">
+                          {review.authorName}
+                        </p>
+                        <div className="flex gap-0.5 mt-1">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`h-3.5 w-3.5 ${
+                                i < review.rating
+                                  ? "text-amber-400 fill-amber-400"
+                                  : "text-muted-foreground/30"
+                              }`}
+                            />
+                          ))}
                         </div>
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
