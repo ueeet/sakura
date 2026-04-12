@@ -18,9 +18,13 @@ router.get("/", requireAdmin, asyncHandler(async (req, res) => {
   const status = typeof req.query.status === "string" ? req.query.status : undefined;
   const branchId = req.query.branchId ? Number(req.query.branchId) : undefined;
 
+  // Неоплаченные брони (pending_payment) в админке НЕ показываем — клиент
+  // только начал оформление, ещё не внёс депозит. Крон через 15 минут их
+  // чистит. Если админу явно нужен этот статус — можно запросить
+  // ?status=pending_payment.
   const data = await prisma.booking.findMany({
     where: {
-      ...(status && { status }),
+      ...(status ? { status } : { status: { not: "pending_payment" } }),
       ...(branchId && { branchId }),
     },
     include: { branch: true, sauna: true },
