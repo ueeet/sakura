@@ -76,6 +76,8 @@ export function HomeView({
     return () => clearInterval(id);
   }, [nextPhrase]);
 
+  const [reviewFormOpen, setReviewFormOpen] = useState(false);
+
   return (
     <>
       <Header />
