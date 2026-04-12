@@ -207,6 +207,11 @@ router.put("/:id", requireAdmin, validate(updateBookingSchema), asyncHandler(asy
 
   broadcast("booking_updated", item);
 
+  // Редактируем telegram-сообщение при смене статуса (подтверждена/отменена/и т.д.)
+  if (clean.status) {
+    updateBookingMessage(item);
+  }
+
   if (req.body.status === "confirmed") {
     const dateStr = formatMoscowHuman(item.startAt);
     sendBookingConfirmedSms(item.phone, item.clientName, dateStr, "");
