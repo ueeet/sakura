@@ -208,6 +208,13 @@ export default function AdminReviewsPage() {
               }`}
             >
               <div className="flex items-start justify-between gap-4">
+                {/* Thumbnail */}
+                {review.image && (
+                  <div className="shrink-0 h-16 w-16 rounded-lg overflow-hidden bg-muted">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={review.image} alt="" className="h-full w-full object-cover" />
+                  </div>
+                )}
                 {/* Left: content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 flex-wrap">
