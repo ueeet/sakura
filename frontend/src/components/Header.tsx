@@ -43,8 +43,8 @@ const megaMenuItems: MegaMenuItem[] = [
   },
   { id: 3, label: "О Сакуре", link: "/#about" },
   { id: 4, label: "Акции", link: "/#promotions" },
-  { id: 5, label: "Контакты", link: "/#contacts" },
-  { id: 6, label: "Отзывы", link: "/#reviews" },
+  { id: 5, label: "Отзывы", link: "/#reviews" },
+  { id: 6, label: "Контакты", link: "/#contacts" },
 ];
 
 export function Header() {
