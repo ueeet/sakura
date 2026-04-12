@@ -5,7 +5,7 @@ import { asyncHandler } from "../middleware/asyncHandler";
 import { createBookingSchema, updateBookingSchema } from "../lib/validators";
 import { sanitizeObject } from "../lib/sanitize";
 import { broadcast } from "../lib/sse";
-import { notifyNewBooking } from "../lib/telegram";
+import { notifyNewBooking, updateBookingMessage } from "../lib/telegram";
 import { sendBookingCreatedSms, sendBookingConfirmedSms, sendBookingCancelledSms } from "../lib/sms";
 import { hasBookingConflict } from "../lib/booking";
 import { parseMoscowDate, formatMoscowHuman } from "../lib/timezone";
