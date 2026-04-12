@@ -76,8 +76,6 @@ export function HomeView({
     return () => clearInterval(id);
   }, [nextPhrase]);
 
-  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
-
   return (
     <>
       <Header />
