@@ -21,6 +21,20 @@ router.get("/", asyncHandler(async (_req, res) => {
   res.json(data);
 }));
 
+// Public: submit a review (goes to moderation)
+router.post("/public", validate(publicReviewSchema), asyncHandler(async (req, res) => {
+  const item = await prisma.review.create({
+    data: {
+      ...req.body,
+      source: "site",
+      isApproved: false,
+      isVisible: true,
+    },
+  });
+  cacheInvalidate("reviews:");
+  res.status(201).json({ success: true, id: item.id });
+}));
+
 router.get("/all", requireAdmin, asyncHandler(async (_req, res) => {
   const data = await prisma.review.findMany({
     orderBy: { createdAt: "desc" },
