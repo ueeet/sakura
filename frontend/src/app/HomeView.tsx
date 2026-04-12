@@ -691,6 +691,7 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
       </div>
 
       {/* Photo review cards — horizontal scroll */}
+      {photoReviews.length > 0 && (
       <div className="mx-auto max-w-[1536px] px-6 md:px-12 lg:px-16">
       <div
         ref={scrollRef}
