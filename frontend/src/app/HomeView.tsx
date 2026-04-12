@@ -489,6 +489,8 @@ export function HomeView({
             </div>
           </div>
         </section>
+        {/* ===== REVIEWS ===== */}
+        <ReviewsSection reviews={reviews} />
       </main>
       <Footer />
     </>
