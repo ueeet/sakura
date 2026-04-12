@@ -14,8 +14,8 @@ const navLinks = [
   { href: "/complex-50", label: "50 Комплекс" },
   { href: "/#about", label: "О Сакуре" },
   { href: "/#promotions", label: "Акции" },
-  { href: "/#contacts", label: "Контакты" },
   { href: "/#reviews", label: "Отзывы" },
+  { href: "/#contacts", label: "Контакты" },
 ];
 
 const megaMenuItems: MegaMenuItem[] = [
