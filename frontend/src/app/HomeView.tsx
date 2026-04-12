@@ -737,6 +737,7 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
           </motion.div>
         ))}
       </div>
+      </div>
 
       {/* "More reviews" — text-only reviews hidden by default */}
       {reviews.length > 0 && (
