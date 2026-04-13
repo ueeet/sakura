@@ -101,7 +101,7 @@ export function DateTimePicker({ value, onChange, allowPast = true }: Props) {
   };
 
   const display = parsed
-    ? `${parsed.getDate()} ${MONTHS_LOWER[parsed.getMonth()]} · ${hh}:${mm}`
+    ? `${parsed.getDate()} ${MONTHS_LOWER[parsed.getMonth()]} · ${hh}:00`
     : "Выберите время";
 
   return (
