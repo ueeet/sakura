@@ -692,6 +692,111 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
   );
 }
 
+/* ───────── BookingTimeRange ───────── */
+/**
+ * Дата + часовой диапазон ОДНИМ блоком. Брони всегда в один день (сауна
+ * работает в пределах суток), поэтому одна дата и два часа «с/до».
+ * Если endHour <= startHour — считаем что конец переходит через полночь,
+ * кидаем endAt на следующий день.
+ */
+function BookingTimeRange({
+  startAt,
+  endAt,
+  onChange,
+}: {
+  startAt: string;
+  endAt: string;
+  onChange: (startAt: string, endAt: string) => void;
+}) {
+  // разбираем текущие значения формы (YYYY-MM-DDTHH:MM)
+  const [sDate, sTime = "00:00"] = startAt ? startAt.split("T") : ["", ""];
+  const [eDate, eTime = "00:00"] = endAt ? endAt.split("T") : ["", ""];
+  const date = sDate || eDate;
+  const startHour = Number(sTime.split(":")[0] || 0);
+  const endHourRaw = Number(eTime.split(":")[0] || 0);
+  // Если конец на следующий день — показываем 24+X
+  const endHour = eDate && sDate && eDate > sDate
+    ? endHourRaw + 24
+    : endHourRaw === 0 && startHour > 0 ? 24 : endHourRaw;
+
+  const setDate = (v: string | null) => {
+    if (!v) return;
+    // пересобираем startAt/endAt, учитывая переход через полночь
+    const start = `${v}T${pad(startHour)}:00`;
+    const endDate = endHour > 24 || (endHour === 24 && startHour > 0)
+      ? addDays(v, 1)
+      : v;
+    const endH = endHour >= 24 ? endHour - 24 : endHour;
+    const end = `${endDate}T${pad(endH)}:00`;
+    onChange(start, end);
+  };
+
+  const setStart = (h: number) => {
+    if (!date) return;
+    const newStart = `${date}T${pad(h)}:00`;
+    // если конец теперь не позже начала — сдвигаем его на start+2ч
+    let newEnd = endAt;
+    if (endHour <= h) {
+      const newEndH = Math.min(24, h + 2);
+      const endDate = newEndH >= 24 ? addDays(date, 1) : date;
+      newEnd = `${endDate}T${pad(newEndH % 24)}:00`;
+    }
+    onChange(newStart, newEnd);
+  };
+
+  const setEnd = (h: number) => {
+    if (!date) return;
+    const endDate = h >= 24 ? addDays(date, 1) : date;
+    const newEnd = `${endDate}T${pad(h % 24)}:00`;
+    onChange(startAt, newEnd);
+  };
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-background p-2">
+      <DatePopover value={date || null} onChange={setDate} placeholder="Дата" />
+      <div className="flex items-center gap-2 px-1">
+        <select
+          value={startHour}
+          onChange={(e) => setStart(Number(e.target.value))}
+          disabled={!date}
+          className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-forest disabled:opacity-50"
+        >
+          {Array.from({ length: 24 }, (_, h) => (
+            <option key={h} value={h}>
+              с {pad(h)}:00
+            </option>
+          ))}
+        </select>
+        <span className="text-sm text-muted-foreground">→</span>
+        <select
+          value={endHour}
+          onChange={(e) => setEnd(Number(e.target.value))}
+          disabled={!date}
+          className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-forest disabled:opacity-50"
+        >
+          {Array.from({ length: 24 }, (_, i) => i + 1)
+            .filter((h) => h > startHour)
+            .map((h) => (
+              <option key={h} value={h}>
+                до {pad(h % 24)}:00{h >= 24 ? " (след. день)" : ""}
+              </option>
+            ))}
+        </select>
+      </div>
+    </div>
+  );
+}
+
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function addDays(ymd: string, n: number): string {
+  const [y, m, d] = ymd.split("-").map(Number);
+  const dt = new Date(y, m - 1, d + n);
+  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+}
+
 function emptyForm() {
   return {
     clientName: "",
