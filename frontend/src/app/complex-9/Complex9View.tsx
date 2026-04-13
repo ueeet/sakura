@@ -129,12 +129,19 @@ function Complex9Inner({ branch }: { branch: BranchWithSaunas }) {
   const [activeTabSlug, setActiveTabSlug] = useState(initialTabSlug);
   const [bookingSauna, setBookingSauna] = useState<Sauna | null>(null);
 
+  // Если юзер пришёл с быстрого бронирования (URL содержит date+time+endTime)
+  // — скрываем сауны, занятые в этот слот. Иначе фильтр неактивен.
+  const { availableIds, loading: loadingAvailability } = useAvailabilityFromUrl();
+
   const activeCategory = categories.find((c) => c.slug === activeTabSlug);
   const rawActiveSaunas = activeCategory?.saunas ?? [];
-  const activeSaunas = useMemo(
-    () => applyFilters(rawActiveSaunas, filters),
-    [rawActiveSaunas, filters],
-  );
+  const activeSaunas = useMemo(() => {
+    let result = applyFilters(rawActiveSaunas, filters);
+    if (availableIds !== null) {
+      result = result.filter((s) => availableIds.has(s.id));
+    }
+    return result;
+  }, [rawActiveSaunas, filters, availableIds]);
 
   const handleTabChange = (slug: string) => {
     setActiveTabSlug(slug);
