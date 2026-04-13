@@ -584,21 +584,15 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1.5">Начало</label>
-                  <DateTimePicker
-                    value={form.startAt}
-                    onChange={(v) => setForm({ ...form, startAt: v })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1.5">Конец</label>
-                  <DateTimePicker
-                    value={form.endAt}
-                    onChange={(v) => setForm({ ...form, endAt: v })}
-                  />
-                </div>
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                  Дата и время
+                </label>
+                <BookingTimeRange
+                  startAt={form.startAt}
+                  endAt={form.endAt}
+                  onChange={(startAt, endAt) => setForm({ ...form, startAt, endAt })}
+                />
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
