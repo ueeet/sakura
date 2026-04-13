@@ -653,7 +653,11 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
                     type="number"
                     min={0}
                     value={form.totalPrice}
-                    onChange={(e) => setForm({ ...form, totalPrice: e.target.value })}
+                    onChange={(e) => {
+                      autoPriceManualOverride.current = true;
+                      setForm({ ...form, totalPrice: e.target.value });
+                    }}
+                    placeholder="Авто"
                     className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest"
                   />
                 </div>
