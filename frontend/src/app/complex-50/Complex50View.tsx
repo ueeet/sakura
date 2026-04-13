@@ -147,6 +147,7 @@ function Complex50Inner({ branch }: { branch: BranchWithSaunas }) {
             filters={filters}
             onChange={setFilters}
             saunas={allSaunas}
+            showSchedule={false}
           />
 
           {saunas.length === 0 ? (
