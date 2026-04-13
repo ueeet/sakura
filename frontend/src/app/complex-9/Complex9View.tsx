@@ -179,6 +179,7 @@ function Complex9Inner({ branch }: { branch: BranchWithSaunas }) {
           filters={filters}
           onChange={setFilters}
           saunas={allSaunas}
+          showSchedule={false}
         />
 
         {categories.length > 1 && (
