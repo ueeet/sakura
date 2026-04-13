@@ -80,9 +80,16 @@ interface SaunaFiltersProps {
   filters: SaunaFilterState;
   onChange: (f: SaunaFilterState) => void;
   saunas: Sauna[];
+  /**
+   * Показывать ли строку выбора даты+времени. Нужна только на /search,
+   * где юзер ищет свободный слот в масштабе всей сети. На страницах
+   * конкретного комплекса (9/50) мы показываем ВСЕ сауны — дата/время
+   * спрашивается уже в модалке бронирования.
+   */
+  showSchedule?: boolean;
 }
 
-export function SaunaFilters({ filters, onChange, saunas }: SaunaFiltersProps) {
+export function SaunaFilters({ filters, onChange, saunas, showSchedule = true }: SaunaFiltersProps) {
   const availableTypes = useMemo(() => {
     const set = new Set(saunas.map((s) => s.type));
     return TYPE_OPTIONS.filter((t) => set.has(t.value));
