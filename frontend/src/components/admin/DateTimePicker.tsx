@@ -127,29 +127,20 @@ export function DateTimePicker({ value, onChange, allowPast = true }: Props) {
     ? `${parsed.getDate()} ${MONTHS_LOWER[parsed.getMonth()]} · ${hh}:00`
     : "Выберите время";
 
-  return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground transition-colors hover:border-forest/50 focus:outline-none focus:border-forest"
-      >
-        <Calendar className="h-4 w-4 shrink-0 text-muted-foreground" />
-        <span className={parsed ? "text-foreground" : "text-muted-foreground"}>
-          {display}
-        </span>
-      </button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -6, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.97 }}
-            transition={{ duration: 0.16 }}
-            style={{ willChange: "transform, opacity" }}
-            className="absolute left-0 top-full z-50 mt-2 flex w-[540px] max-w-[calc(100vw-32px)] flex-col rounded-xl border border-border bg-card p-3 shadow-xl sm:flex-row sm:gap-3"
-          >
+  const popupContent = open && coords ? (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: -6, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -6, scale: 0.97 }}
+      transition={{ duration: 0.16 }}
+      style={{
+        willChange: "transform, opacity",
+        top: coords.top,
+        left: Math.min(coords.left, typeof window !== "undefined" ? window.innerWidth - 560 - 16 : coords.left),
+      }}
+      className="fixed z-[200] flex w-[540px] max-w-[calc(100vw-32px)] flex-col rounded-xl border border-border bg-card p-3 shadow-2xl sm:flex-row sm:gap-3"
+    >
             {/* Calendar */}
             <div className="flex-1">
               <div className="mb-3 flex items-center justify-between">
