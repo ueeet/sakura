@@ -10,6 +10,7 @@ import { ComplexHero } from "@/components/ComplexHero";
 import { BookingModal } from "@/components/BookingModal";
 import { SaunaCardCarousel } from "@/components/SaunaCardCarousel";
 import { SaunaFilters, applyFilters, defaultFilters, type SaunaFilterState } from "@/components/SaunaFilters";
+import { useAvailabilityFromUrl } from "@/lib/useAvailabilityFromUrl";
 import type { BranchWithSaunas, Sauna } from "@/lib/types";
 import { Users } from "lucide-react";
 
