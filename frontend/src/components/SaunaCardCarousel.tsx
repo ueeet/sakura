@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface SaunaCardCarouselProps {
@@ -12,54 +12,79 @@ interface SaunaCardCarouselProps {
 
 /* eslint-disable @next/next/no-img-element */
 /*
- * Карусель фото саун. Используем нативный <img> вместо next/image —
- * все файлы уже .webp и небольшие, прогон через /_next/image endpoint
- * только добавляет задержку на холодном кэше. Нативный img грузится
- * прямо из public/ или CDN, все картинки рендерим сразу с opacity-0,
- * чтобы листание было мгновенным (браузер параллельно тянет все 4 фото
- * при появлении карточки во вьюпорте).
+ * Карусель фото саун. Стратегия:
+ *  - Рендерим только ОДНО <img> (активная картинка) — на странице может быть
+ *    15+ карточек, держать 60+ DOM-img сразу убивает FPS на Mac.
+ *  - Остальные картинки prefetch-им через `new Image()` при первом раскрытии
+ *    карусели (клик по стрелке или hover карточки) — тогда листание мгновенное,
+ *    а начальный рендер страницы не страдает.
  */
 export function SaunaCardCarousel({
   images,
   alt,
 }: SaunaCardCarouselProps) {
   const [current, setCurrent] = useState(0);
+  const [prefetched, setPrefetched] = useState(false);
+
+  const prefetchAll = useCallback(() => {
+    if (prefetched || images.length <= 1) return;
+    setPrefetched(true);
+    // Prefetch остальные картинки в фоне
+    for (let i = 1; i < images.length; i++) {
+      const img = new window.Image();
+      img.src = images[i];
+    }
+  }, [images, prefetched]);
 
   const prev = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
+      prefetchAll();
       setCurrent((c) => (c === 0 ? images.length - 1 : c - 1));
     },
-    [images.length],
+    [images.length, prefetchAll],
   );
 
   const next = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
+      prefetchAll();
       setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
     },
-    [images.length],
+    [images.length, prefetchAll],
   );
+
+  // Ленивый prefetch после idle — не блокируем начальный рендер,
+  // но к моменту когда пользователь потянется к карточке всё уже в кэше.
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const schedule = (cb: () => void) => {
+      const win = window as Window & {
+        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      };
+      if (win.requestIdleCallback) {
+        win.requestIdleCallback(cb, { timeout: 3000 });
+      } else {
+        setTimeout(cb, 1500);
+      }
+    };
+    schedule(prefetchAll);
+  }, [images, prefetchAll]);
 
   const hasMultiple = images.length > 1;
 
   return (
-    <>
-      {images.map((src, i) => (
-        <img
-          key={src}
-          src={src}
-          alt={alt}
-          loading="eager"
-          decoding="async"
-          className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${
-            i === current ? "opacity-100" : "opacity-0"
-          }`}
-          style={{ transition: "opacity 0.2s ease-out, transform 0.5s ease-out" }}
-        />
-      ))}
+    <div onMouseEnter={prefetchAll} className="contents">
+      <img
+        key={images[current]}
+        src={images[current]}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      />
 
       {hasMultiple && (
         <>
