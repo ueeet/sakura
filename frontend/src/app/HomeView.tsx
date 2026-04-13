@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { HeroQuickBooking } from "@/components/HeroQuickBooking";
+import { AmbientBackground } from "@/components/AmbientBackground";
 import {
   Carousel,
   CarouselContent,
@@ -79,6 +80,7 @@ export function HomeView({
   return (
     <>
       <Header />
+      <AmbientBackground />
       <main>
         {/* ===== HERO =====
             overflow-x-clip (не overflow-hidden!) — клипаем только по X, чтобы
@@ -148,7 +150,7 @@ export function HomeView({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -16 }}
                   transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="absolute whitespace-nowrap text-xl text-white/90 sm:text-2xl md:text-[27px]"
+                  className="absolute whitespace-nowrap text-base text-white/90 sm:text-2xl md:text-[27px]"
                 >
                   {HERO_PHRASES[phraseIdx]}
                 </motion.p>
@@ -704,12 +706,10 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
           <motion.div
             key={review.id}
             data-review-card
-            style={{ willChange: "transform, opacity" }}
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: Math.min(idx, 4) * 0.08, ease: "easeOut" }}
-            className="w-[300px] shrink-0 sm:w-[340px] lg:w-[380px]"
+            className="shrink-0 basis-[300px] sm:basis-[calc((100%-1.5rem)/2)] lg:basis-[calc((100%-3rem)/3)] xl:basis-[calc((100%-4.5rem)/4)]"
           >
             <div className="rounded-2xl border bg-card shadow-md overflow-hidden">
               <div className="relative aspect-square overflow-hidden bg-muted">
@@ -718,12 +718,13 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                   src={review.image!}
                   alt={review.authorName}
                   className="h-full w-full object-cover"
-                  loading="lazy"
+                  loading="eager"
+                  decoding="async"
                 />
               </div>
-              <div className="p-5">
+              <div className="p-5 flex flex-col">
                 <div className="mb-3">
-                  <p className="font-semibold text-foreground text-sm">{review.authorName}</p>
+                  <p className="font-semibold text-foreground text-sm truncate">{review.authorName}</p>
                   <div className="flex gap-0.5 mt-1">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
@@ -735,14 +736,16 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                     ))}
                   </div>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 min-h-[4.25rem]">
                   {review.text}
                 </p>
-                {review.source !== "site" && (
-                  <span className="mt-3 inline-block text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
-                    {review.source === "2gis" ? "2ГИС" : "Яндекс"}
-                  </span>
-                )}
+                <div className="mt-3 h-3.5">
+                  {review.source !== "site" && (
+                    <span className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+                      {review.source === "2gis" ? "2ГИС" : "Яндекс"}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>

@@ -216,6 +216,25 @@ Response: {
 - `"cleaning"` — занято уборкой
 - `"closed"` — вне рабочих часов сауны
 
+### GET `/saunas/availability/batch?date=YYYY-MM-DD&startHour=N&endHour=N`
+Batch-проверка свободности всех активных саун на интервал `[startHour, endHour)`.
+Используется на странице `/search` для фильтрации списка под выбранную дату/время.
+
+```json
+Response: {
+  "available": {
+    "1": true,
+    "2": false,
+    "3": true,
+    ...
+  }
+}
+```
+
+Ключи — saunaId, значения — `true` если сауна свободна на весь интервал
+(нет конфликтующих броней + интервал внутри `[openHour, closeHour]`).
+Учитывает `cleaningMinutes` каждой сауны.
+
 ### POST / PUT / DELETE `/saunas[/:id]` (Admin) — CRUD
 
 POST принимает все поля сауны включая `images: string[]`, `amenities: string[]`, `extras: string[]`, `categoryId` (nullable).

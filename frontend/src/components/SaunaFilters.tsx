@@ -2,8 +2,9 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Users, SlidersHorizontal, X } from "lucide-react";
+import { Users, SlidersHorizontal, X, Clock } from "lucide-react";
 import type { Sauna, SaunaType } from "@/lib/types";
+import { DatePopover } from "@/components/DatePopover";
 
 const TYPE_OPTIONS: { value: SaunaType; label: string }[] = [
   { value: "russian", label: "Русская баня" },
@@ -30,16 +31,29 @@ export interface SaunaFilterState {
   types: SaunaType[];
   minCapacity: number;
   sort: SortOption;
+  // Расписание (опционально). Если все три заданы — SearchView фильтрует
+  // список по реальной свободности через batch-эндпоинт.
+  date: string | null;       // "YYYY-MM-DD"
+  startHour: number | null;  // 0..23
+  endHour: number | null;    // 1..24, > startHour
 }
 
 export const defaultFilters: SaunaFilterState = {
   types: [],
   minCapacity: 0,
   sort: "default",
+  date: null,
+  startHour: null,
+  endHour: null,
 };
 
 export function hasActiveFilters(f: SaunaFilterState): boolean {
-  return f.types.length > 0 || f.minCapacity > 0 || f.sort !== "default";
+  return f.types.length > 0 || f.minCapacity > 0 || f.sort !== "default" ||
+    f.date !== null || f.startHour !== null || f.endHour !== null;
+}
+
+export function hasScheduleFilter(f: SaunaFilterState): boolean {
+  return f.date !== null && f.startHour !== null && f.endHour !== null;
 }
 
 export function applyFilters(saunas: Sauna[], filters: SaunaFilterState): Sauna[] {
@@ -82,6 +96,21 @@ export function SaunaFilters({ filters, onChange, saunas }: SaunaFiltersProps) {
   };
 
   const active = hasActiveFilters(filters);
+  const scheduleActive = filters.date !== null || filters.startHour !== null || filters.endHour !== null;
+
+  const setStartHour = (v: number | null) => {
+    // Если новый start ≥ end — сдвигаем end к start+2 (макс 24)
+    const endH = v !== null && filters.endHour !== null && filters.endHour <= v
+      ? Math.min(24, v + 2)
+      : filters.endHour;
+    onChange({ ...filters, startHour: v, endHour: endH });
+  };
+
+  const selectArrowStyle: React.CSSProperties = {
+    backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "right 10px center",
+  };
 
   return (
     <motion.div
@@ -89,8 +118,58 @@ export function SaunaFilters({ filters, onChange, saunas }: SaunaFiltersProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
       style={{ willChange: "transform, opacity" }}
-      className="mb-8 rounded-2xl border border-border bg-card/50 px-5 py-4"
+      className="relative z-30 mb-8 rounded-2xl border border-border bg-card/50 px-5 py-4"
     >
+      {/* Schedule row — даёт юзеру быстро менять дату/время прямо в списке.
+          Когда заданы все три (date + startHour + endHour) — SearchView
+          фильтрует карточки по реальной свободности слота. */}
+      <div className="mb-3 flex flex-wrap items-center gap-2 pb-3 border-b border-border/60">
+        <DatePopover
+          value={filters.date}
+          onChange={(v) => onChange({ ...filters, date: v })}
+          placeholder="Дата"
+        />
+
+        <Clock className="ml-2 h-4 w-4 text-muted-foreground" />
+        <select
+          value={filters.startHour ?? ""}
+          onChange={(e) => setStartHour(e.target.value === "" ? null : Number(e.target.value))}
+          className="appearance-none rounded-full bg-muted pl-4 pr-8 py-2 text-sm font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-forest"
+          style={selectArrowStyle}
+        >
+          <option value="">с</option>
+          {Array.from({ length: 24 }, (_, h) => (
+            <option key={h} value={h}>{String(h).padStart(2, "0")}:00</option>
+          ))}
+        </select>
+        <span className="text-sm text-muted-foreground/60">→</span>
+        <select
+          value={filters.endHour ?? ""}
+          onChange={(e) => onChange({ ...filters, endHour: e.target.value === "" ? null : Number(e.target.value) })}
+          disabled={filters.startHour === null}
+          className="appearance-none rounded-full bg-muted pl-4 pr-8 py-2 text-sm font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-forest disabled:opacity-50 disabled:cursor-not-allowed"
+          style={selectArrowStyle}
+        >
+          <option value="">до</option>
+          {Array.from({ length: 24 }, (_, i) => i + 1)
+            .filter((h) => filters.startHour === null || h > filters.startHour)
+            .map((h) => (
+              <option key={h} value={h}>{String(h).padStart(2, "0")}:00</option>
+            ))}
+        </select>
+
+        {scheduleActive && (
+          <button
+            type="button"
+            onClick={() => onChange({ ...filters, date: null, startHour: null, endHour: null })}
+            className="ml-1 inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          >
+            <X className="h-3 w-3" />
+            Очистить
+          </button>
+        )}
+      </div>
+
       <div className="flex flex-wrap items-center gap-2.5">
         <SlidersHorizontal className="h-4.5 w-4.5 text-muted-foreground" />
 

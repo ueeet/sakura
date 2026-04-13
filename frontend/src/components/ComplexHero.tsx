@@ -167,7 +167,7 @@ export function ComplexHero({
             <motion.div variants={itemVariants} className="mt-10">
               <a
                 href={`#${scrollToId}`}
-                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-900 px-12 py-5 text-lg font-semibold text-white shadow-[0_8px_30px_rgba(6,78,59,0.4)] ring-1 ring-emerald-500/30 transition-shadow duration-200 hover:shadow-[0_12px_40px_rgba(6,78,59,0.55)]"
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-forest px-12 py-5 text-lg font-semibold text-white shadow-[0_8px_30px_rgba(6,78,59,0.4)] ring-1 ring-forest-light/40 transition-colors duration-200 hover:bg-forest-dark"
               >
                 <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                 Посмотреть сауны

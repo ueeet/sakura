@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useMemo } from "react";
+import { Suspense, useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -8,9 +8,10 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BookingModal } from "@/components/BookingModal";
 import { SaunaCardCarousel } from "@/components/SaunaCardCarousel";
-import { SaunaFilters, applyFilters, defaultFilters, type SaunaFilterState } from "@/components/SaunaFilters";
+import { SaunaFilters, applyFilters, defaultFilters, hasScheduleFilter, type SaunaFilterState } from "@/components/SaunaFilters";
+import { publicApi } from "@/lib/publicApi";
 import type { Sauna } from "@/lib/types";
-import { Search, Users } from "lucide-react";
+import { Search, Users, Loader2 } from "lucide-react";
 
 const typeBadge = "bg-wood-dark/80 text-white";
 
@@ -118,18 +119,71 @@ function SearchInner({ allSaunas }: { allSaunas: Sauna[] }) {
   const searchParams = useSearchParams();
   const [bookingSauna, setBookingSauna] = useState<Sauna | null>(null);
 
-  // Инициализируем фильтры из URL (?guests=N)
+  // Инициализируем фильтры из URL — приходят с hero quick booking:
+  // ?date=YYYY-MM-DD&time=HH:00&endTime=HH:00&guests=N
   const guestsParam = searchParams.get("guests");
+  const dateParam = searchParams.get("date");
+  const timeParam = searchParams.get("time");        // "HH:00"
+  const endTimeParam = searchParams.get("endTime");  // "HH:00"
+
   const initialCapacity = guestsParam ? Math.max(1, parseInt(guestsParam, 10)) : 0;
+  const parseHour = (s: string | null): number | null => {
+    if (!s) return null;
+    const h = parseInt(s.split(":")[0] ?? "", 10);
+    return Number.isInteger(h) && h >= 0 && h <= 24 ? h : null;
+  };
   const [filters, setFilters] = useState<SaunaFilterState>({
     ...defaultFilters,
     minCapacity: initialCapacity,
+    date: dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) ? dateParam : null,
+    startHour: parseHour(timeParam),
+    endHour: parseHour(endTimeParam),
   });
 
-  const filtered = useMemo(
-    () => applyFilters(allSaunas, filters),
-    [allSaunas, filters],
-  );
+  // Доступность: null = не запрашивали (нет даты/времени) → показываем всё.
+  // Set<number> = ID свободных саун на выбранный слот.
+  const [availableIds, setAvailableIds] = useState<Set<number> | null>(null);
+  const [loadingAvailability, setLoadingAvailability] = useState(false);
+
+  const { date: filterDate, startHour: filterStartHour, endHour: filterEndHour } = filters;
+  useEffect(() => {
+    if (filterDate === null || filterStartHour === null || filterEndHour === null) {
+      setAvailableIds(null);
+      return;
+    }
+    const date = filterDate;
+    const startHour = filterStartHour;
+    const endHour = filterEndHour;
+    let aborted = false;
+    setLoadingAvailability(true);
+    publicApi
+      .getBatchAvailability(date, startHour, endHour)
+      .then(({ available }) => {
+        if (aborted) return;
+        const ids = new Set<number>();
+        for (const [id, free] of Object.entries(available)) {
+          if (free) ids.add(Number(id));
+        }
+        setAvailableIds(ids);
+      })
+      .catch(() => {
+        if (!aborted) setAvailableIds(new Set());
+      })
+      .finally(() => {
+        if (!aborted) setLoadingAvailability(false);
+      });
+    return () => { aborted = true; };
+  }, [filterDate, filterStartHour, filterEndHour]);
+
+  const filtered = useMemo(() => {
+    let result = applyFilters(allSaunas, filters);
+    if (availableIds !== null) {
+      result = result.filter((s) => availableIds.has(s.id));
+    }
+    return result;
+  }, [allSaunas, filters, availableIds]);
+
+  const scheduleOn = hasScheduleFilter(filters);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -145,10 +199,19 @@ function SearchInner({ allSaunas }: { allSaunas: Sauna[] }) {
               Все сауны
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            {filtered.length === allSaunas.length
-              ? `Найдено ${allSaunas.length} саун в обоих филиалах`
-              : `Найдено ${filtered.length} из ${allSaunas.length} саун`}
+          <p className="text-muted-foreground inline-flex items-center gap-2">
+            {loadingAvailability ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Проверяем свободные сауны…
+              </>
+            ) : scheduleOn ? (
+              `Свободно ${filtered.length} ${filtered.length === 1 ? "сауна" : "саун"} на выбранное время`
+            ) : filtered.length === allSaunas.length ? (
+              `Найдено ${allSaunas.length} саун в обоих филиалах`
+            ) : (
+              `Найдено ${filtered.length} из ${allSaunas.length} саун`
+            )}
           </p>
         </div>
 
@@ -160,7 +223,9 @@ function SearchInner({ allSaunas }: { allSaunas: Sauna[] }) {
 
         {filtered.length === 0 ? (
           <div className="rounded-2xl border border-border bg-card p-12 text-center text-muted-foreground">
-            Нет саун, подходящих под выбранное количество гостей
+            {scheduleOn
+              ? "На выбранную дату и время свободных саун нет — попробуйте другой слот"
+              : "Нет саун, подходящих под выбранные фильтры"}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">

@@ -93,6 +93,15 @@ export const publicApi = {
       `/saunas/${saunaId}/availability?date=${date}`,
       { revalidate: false },
     ),
+  /**
+   * Batch — какие сауны свободны на указанный интервал.
+   * Используется на /search для фильтрации списка под выбранную дату/время.
+   */
+  getBatchAvailability: (date: string, startHour: number, endHour: number) =>
+    publicGet<{ available: Record<number, boolean> }>(
+      `/saunas/availability/batch?date=${date}&startHour=${startHour}&endHour=${endHour}`,
+      { revalidate: false },
+    ),
   getPromotions: () =>
     publicGet<Promotion[]>("/promotions", { tags: [CACHE_TAGS.promotions] }),
   getHomeSlides: () =>
