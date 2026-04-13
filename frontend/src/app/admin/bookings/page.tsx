@@ -539,10 +539,9 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
                   <input
                     type="text"
                     required
-                    disabled={isEdit}
                     value={form.clientName}
                     onChange={(e) => setForm({ ...form, clientName: e.target.value })}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest disabled:opacity-60"
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest"
                   />
                 </div>
                 <div>
@@ -550,11 +549,10 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
                   <input
                     type="tel"
                     required
-                    disabled={isEdit}
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     placeholder="+7..."
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest disabled:opacity-60"
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest"
                   />
                 </div>
               </div>
@@ -564,10 +562,9 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5">Филиал</label>
                   <select
                     required
-                    disabled={isEdit}
                     value={form.branchId}
                     onChange={(e) => setForm({ ...form, branchId: e.target.value, saunaId: "" })}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest disabled:opacity-60"
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest"
                   >
                     <option value="">—</option>
                     {branches.map((br) => (
@@ -579,10 +576,9 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5">Сауна</label>
                   <select
                     required
-                    disabled={isEdit}
                     value={form.saunaId}
                     onChange={(e) => setForm({ ...form, saunaId: e.target.value })}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest disabled:opacity-60"
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest"
                   >
                     <option value="">—</option>
                     {availableSaunas.map((s) => (
@@ -595,22 +591,16 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5">Начало</label>
-                  <input
-                    type="datetime-local"
-                    required
+                  <DateTimePicker
                     value={form.startAt}
-                    onChange={(e) => setForm({ ...form, startAt: e.target.value })}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest"
+                    onChange={(v) => setForm({ ...form, startAt: v })}
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground mb-1.5">Конец</label>
-                  <input
-                    type="datetime-local"
-                    required
+                  <DateTimePicker
                     value={form.endAt}
-                    onChange={(e) => setForm({ ...form, endAt: e.target.value })}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm focus:outline-none focus:border-forest"
+                    onChange={(v) => setForm({ ...form, endAt: v })}
                   />
                 </div>
               </div>
