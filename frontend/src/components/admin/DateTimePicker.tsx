@@ -41,7 +41,8 @@ interface Props {
  */
 export function DateTimePicker({ value, onChange, allowPast = true }: Props) {
   const [date, hhmm] = value ? value.split("T") : ["", "00:00"];
-  const [hh = "00", mm = "00"] = (hhmm || "00:00").split(":");
+  const [hh = "00"] = (hhmm || "00:00").split(":");
+  const mm = "00"; // минуты всегда :00 — брони на час
 
   const parsed = parseLocal(date);
   const [viewYear, setViewYear] = useState(() => (parsed ?? new Date()).getFullYear());
