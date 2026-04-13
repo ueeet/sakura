@@ -130,6 +130,7 @@ export function SaunaFilters({ filters, onChange, saunas, showSchedule = true }:
       {/* Schedule row — даёт юзеру быстро менять дату/время прямо в списке.
           Когда заданы все три (date + startHour + endHour) — SearchView
           фильтрует карточки по реальной свободности слота. */}
+      {showSchedule && (
       <div className="mb-3 flex flex-wrap items-center gap-2 pb-3 border-b border-border/60">
         <DatePopover
           value={filters.date}
