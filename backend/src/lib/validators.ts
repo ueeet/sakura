@@ -115,6 +115,10 @@ export const createBookingSchema = z.object({
 
 export const updateBookingSchema = z.object({
   status: z.enum(["new", "confirmed", "cancelled", "completed"]).optional(),
+  clientName: z.string().min(2).optional(),
+  phone: z.string().min(10).optional(),
+  branchId: z.number().int().min(1).optional(),
+  saunaId: z.number().int().min(1).optional(),
   startAt: z.string().optional(),
   endAt: z.string().optional(),
   guests: z.number().int().min(1).optional(),
