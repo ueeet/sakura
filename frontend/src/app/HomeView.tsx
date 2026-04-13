@@ -275,7 +275,7 @@ export function HomeView({
                   </CarouselContent>
                   <CarouselNavigation
                     alwaysShow
-                    className="-left-16 w-[calc(100%+8rem)] md:-left-20 md:w-[calc(100%+10rem)]"
+                    className="left-2 w-[calc(100%-1rem)] md:-left-6 md:w-[calc(100%+3rem)]"
                     classNameButton="bg-forest/90 backdrop-blur *:stroke-white dark:bg-forest/90 dark:*:stroke-white shadow-lg"
                   />
                   <CarouselIndicator className="mt-4 relative" />
