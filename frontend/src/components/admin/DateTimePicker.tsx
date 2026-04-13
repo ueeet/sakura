@@ -138,108 +138,127 @@ export function DateTimePicker({ value, onChange, allowPast = true }: Props) {
     ? `${parsed.getDate()} ${MONTHS_LOWER[parsed.getMonth()]} · ${hh}:00`
     : "Выберите время";
 
-  const popupContent = open && coords ? (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: -6, scale: 0.97 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -6, scale: 0.97 }}
-      transition={{ duration: 0.16 }}
-      style={{
-        willChange: "transform, opacity",
-        top: coords.top,
-        left: Math.min(coords.left, typeof window !== "undefined" ? window.innerWidth - 560 - 16 : coords.left),
-      }}
-      className="fixed z-[200] flex w-[540px] max-w-[calc(100vw-32px)] flex-col rounded-xl border border-border bg-card p-3 shadow-2xl sm:flex-row sm:gap-3"
-    >
-            {/* Calendar */}
-            <div className="flex-1">
-              <div className="mb-3 flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={prevMonth}
-                  className="rounded-lg p-1.5 transition-colors hover:bg-muted"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <span className="text-sm font-semibold text-foreground">
-                  {MONTHS[viewMonth]} {viewYear}
-                </span>
-                <button
-                  type="button"
-                  onClick={nextMonth}
-                  className="rounded-lg p-1.5 transition-colors hover:bg-muted"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
+  return (
+    <>
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground transition-colors hover:border-forest/50 focus:outline-none focus:border-forest"
+      >
+        <Calendar className="h-4 w-4 shrink-0 text-muted-foreground" />
+        <span className={parsed ? "text-foreground" : "text-muted-foreground"}>
+          {display}
+        </span>
+      </button>
 
-              <div className="mb-1 grid grid-cols-7 gap-0.5">
-                {WEEKDAYS.map((d) => (
-                  <div key={d} className="py-1 text-center text-[10px] font-medium text-muted-foreground">
-                    {d}
-                  </div>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-7 gap-0.5">
-                {Array.from({ length: firstDay }).map((_, i) => (
-                  <div key={`empty-${i}`} />
-                ))}
-                {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
-                  const past = isPast(day);
-                  const sel = isSelected(day);
-                  const td = isToday(day);
-                  return (
+      {typeof window !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {open && coords && (
+              <motion.div
+                ref={popupRef}
+                initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                transition={{ duration: 0.16 }}
+                style={{
+                  willChange: "transform, opacity",
+                  top: coords.top,
+                  left: Math.min(coords.left, window.innerWidth - 560),
+                }}
+                className="fixed z-[200] flex w-[540px] max-w-[calc(100vw-32px)] flex-col rounded-xl border border-border bg-card p-3 shadow-2xl sm:flex-row sm:gap-3"
+              >
+                {/* Calendar */}
+                <div className="flex-1">
+                  <div className="mb-3 flex items-center justify-between">
                     <button
                       type="button"
-                      key={day}
-                      disabled={past}
-                      onClick={() => pickDay(day)}
-                      className={`h-8 w-full rounded-md text-xs font-medium transition-colors ${
-                        sel
-                          ? "bg-forest text-white"
-                          : td
-                            ? "bg-forest/20 text-forest"
-                            : past
-                              ? "cursor-not-allowed text-muted-foreground/30"
-                              : "text-foreground hover:bg-muted"
-                      }`}
+                      onClick={prevMonth}
+                      className="rounded-lg p-1.5 transition-colors hover:bg-muted"
                     >
-                      {day}
+                      <ChevronLeft className="h-4 w-4" />
                     </button>
-                  );
-                })}
-              </div>
-            </div>
+                    <span className="text-sm font-semibold text-foreground">
+                      {MONTHS[viewMonth]} {viewYear}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={nextMonth}
+                      className="rounded-lg p-1.5 transition-colors hover:bg-muted"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
 
-            {/* Time — hours only (booking granularity = 1 hour) */}
-            <div className="border-t border-border pt-3 sm:w-[200px] sm:border-l sm:border-t-0 sm:pl-3 sm:pt-0">
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
-                <span className="uppercase tracking-wider">Время</span>
-              </div>
-              <div className="grid grid-cols-4 gap-1">
-                {Array.from({ length: 24 }, (_, i) => i).map((h) => (
-                  <button
-                    key={h}
-                    type="button"
-                    onClick={() => pickHour(h)}
-                    className={`rounded-md py-2 text-sm font-medium transition-colors ${
-                      Number(hh) === h
-                        ? "bg-forest text-white"
-                        : "text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {pad(h)}:00
-                  </button>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+                  <div className="mb-1 grid grid-cols-7 gap-0.5">
+                    {WEEKDAYS.map((d) => (
+                      <div key={d} className="py-1 text-center text-[10px] font-medium text-muted-foreground">
+                        {d}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-7 gap-0.5">
+                    {Array.from({ length: firstDay }).map((_, i) => (
+                      <div key={`empty-${i}`} />
+                    ))}
+                    {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
+                      const past = isPast(day);
+                      const sel = isSelected(day);
+                      const td = isToday(day);
+                      return (
+                        <button
+                          type="button"
+                          key={day}
+                          disabled={past}
+                          onClick={() => pickDay(day)}
+                          className={`h-8 w-full rounded-md text-xs font-medium transition-colors ${
+                            sel
+                              ? "bg-forest text-white"
+                              : td
+                                ? "bg-forest/20 text-forest"
+                                : past
+                                  ? "cursor-not-allowed text-muted-foreground/30"
+                                  : "text-foreground hover:bg-muted"
+                          }`}
+                        >
+                          {day}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Time — hours only (booking granularity = 1 hour) */}
+                <div className="border-t border-border pt-3 sm:w-[200px] sm:border-l sm:border-t-0 sm:pl-3 sm:pt-0">
+                  <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span className="uppercase tracking-wider">Время</span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-1">
+                    {Array.from({ length: 24 }, (_, i) => i).map((h) => (
+                      <button
+                        key={h}
+                        type="button"
+                        onClick={() => pickHour(h)}
+                        className={`rounded-md py-2 text-sm font-medium transition-colors ${
+                          Number(hh) === h
+                            ? "bg-forest text-white"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        {pad(h)}:00
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
-    </div>
+    </>
   );
 }
 
