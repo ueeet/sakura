@@ -414,6 +414,10 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
     if (!open) return;
     setError(null);
     setSuccess(false);
+    // При открытии модалки сбрасываем флаг ручного оверрайда суммы —
+    // если у редактируемой брони уже была totalPrice, считаем её
+    // ручной (не перетираем автосчётом). Для новой — даём авторасчёту работать.
+    autoPriceManualOverride.current = !!booking?.totalPrice;
     if (booking) {
       setForm({
         clientName: booking.clientName,
