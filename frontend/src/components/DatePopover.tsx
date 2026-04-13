@@ -247,7 +247,9 @@ export function DatePopover({ value, onChange, placeholder = "Дата" }: Props
             )}
           </motion.div>
         )}
-      </AnimatePresence>
-    </div>
+      </AnimatePresence>,
+      document.body,
+      )}
+    </>
   );
 }
