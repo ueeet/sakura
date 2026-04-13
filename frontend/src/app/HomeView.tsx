@@ -781,7 +781,6 @@ function ReviewsSection({ reviews }: { reviews: Review[] }) {
                   {textReviews.slice(0, textReviewsShown).map((review, idx) => (
                     <motion.div
                       key={review.id}
-                      style={{ willChange: "transform, opacity" }}
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       whileHover={{
