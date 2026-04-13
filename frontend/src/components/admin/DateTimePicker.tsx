@@ -97,12 +97,7 @@ export function DateTimePicker({ value, onChange, allowPast = true }: Props) {
 
   const pickHour = (h: number) => {
     if (!date) return;
-    onChange(`${date}T${pad(h)}:${mm}`);
-  };
-
-  const pickMinute = (m: number) => {
-    if (!date) return;
-    onChange(`${date}T${hh}:${pad(m)}`);
+    onChange(`${date}T${pad(h)}:00`);
   };
 
   const display = parsed
