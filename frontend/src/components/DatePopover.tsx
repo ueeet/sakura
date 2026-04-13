@@ -138,8 +138,9 @@ export function DatePopover({ value, onChange, placeholder = "Дата" }: Props
     : placeholder;
 
   return (
-    <div ref={ref} className="relative">
+    <>
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={`inline-flex items-center gap-2 rounded-full bg-muted px-4 py-2 text-sm font-medium transition-colors hover:bg-muted/80 focus:outline-none focus:ring-1 focus:ring-forest ${
@@ -150,15 +151,21 @@ export function DatePopover({ value, onChange, placeholder = "Дата" }: Props
         <span>{display}</span>
       </button>
 
+      {typeof window !== "undefined" && createPortal(
       <AnimatePresence>
-        {open && (
+        {open && coords && (
           <motion.div
+            ref={popupRef}
             initial={{ opacity: 0, y: -8, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.96 }}
             transition={{ duration: 0.18 }}
-            style={{ willChange: "transform, opacity" }}
-            className="absolute left-0 top-full z-50 mt-2 w-[320px] rounded-xl border border-border bg-card p-4 shadow-xl"
+            style={{
+              willChange: "transform, opacity",
+              top: coords.top,
+              left: Math.min(coords.left, typeof window !== "undefined" ? window.innerWidth - 336 : coords.left),
+            }}
+            className="fixed z-[200] w-[320px] rounded-xl border border-border bg-card p-4 shadow-xl"
           >
             <div className="mb-4 flex items-center justify-between">
               <button
