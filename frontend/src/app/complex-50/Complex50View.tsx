@@ -105,10 +105,15 @@ function Complex50Inner({ branch }: { branch: BranchWithSaunas }) {
     minCapacity: initialCapacity,
   });
 
-  const saunas = useMemo(
-    () => applyFilters(allSaunas, filters),
-    [allSaunas, filters],
-  );
+  const { availableIds, loading: loadingAvailability } = useAvailabilityFromUrl();
+
+  const saunas = useMemo(() => {
+    let result = applyFilters(allSaunas, filters);
+    if (availableIds !== null) {
+      result = result.filter((s) => availableIds.has(s.id));
+    }
+    return result;
+  }, [allSaunas, filters, availableIds]);
 
   const [bookingSauna, setBookingSauna] = useState<Sauna | null>(null);
   const heroImages: [string, string, string] | [string] =
