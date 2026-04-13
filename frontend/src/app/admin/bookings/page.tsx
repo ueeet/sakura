@@ -448,6 +448,46 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
     [saunas, form.branchId],
   );
 
+  // Авто-расчёт totalPrice по сауне + дате + диапазону часов.
+  // Берём цены за час из sauna.prices (по dayType + timeSlot) и суммируем.
+  // Админ может переписать сумму вручную — тогда autoPrice будет
+  // отличаться от form.totalPrice, и мы не перезаписываем (см. ref).
+  const autoPriceManualOverride = useRef(false);
+  useEffect(() => {
+    if (autoPriceManualOverride.current) return;
+    if (!form.saunaId || !form.startAt || !form.endAt) return;
+    const sauna = saunas.find((s) => String(s.id) === form.saunaId);
+    if (!sauna || !sauna.prices?.length) return;
+
+    const [sDate, sTime] = form.startAt.split("T");
+    const [, eTime] = form.endAt.split("T");
+    if (!sDate || !sTime || !eTime) return;
+
+    const startHour = Number(sTime.split(":")[0]);
+    let endHour = Number(eTime.split(":")[0]);
+    // если endAt на следующий день — добавляем 24
+    const eDate = form.endAt.split("T")[0];
+    if (eDate > sDate) endHour += 24;
+    if (endHour <= startHour) return;
+
+    const date = new Date(sDate + "T00:00:00");
+    const dayType: "weekday" | "weekend" = date.getDay() === 0 || date.getDay() === 6 ? "weekend" : "weekday";
+
+    let sum = 0;
+    for (let h = startHour; h < endHour; h++) {
+      const realH = h % 24;
+      const slot: "day" | "evening" | "night" =
+        realH >= 9 && realH < 15 ? "day" : realH >= 15 ? "evening" : "night";
+      const price = sauna.prices.find((p) => p.dayType === dayType && p.timeSlot === slot);
+      if (price) sum += price.pricePerHour;
+    }
+
+    if (sum > 0 && String(sum) !== form.totalPrice) {
+      setForm((f) => ({ ...f, totalPrice: String(sum) }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.saunaId, form.startAt, form.endAt, saunas]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
