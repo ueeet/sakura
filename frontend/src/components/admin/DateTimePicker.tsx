@@ -125,7 +125,7 @@ export function DateTimePicker({ value, onChange, allowPast = true }: Props) {
             exit={{ opacity: 0, y: -6, scale: 0.97 }}
             transition={{ duration: 0.16 }}
             style={{ willChange: "transform, opacity" }}
-            className="absolute left-0 top-full z-50 mt-2 flex w-[520px] max-w-[calc(100vw-32px)] flex-col rounded-xl border border-border bg-card p-3 shadow-xl sm:flex-row sm:gap-3"
+            className="absolute left-0 top-full z-50 mt-2 flex w-[540px] max-w-[calc(100vw-32px)] flex-col rounded-xl border border-border bg-card p-3 shadow-xl sm:flex-row sm:gap-3"
           >
             {/* Calendar */}
             <div className="flex-1">
