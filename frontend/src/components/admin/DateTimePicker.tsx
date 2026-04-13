@@ -57,11 +57,9 @@ export function DateTimePicker({ value, onChange, allowPast = true }: Props) {
   }, [date]);
 
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
-
-  useClickOutside(ref, () => setOpen(false));
 
   // Пересчитываем координаты попапа при открытии и при скролле —
   // попап рендерится через portal в body, чтобы не обрезался модалкой
@@ -80,6 +78,20 @@ export function DateTimePicker({ value, onChange, allowPast = true }: Props) {
       window.removeEventListener("scroll", update, true);
       window.removeEventListener("resize", update);
     };
+  }, [open]);
+
+  // Закрытие по клику вне кнопки И вне попапа (попап в portal,
+  // поэтому проверяем оба ref вручную)
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (buttonRef.current?.contains(t)) return;
+      if (popupRef.current?.contains(t)) return;
+      setOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
   }, [open]);
 
   const today = new Date();
