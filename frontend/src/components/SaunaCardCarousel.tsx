@@ -76,7 +76,7 @@ export function SaunaCardCarousel({
   const hasMultiple = images.length > 1;
 
   return (
-    <div onMouseEnter={prefetchAll} className="contents">
+    <>
       <img
         key={images[current]}
         src={images[current]}
