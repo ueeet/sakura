@@ -128,6 +128,6 @@ export function SaunaCardCarousel({
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }
