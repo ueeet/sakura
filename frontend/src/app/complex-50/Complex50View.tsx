@@ -149,6 +149,13 @@ function Complex50Inner({ branch }: { branch: BranchWithSaunas }) {
         />
 
         <section id="saunas" className="container mx-auto px-4 py-10 sm:py-14">
+          {availableIds !== null && (
+            <div className="mb-4 rounded-xl border border-forest/30 bg-forest/10 px-4 py-3 text-sm text-foreground">
+              {loadingAvailability
+                ? "Ищем свободные сауны..."
+                : `Показаны только свободные сауны на выбранное время. Найдено: ${availableIds.size}.`}
+            </div>
+          )}
           <SaunaFilters
             filters={filters}
             onChange={setFilters}
