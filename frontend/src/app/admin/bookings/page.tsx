@@ -467,13 +467,9 @@ function BookingEditor({ open, booking, branches, saunas, onClose, onSaved }: Ed
 
     try {
       if (isEdit && booking) {
-        // PUT принимает status и партиал полей
+        // В режиме редактирования админ может менять любые поля
         const editPayload: Record<string, unknown> = {
-          startAt: payload.startAt,
-          endAt: payload.endAt,
-          guests: payload.guests,
-          comment: payload.comment,
-          totalPrice: payload.totalPrice,
+          ...payload,
           status: form.status,
         };
         await api.put(`/bookings/${booking.id}`, editPayload);
