@@ -59,7 +59,29 @@ export function DateTimePicker({ value, onChange, allowPast = true }: Props) {
 
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+
   useClickOutside(ref, () => setOpen(false));
+
+  // Пересчитываем координаты попапа при открытии и при скролле —
+  // попап рендерится через portal в body, чтобы не обрезался модалкой
+  // с overflow-y:auto. Координаты берём от кнопки в viewport.
+  useEffect(() => {
+    if (!open) return;
+    const update = () => {
+      const rect = buttonRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setCoords({ top: rect.bottom + 8, left: rect.left });
+    };
+    update();
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [open]);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
