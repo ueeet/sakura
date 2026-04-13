@@ -63,8 +63,41 @@ export function DatePopover({ value, onChange, placeholder = "Дата" }: Props
     (selected ?? today).getMonth(),
   );
 
-  const ref = useRef<HTMLDivElement>(null);
-  useClickOutside(ref, () => setOpen(false));
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+
+  // Координаты попапа в viewport — обновляем на scroll/resize.
+  // Попап рендерится через portal в body, чтобы не обрезался
+  // overflow:auto модалок/скроллящихся родителей.
+  useEffect(() => {
+    if (!open) return;
+    const update = () => {
+      const rect = buttonRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setCoords({ top: rect.bottom + 8, left: rect.left });
+    };
+    update();
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [open]);
+
+  // Закрытие по клику вне кнопки И вне попапа
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (buttonRef.current?.contains(t)) return;
+      if (popupRef.current?.contains(t)) return;
+      setOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [open]);
 
   const daysInMonth = getDaysInMonth(viewYear, viewMonth);
   const firstDay = getFirstDayOfMonth(viewYear, viewMonth);
