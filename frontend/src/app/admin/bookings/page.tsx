@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { api } from "@/lib/api";
 import { onSSE } from "@/lib/sse";
 import type { Booking, Branch, Sauna } from "@/lib/types";
-import { DateTimePicker } from "@/components/admin/DateTimePicker";
+import { DatePopover } from "@/components/DatePopover";
 import {
   Check,
   X,
