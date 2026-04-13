@@ -177,6 +177,7 @@ export function SaunaFilters({ filters, onChange, saunas, showSchedule = true }:
           </button>
         )}
       </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-2.5">
         <SlidersHorizontal className="h-4.5 w-4.5 text-muted-foreground" />
